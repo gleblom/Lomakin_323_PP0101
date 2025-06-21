@@ -1,0 +1,62 @@
+﻿<Window x:Class="DocumentManagementService.Views.RouteEditorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DocumentManagementService.Views" 
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:graph="clr-namespace:DocumentManagementService"
+        mc:Ignorable="d"
+        Title="Редактирование маршрутной карты" Height="450" Width="800" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+    <Grid Background="#78B24B">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+
+
+        <Border Grid.Column="0" BorderBrush="LightGray" BorderThickness="1" Margin="10">
+            <graph:RouteGraphLayout x:Name="graphLayout"
+                                    IsEnabled="False"
+                               Graph="{Binding Graph}"
+                               LayoutAlgorithmType="Tree"
+                               OverlapRemovalAlgorithmType="FSA" />
+        </Border>
+
+
+        <StackPanel Grid.Column="1" Margin="10">
+            <StackPanel Orientation="Horizontal">
+                <ComboBox materialDesign:HintAssist.Hint="Маршрут" Style="{StaticResource MaterialDesignDataGridComboBox}" Margin="5" Width="282" Foreground="White" FontWeight="Bold" BorderBrush="White"/>
+            </StackPanel>
+            <TextBlock Text="Этапы маршрута:" FontWeight="Bold" FontSize="16" Foreground="White"/>
+            <ListBox ItemsSource="{Binding Steps}" SelectedItem="{Binding SelectedStep}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Display}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+
+            <StackPanel Orientation="Horizontal" Margin="8">
+                <Button Style="{StaticResource MaterialDesignFlatButton}"  Margin="5" Content="Вверх" Command="{Binding MoveUpCommand}" Foreground="White"/>
+                <Button Style="{StaticResource MaterialDesignFlatButton}"  Margin="5" Content="Вниз" Command="{Binding MoveDownCommand}" Foreground="White"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="8">
+                <Button Style="{StaticResource MaterialDesignFlatButton}" Margin="5" Content="Добавить" Command="{Binding AddStepCommand}" Foreground="White"/>
+                <ComboBox materialDesign:HintAssist.Hint="Подписант" Style="{StaticResource MaterialDesignDataGridComboBox}" Width="247" Height="20" Background="{x:Null}" Foreground="White" FontWeight="Bold" BorderBrush="White"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="8">
+                <Button Style="{StaticResource MaterialDesignFlatButton}" Margin="5" Content="Удалить" Command="{Binding RemoveStepCommand}" Foreground="White"/>
+            </StackPanel>
+            <Button
+                    Style="{StaticResource MaterialDesignFlatButton}"
+                    Content="Сохранить маршрут"
+                    Command="{Binding SaveCommand}"
+                    Margin="0 20 0 0" Foreground="White"/>
+            <Button Style="{StaticResource MaterialDesignFlatButton}" 
+                    Content="Удалить маршрут"  Foreground="Red"/>
+        </StackPanel>
+    </Grid>
+</Window>
