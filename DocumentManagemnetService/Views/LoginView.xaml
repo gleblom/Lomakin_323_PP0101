@@ -1,0 +1,26 @@
+﻿<Window x:Class="DocumentManagemnetService.Views.LoginView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DocumentManagemnetService.Views"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Height="450" Width="390" ResizeMode="NoResize">
+    <Grid Background="White">
+        <TextBox MaxLength="100" Style="{StaticResource MaterialDesignTextBox}"
+                     x:Name="EmailBox"
+                     materialDesign:HintAssist.Hint="Email" Margin="40,113,40,0" Height="50" VerticalAlignment="Top"/>
+        <TextBox MaxLength="50" Style="{StaticResource MaterialDesignTextBox}"
+                     x:Name="PasswordBox"
+                     materialDesign:HintAssist.Hint="Пароль"
+                     Margin="40,180,40,0" Height="65" VerticalAlignment="Top" />
+        <Button Style="{StaticResource MaterialDesignOutlinedSecondaryLightButton}" x:Name="SignIn" 
+                Content="Войти" Margin="139,0,151,117" 
+                FontSize="14" FontWeight="Bold" Height="32" VerticalAlignment="Bottom" Click="SignIn_ClickAsync"/>
+        <Button Style="{StaticResource MaterialDesignOutlinedSecondaryLightButton}" x:Name="SignUp" 
+            Content="Зарегистрироваться" Margin="100,330,101,0" 
+            FontSize="14" FontWeight="Bold" 
+                RenderTransformOrigin="0.55,0.781" Click="SignUp_ClickAsync" Height="32" VerticalAlignment="Top"/>
+    </Grid>
+</Window>

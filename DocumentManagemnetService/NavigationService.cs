@@ -1,9 +1,4 @@
 ﻿using DocumentManagementService.Views;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace DocumentManagementService
@@ -11,7 +6,7 @@ namespace DocumentManagementService
     public class NavigationService: INavigationService
     {
         private readonly Frame mainFraim;
-        private readonly Dictionary<string, Func<UserControl>> routes = new Dictionary<string, Func<UserControl>>();
+        private readonly Dictionary<string, Func<UserControl>> routes = [];
         public NavigationService(Frame frame) 
         {
             mainFraim = frame;

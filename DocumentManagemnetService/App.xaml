@@ -5,7 +5,7 @@
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:graph="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls" 
              xmlns:local1="clr-namespace:DocumentManagementService.Models"
-             StartupUri="/Views/MenuView.xaml">
+             >
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

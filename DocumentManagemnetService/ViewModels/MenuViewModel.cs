@@ -30,11 +30,11 @@ namespace DocumentManagementService.ViewModels
         public MenuViewModel(INavigationService navigationService)
         {
             this.navigationService = navigationService;
-            MenuItems = new ObservableCollection<MenuItemViewModel>
-            {
-                new MenuItemViewModel("Документы", "FileDocument", "Documents"),
-                new MenuItemViewModel("Маршруты", "Map", "Routes"),
-            };
+            MenuItems =
+            [
+                new("Документы", "FileDocument", "Documents"),
+                new("Маршруты", "Map", "Routes"),
+            ];
         }
     }
 }

@@ -35,15 +35,15 @@ namespace DocumentManagementService.ViewModels
         {
             this.navigationService = navigationService;
             this.navigationService = navigationService;
-            MenuItems = new ObservableCollection<MenuItemViewModel>
-            {
-                new MenuItemViewModel("Новый документ", "PencilPlus", "UploadDocument"),
-                new MenuItemViewModel("Все документы", "File", "AllDocuments"),
-                new MenuItemViewModel("Входящие", "ArrowBottomLeftThin", "Incoming"),
-                new MenuItemViewModel("Исходящие", "ArrowTopRightThin", "Outcoming"),
-                new MenuItemViewModel("Черновики", "PencilOutline", "Draft")
+            MenuItems =
+            [
+                new("Новый документ", "PencilPlus", "UploadDocument"),
+                new("Все документы", "File", "AllDocuments"),
+                new("Входящие", "ArrowBottomLeftThin", "Incoming"),
+                new("Исходящие", "ArrowTopRightThin", "Outcoming"),
+                new("Черновики", "PencilOutline", "Draft")
 
-            };
+            ];
         }
     }
 }
