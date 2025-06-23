@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using DocumentManagementService.Views;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -44,31 +45,41 @@ namespace DocumentManagementService.ViewModels
             {
                 selectedFilePath = dialoig.FileName;
                 SelectedFileName = Path.GetFileName(selectedFilePath);
-                OnPropertyChaneged(nameof(SelectedFileName));
+                OnPropertyChanged(nameof(SelectedFileName));
             }
         }
-        private void SaveAsDraft()
+        private async void SaveAsDraft()
         {
-            
-        }
-        private async void SubmitDocument()
-        {
-
-            bool success = await documentService.AddDocumentAsync(DocumentTitle, SelectedFileCategory, "На согласовании", selectedFilePath);
+            bool success = await documentService.AddDocumentAsync(DocumentTitle, SelectedFileCategory, "Черновик", selectedFilePath, null);
             if (success)
             {
                 MessageBox.Show("Документ сохранен", "Сохранение", MessageBoxButton.OK, MessageBoxImage.Information);
             }
-            else 
+            else
             {
                 MessageBox.Show("Ошибка при сохранении документа", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
+        }
+        private void SubmitDocument()
+        {
+            var selectWindow = new SelectRouteView
+            {
+                DataContext = new SelectRouteViewModel
+                {
+                    DocumentTitle = DocumentTitle,
+                    SelectedFilePath = selectedFilePath,
+                    SelectedFileCategory = SelectedFileCategory,
+                    documentService = documentService
+                    
+                }
+            };
+            selectWindow.Show();
         }
         public void HandleDropFile(string filePath)
         {
             selectedFilePath = filePath;
             SelectedFileName = Path.GetFileName(filePath);
-            OnPropertyChaneged(nameof(SelectedFileName));
+            OnPropertyChanged(nameof(SelectedFileName));
         }
 
     }

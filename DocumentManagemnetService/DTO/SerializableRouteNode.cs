@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DocumentManagementService.Models
+namespace DocumentManagementService.DTO
 {
-    public class RouteNode
+    public class SerializableRouteNode
     {
+        public string Id { get; set; }
         public int StepNumber { get; set; }
         public string Name { get; set; }
-        public string Display => $"{StepNumber}\n({Name})";
-
+        public string? UserId { get; set; }
     }
 }

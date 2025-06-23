@@ -25,7 +25,7 @@ namespace DocumentManagementService.ViewModels
                 {
 
                     selectedMenuItem = value;
-                    OnPropertyChaneged();
+                    OnPropertyChanged();
 
                     navigationService.Navigate(selectedMenuItem?.PageKey); //Когда пользователь выбирает пункт меню, вызывается переход
                 }

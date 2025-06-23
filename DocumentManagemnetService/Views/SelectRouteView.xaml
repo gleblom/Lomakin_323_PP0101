@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:DocumentManagementService.Views"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="Выбор маршрута" Height="450" Width="800">
+        Title="Выбор маршрута" Height="300" Width="500">
     <Grid Background="{DynamicResource PrimaryHueDarkBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -15,24 +15,16 @@
         </Grid.RowDefinitions>
 
 
-        <StackPanel Orientation="Horizontal">
-            <ComboBox Style="{StaticResource MaterialDesignDataGridComboBox}"
-                        Margin="10"
-                        Width="200"
-                      ItemsSource="{Binding Categories}"
-                      SelectedItem="{Binding SelectedCategory}"
-                      materialDesign:HintAssist.Hint="Категория документа" Foreground="White" BorderBrush="White"/>
-        </StackPanel>
+        <StackPanel Orientation="Horizontal"/>
 
         <ListBox Grid.Row="1"
                  Margin="0 12 0 12"
-                 ItemsSource="{Binding FilteredRoutes}"
+                 ItemsSource="{Binding Routes}"
                  SelectedItem="{Binding SelectedRoute}" Background="#78B24B">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Margin="8">
                         <TextBlock Text="{Binding Name}" FontWeight="Bold" />
-                        <TextBlock Text="{Binding Description}" FontStyle="Italic" FontSize="12" Foreground="White"/>
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
@@ -43,7 +35,7 @@
             <Button Style="{StaticResource MaterialDesignFlatSecondaryButton}" Content="Отмена" IsCancel="True" Foreground="White" />
             <Button Content="Выбрать маршрут"
                     IsDefault="True"
-                    Command="{Binding ConfirmCommand}"
+                    Command="{Binding SaveRouteCommand}"
                     Style="{StaticResource MaterialDesignFlatSecondaryButton}" Foreground="White" />
         </StackPanel>
     </Grid>

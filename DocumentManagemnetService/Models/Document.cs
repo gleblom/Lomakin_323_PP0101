@@ -26,6 +26,11 @@ namespace DocumentManagementService.Models
 
         [Column("url")]
         public string Url { get; set; }
+
+        [Column("route_id")]
+        public Guid? RouteId { get; set; }
+        [Column("current_step_index")]
+        public int CurrentStepIndex { get; set; }
     }
 
 }
