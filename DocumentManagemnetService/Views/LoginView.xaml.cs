@@ -1,4 +1,5 @@
-﻿using DocumentManagementService.Views;
+﻿using DocumentManagementService;
+using DocumentManagementService.Views;
 using Supabase;
 using System.Windows;
 

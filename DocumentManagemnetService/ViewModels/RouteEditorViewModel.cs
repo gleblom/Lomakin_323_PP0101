@@ -8,7 +8,7 @@ namespace DocumentManagementService.ViewModels
 {
     public class RouteEditorViewModel: BaseViewModel
     {
-        public ObservableCollection<RouteStep> Steps { get; } = new ObservableCollection<RouteStep>();
+        public ObservableCollection<RouteStep> Steps { get; } = [];
         public RouteStep SelectedStep { get; set;  }
         public IBidirectionalGraph<RouteNode, RouteEdge> Graph { get; set; }
         public ICommand AddStepCommand { get; }

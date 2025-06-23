@@ -1,4 +1,5 @@
 ﻿using DocumentManagementService.ViewModels;
+using DocumentManagemnetService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +25,9 @@ namespace DocumentManagementService.Views
         public UploadDocumentView()
         {
             InitializeComponent();
-            DataContext = new UploadDocumentViewModel();
+            var client = App.SupabaseService.Client;
+            DocumentService service = new(client);
+            DataContext = new UploadDocumentViewModel(service);
         }
 
         private void Border_DragEnter(object sender, DragEventArgs e)

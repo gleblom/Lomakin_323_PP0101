@@ -1,7 +1,8 @@
-﻿using Supabase;
+﻿using DocumentManagemnetService;
+using Supabase;
 using Supabase.Gotrue.Exceptions;
 using System.Windows;
-namespace DocumentManagemnetService
+namespace DocumentManagementService
 {
     public class AuthService
     {
@@ -43,7 +44,9 @@ namespace DocumentManagemnetService
                 var response = await client.Auth.SignIn(email, password);
                 if (response.User != null)
                 {
-                    return true;
+                   await App.SupabaseService.SaveSessionAsync();
+                   await client.Auth.SetSession(response.AccessToken, response.RefreshToken);
+                   return true;
                 }
                 MessageBox.Show("Неверный логин или пароль.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;

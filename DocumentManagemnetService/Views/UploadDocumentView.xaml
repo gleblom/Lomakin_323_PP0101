@@ -14,16 +14,17 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Margin="0,0,0,304" Grid.RowSpan="2" >
-            <TextBox Style="{StaticResource MaterialDesignTextBox}" 
+            <TextBox 
+                    Style="{StaticResource MaterialDesignTextBox}"                 
                     Margin="5"
                      materialDesign:HintAssist.Hint="Название документа"
-                     Text="{Binding DocumentTitle, UpdateSourceTrigger=PropertyChanged}" Width="500" Height="23" Foreground="White" BorderBrush="White" />
+                     Text="{Binding DocumentTitle, UpdateSourceTrigger=PropertyChanged}" Width="500" Height="38" Foreground="White" BorderBrush="White" />
 
             <ComboBox Margin="10"
-                      Style="{StaticResource MaterialDesignDataGridComboBox}"
                       materialDesign:HintAssist.Hint="Категория"
+                      ItemContainerStyle="{StaticResource MaterialDesignDataGridComboBoxItemStyle}"
                       ItemsSource="{Binding Categories}"
-                      SelectedItem="{Binding SelectedFileCategory}" Width="500" Foreground="White" BorderBrush="White" Height="20" />
+                      SelectedItem="{Binding SelectedFileCategory}" Width="500" Height="29" />
 
         </StackPanel>
 

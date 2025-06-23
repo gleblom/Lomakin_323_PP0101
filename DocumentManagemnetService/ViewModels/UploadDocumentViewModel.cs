@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace DocumentManagementService.ViewModels
@@ -16,21 +17,21 @@ namespace DocumentManagementService.ViewModels
         public string SelectedFileName { get; set; }
         public string SelectedFileCategory { get; set; }
         public bool IsDraggingFile { get; set; }
-
-        public ObservableCollection<string> Categories { get; } = new ObservableCollection<string>() { "Регламент", "Инструкция", "Методика", "Политика" };
-        public ObservableCollection<string> DocumentTypes { get; } = new ObservableCollection<string>() { "PDF", "DOCX", "XLSX" };
-
+        public ObservableCollection<string> Categories { get; } = ["Регламент", "Инструкция", "Методика", "Политика"];
         public ICommand SelectFileCommand { get; }
         public ICommand SaveDraftCommand { get; }
         public ICommand SubmitCommand { get; }
 
         private string selectedFilePath;
 
-        public UploadDocumentViewModel() 
+        private DocumentService documentService;
+
+        public UploadDocumentViewModel(DocumentService documentService) 
         {
             SelectFileCommand = new RelayCommand(OpenFileDialog);
-            SaveDraftCommand = new RelayCommand(SaveAsDraft);
-            SubmitCommand = new RelayCommand(SubmitDocument);
+            SaveDraftCommand = new RelayCommand(SaveAsDraft, obj => (SelectedFileCategory != null && DocumentTitle != null && SelectedFileName != null));
+            SubmitCommand = new RelayCommand(SubmitDocument, obj => (SelectedFileCategory != null && DocumentTitle != null && SelectedFileName != null));
+            this.documentService = documentService;
         }
         private void OpenFileDialog()
         {
@@ -48,11 +49,20 @@ namespace DocumentManagementService.ViewModels
         }
         private void SaveAsDraft()
         {
-
+            
         }
-        private void SubmitDocument()
+        private async void SubmitDocument()
         {
 
+            bool success = await documentService.AddDocumentAsync(DocumentTitle, SelectedFileCategory, "На согласовании", selectedFilePath);
+            if (success)
+            {
+                MessageBox.Show("Документ сохранен", "Сохранение", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else 
+            {
+                MessageBox.Show("Ошибка при сохранении документа", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
         public void HandleDropFile(string filePath)
         {

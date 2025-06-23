@@ -1,8 +1,9 @@
 ﻿using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
 
-namespace DocumentManagemnetService.Models
+namespace DocumentManagementService.Models
 {
+    [Table("documents")]
     public class Document : BaseModel
     {
         [PrimaryKey("id", false)]
@@ -16,6 +17,15 @@ namespace DocumentManagemnetService.Models
 
         [Column("created_at")]
         public DateTime CreatedAt { get; set; }
+
+        [Column("status")]
+        public string Status { get; set; }
+
+        [Column("author_uuid")]
+        public string AuthorId { get; set; }
+
+        [Column("url")]
+        public string Url { get; set; }
     }
 
 }

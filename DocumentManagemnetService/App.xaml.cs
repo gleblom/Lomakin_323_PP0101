@@ -1,8 +1,6 @@
-﻿using DocumentManagementService.Views;
+﻿using DocumentManagementService;
+using DocumentManagementService.Views;
 using DocumentManagemnetService.Views;
-using Supabase;
-using System.Diagnostics;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace DocumentManagemnetService
@@ -18,12 +16,11 @@ namespace DocumentManagemnetService
 
             await SupabaseService.InitializeAsync();
 
-            SupabaseService.Client.Auth.LoadSession();
-
+            await SupabaseService.EnsureSessionIsValidAsync();
 
             if (SupabaseService.IsAuthenticated)
             {
-              new MenuWindow().Show();
+                new MenuWindow().Show();
             }
             else
             {

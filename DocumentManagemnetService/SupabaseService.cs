@@ -1,25 +1,63 @@
 ﻿using Supabase;
 
-namespace DocumentManagemnetService
+namespace DocumentManagementService
 {
     public class SupabaseService
     {
         private string url = "https://kphkeykctqyqgfotrqoy.supabase.co";
         private string key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtwaGtleWtjdHF5cWdmb3RycW95Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA0ODc4NTQsImV4cCI6MjA2NjA2Mzg1NH0.N9tcPHuG6VXdOBiiC8UWS7ISxTTZnNKoWIarWX9bOAw";
         private Client client;
+        private readonly SessionManager sessionManager = new();
 
         public async Task InitializeAsync()
         {
 
             var options = new SupabaseOptions
             {
-                AutoConnectRealtime = false,
-                SessionHandler = new FileSessionHandler()
+                AutoConnectRealtime = true
             };
             client = new Client(url, key, options);
             await client.InitializeAsync();
-        }
 
+           
+            var session = await sessionManager.LoadSessionAsync();
+            if (session != null)
+            {
+                await client.Auth.SetSession(session.AccessToken, session.RefreshToken);
+            }
+        }
+        public async Task SaveSessionAsync()
+        {
+            var session = client.Auth.CurrentSession;
+            if (session != null)
+            {
+                await sessionManager.SaveSessionAsync(session);
+            }
+        }
+        public void DestroySession()
+        {
+            sessionManager.DestroySession();
+        }
+        public async Task EnsureSessionIsValidAsync()
+        {
+            var session = client.Auth.CurrentSession;
+
+            if (session == null || string.IsNullOrWhiteSpace(session.AccessToken))
+                return;
+
+            if (session.Expired())
+            {
+                try
+                {
+                    await client.Auth.RefreshSession();
+                    await SaveSessionAsync();
+                }
+                catch
+                {
+                    DestroySession();
+                }
+            }
+        }
         public Client Client => client;
         public bool IsAuthenticated => client.Auth.CurrentUser != null;
     }

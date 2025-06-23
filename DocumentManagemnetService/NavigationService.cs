@@ -3,7 +3,7 @@ using System.Windows.Controls;
 
 namespace DocumentManagementService
 {
-    public class NavigationService: INavigationService
+    public class NavigationService: INavigationService // Класс для навигации внутри Frame
     {
         private readonly Frame mainFraim;
         private readonly Dictionary<string, Func<UserControl>> routes = [];
@@ -19,6 +19,7 @@ namespace DocumentManagementService
 
         public void Navigate(string pageKey)
         {
+            //Переход на страницу происходит по ключу
             if (routes.TryGetValue(pageKey, out var route)) {
                 mainFraim.Navigate(route());
             }
