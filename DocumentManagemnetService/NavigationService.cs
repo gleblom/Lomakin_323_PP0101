@@ -1,4 +1,6 @@
-﻿using DocumentManagementService.Views;
+﻿using DocumentManagementService.ViewModels;
+using DocumentManagementService.Views;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace DocumentManagementService
@@ -15,6 +17,7 @@ namespace DocumentManagementService
             routes["AllDocuments"] = () => new PublicDocumentsView();
             routes["UploadDocument"] = () => new UploadDocumentView();
             routes["Routes"] = () => new RoutesView();
+            routes["Incoming"] = () => new ApprovalView();
         }
 
         public void Navigate(string pageKey)

@@ -32,10 +32,12 @@
 
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
-            <Button Style="{StaticResource MaterialDesignFlatSecondaryButton}" Content="Отмена" IsCancel="True" Foreground="White" />
-            <Button Content="Выбрать маршрут"
+            <Button Command="{Binding CancelCommand}"
+                    Style="{StaticResource MaterialDesignFlatSecondaryButton}" Content="Отмена" IsCancel="True" Foreground="White" />
+            <Button x:Name="SelectRoute"
+                    Content="Выбрать маршрут"
                     IsDefault="True"
-                    Command="{Binding SaveRouteCommand}"
+                    Command="{Binding SaveDocumentCommand}"
                     Style="{StaticResource MaterialDesignFlatSecondaryButton}" Foreground="White" />
         </StackPanel>
     </Grid>

@@ -1,9 +1,11 @@
 ﻿using DocumentManagementService.DTO;
 using DocumentManagementService.Models;
 using Supabase;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Text.Json;
 using System.Windows;
+using System.Windows.Controls;
 
 
 namespace DocumentManagementService
@@ -16,7 +18,7 @@ namespace DocumentManagementService
         {
             this.client = client; 
         }
-        public async Task<bool> AddDocumentAsync(string title, string category, string status, string localFilePath, Guid? key)
+        public async Task<bool> AddDocumentAsync(string title, string category, string status, string localFilePath, ApprovalRoute route)
         {
             var user = client.Auth.CurrentUser;
             if (user == null)
@@ -39,9 +41,22 @@ namespace DocumentManagementService
                 AuthorId = user.Id,
                 Status = status,
                 Url = url,
-                RouteId = key
+                RouteId = route.Id
             };
             var response = await client.From<Document>().Insert(document);
+            if(status == "В процессе согласования")
+            {
+                var dto = JsonSerializer.Deserialize<RouteGraph>(route.GraphJson); //Из маршрута получаем граф
+
+         
+                await client.Rpc("InsertNotification", //После отправки на солгласованме уведомляем первого подписанта
+                          new Dictionary<string, object> {
+                        {"UserId",  dto.Nodes[document.CurrentStepIndex].UserId}, //Из десериализованного графа получаем id первого подписанта
+                        {"DocumentId",   response.Model.Id}
+                });
+
+            }
+          
             return response.Models.Count == 1;
         }
         public async Task<string?> UploadFileAsync(string localFilePath, string storageFilePath)
@@ -59,7 +74,17 @@ namespace DocumentManagementService
                 return null;
             }
         }
-        public async Task<bool> ApproveCurrentStepAsync(Document doc)
+        public async Task<List<Notification>> GetNotificationsAsync()
+        {
+            var notification = await client.From<Notification>().Get();
+            return notification.Models;
+        }
+        public async Task<ApprovalRoute> GetApprovalRouteById(Guid? routeId)
+        {
+            var route = await client.From<ApprovalRoute>().Where(x => x.Id == routeId).Get();
+            return route.Model;
+        }
+        public async Task<bool> ApproveCurrentStepAsync(Document doc, bool approved)
         {
             var route = await GetApprovalRouteById(doc.RouteId);
             if (route == null)
@@ -72,45 +97,62 @@ namespace DocumentManagementService
 
             var currentIndex = doc.CurrentStepIndex;
             var currentNode = steps.ElementAtOrDefault(currentIndex);
-            if (currentNode == null) return false;
-
-            var currentUserId = client.Auth.CurrentUser?.Id;
-            if (currentUserId != currentNode.UserId)
+            if (currentNode == null)
             {
                 return false;
             }
 
+            var currentUserId = client.Auth.CurrentUser?.Id;
+ 
 
-            await client.From("document_approvals").Insert(new
+            var approval = new DocumentApprovals
             {
-                document_id = doc.Id,
-                user_id = currentUserId,
-                step_index = currentIndex,
-                approved = true
-            });
+                Id = Guid.NewGuid(),
+                DocumentId = doc.Id,
+                UserId = currentUserId,
+                StepIndex = currentIndex,
+                IsApproved = true
+            };
+            await client.From<DocumentApprovals>().Insert(approval);
 
-            if (currentIndex >= steps.Count - 1)
+            var model = await client.From<Document>().Where(x => x.Id == doc.Id).Single();
+
+            if (!approved)
+            {
+                model.Status = "Отклонён";
+
+                await client.From<Document>().Update(model);
+            }
+            else if (currentIndex >= steps.Count - 1)
             {
 
-                var model = await client.From<Document>().Where(x => x.Id == doc.Id).Single();
-                model.Status = "опубликован";
+                model.Status = "Опубликован";
                 model.CurrentStepIndex = currentIndex + 1;
-                await model.Update<Document>();
 
+                await client.From<Document>().Update(model);
 
-                //await MakeDocumentPublic(doc.Id);
             }
             else
             {
-                // Переход к следующему этапу
-               var model = await client.From<Document>().Where(x => x.Id == doc.Id).Single();
                 model.Status = "В процессе согласования";
                 model.CurrentStepIndex = currentIndex + 1;
-                await model.Update<Document>();
+              
+                var nextNode = steps[model.CurrentStepIndex];
+
+                await client.From<Document>().Update(model);
+
+                await client.Rpc("InsertNotification", 
+                    new Dictionary<string, object> { 
+                        {"UserId", nextNode.UserId},
+                        {"DocumentId",  doc.Id}
+                    });
             }
+            await client.From<Notification>().
+            Where(x => x.DocumentId == doc.Id).
+            Delete();
+
 
             return true;
         }
-
     }
 }

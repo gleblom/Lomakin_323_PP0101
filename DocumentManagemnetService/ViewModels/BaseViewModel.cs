@@ -2,6 +2,7 @@
 
 namespace DocumentManagementService.ViewModels
 {
+    //Базовая модель представления, реализующая интерфейс уведомления необходимый для автоматического обновления представления
     public class BaseViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;

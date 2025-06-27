@@ -16,17 +16,23 @@ namespace DocumentManagemnetService
 
             await SupabaseService.InitializeAsync();
 
-            await SupabaseService.EnsureSessionIsValidAsync();
+            await SupabaseService.EnsureSessionIsValidAsync(); 
 
-            if (SupabaseService.IsAuthenticated)
+            if (SupabaseService.IsAuthenticated) 
             {
-                new MenuWindow().Show();
+                new MenuWindow().Show(); //Если пользователь залогинен открывается главное окно
             }
             else
             {
-                new LoginView(SupabaseService.Client).Show(); 
+                new LoginView().Show(); //если нет - окно входа
             }
 
+        }
+        public static bool IsWindowOpen<T>(string name = "") where T : Window //Проверка, открыто ли окно
+        {
+            return string.IsNullOrEmpty(name)
+               ? Current.Windows.OfType<T>().Any()
+               : Current.Windows.OfType<T>().Any(w => w.Name.Equals(name));
         }
 
     }

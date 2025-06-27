@@ -1,13 +1,8 @@
 ﻿using DocumentManagementService.Views;
+using DocumentManagemnetService;
 using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 
 namespace DocumentManagementService.ViewModels
@@ -20,7 +15,6 @@ namespace DocumentManagementService.ViewModels
         public bool IsDraggingFile { get; set; }
         public ObservableCollection<string> Categories { get; } = ["Регламент", "Инструкция", "Методика", "Политика"];
         public ICommand SelectFileCommand { get; }
-        public ICommand SaveDraftCommand { get; }
         public ICommand SubmitCommand { get; }
 
         private string selectedFilePath;
@@ -30,8 +24,12 @@ namespace DocumentManagementService.ViewModels
         public UploadDocumentViewModel(DocumentService documentService) 
         {
             SelectFileCommand = new RelayCommand(OpenFileDialog);
-            SaveDraftCommand = new RelayCommand(SaveAsDraft, obj => (SelectedFileCategory != null && DocumentTitle != null && SelectedFileName != null));
-            SubmitCommand = new RelayCommand(SubmitDocument, obj => (SelectedFileCategory != null && DocumentTitle != null && SelectedFileName != null));
+            SubmitCommand = new RelayCommand(SubmitDocument, obj => 
+            (SelectedFileCategory != null 
+            && DocumentTitle != null 
+            && SelectedFileName != null 
+            && !App.IsWindowOpen<SelectRouteView>()));
+
             this.documentService = documentService;
         }
         private void OpenFileDialog()
@@ -48,31 +46,18 @@ namespace DocumentManagementService.ViewModels
                 OnPropertyChanged(nameof(SelectedFileName));
             }
         }
-        private async void SaveAsDraft()
-        {
-            bool success = await documentService.AddDocumentAsync(DocumentTitle, SelectedFileCategory, "Черновик", selectedFilePath, null);
-            if (success)
-            {
-                MessageBox.Show("Документ сохранен", "Сохранение", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            else
-            {
-                MessageBox.Show("Ошибка при сохранении документа", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
-        }
         private void SubmitDocument()
         {
-            var selectWindow = new SelectRouteView
-            {
-                DataContext = new SelectRouteViewModel
-                {
-                    DocumentTitle = DocumentTitle,
-                    SelectedFilePath = selectedFilePath,
-                    SelectedFileCategory = SelectedFileCategory,
-                    documentService = documentService
-                    
-                }
-            };
+            var selectWindow = new SelectRouteView();
+            SelectRouteViewModel vm = new SelectRouteViewModel();
+            vm.DocumentTitle = DocumentTitle;
+            vm.SelectedFilePath = selectedFilePath;
+            vm.SelectedFileCategory = SelectedFileCategory;
+            vm.documentService = documentService;
+            vm.CloseAction ??= new Action(selectWindow.Close);
+
+            selectWindow.DataContext = vm;
+
             selectWindow.Show();
         }
         public void HandleDropFile(string filePath)

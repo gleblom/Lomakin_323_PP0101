@@ -1,0 +1,33 @@
+﻿<UserControl x:Class="DocumentManagementService.Views.ApprovalView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:DocumentManagementService.ViewModels"
+      mc:Ignorable="d"
+      d:DesignHeight="420" d:DesignWidth="860">
+
+    <Grid Background="White">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="1,0,1,383" Background="{DynamicResource PrimaryHueDarkBrush}"  >
+            <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Отклонить" Command="{Binding RejectCommand}" Margin="0,0,8,0" Foreground="White"/>
+            <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Согласовать" Command="{Binding ApproveCommand}" Cursor="Hand" Foreground="White" />
+            <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Скачать документ" Command="{Binding DownloadCommand}" Cursor="Hand" Foreground="White" />
+        </StackPanel>
+        <DataGrid
+                AutoGenerateColumns="False"
+                ItemsSource="{Binding Documents}"
+                      SelectedItem="{Binding SelectedDocument}"
+                      SelectionMode="Single"
+                IsReadOnly="True" Margin="0,33,0,3" Grid.RowSpan="2" >
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Название"  Binding="{Binding Title}" Width="*"/>
+                <DataGridTextColumn Header="Категория" Binding="{Binding Category}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

@@ -31,7 +31,7 @@
             </StackPanel>
             <TextBlock Text="Этапы маршрута:" FontWeight="Bold" FontSize="16" Foreground="White"/>
             <ScrollViewer>
-                <ListBox ItemsSource="{Binding Steps}" SelectedItem="{Binding SelectedStep}">
+                <ListBox ItemsSource="{Binding Steps}" SelectedItem="{Binding SelectedStep}" Height="45">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Display}" />
@@ -66,7 +66,8 @@
                     Content="Сохранить маршрут"
                     Command="{Binding SaveCommand}"
                     Margin="0 20 0 0" Foreground="White"/>
-            <Button Style="{StaticResource MaterialDesignFlatButton}" 
+            <Button Command="{Binding DeleteCommand}"
+                    Style="{StaticResource MaterialDesignFlatButton}" 
                     Content="Удалить маршрут"  Foreground="Red"/>
         </StackPanel>
     </Grid>

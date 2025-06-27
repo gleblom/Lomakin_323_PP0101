@@ -13,20 +13,23 @@ namespace DocumentManagementService.ViewModels
         public DocumentService documentService;
         public string DocumentTitle { get; set; }
         public string SelectedFilePath { get; set; }
+        public Action CloseAction { get; set; }
         public string SelectedFileCategory { get; set; }
         public ApprovalRoute? SelectedRoute { get; set; }
         public ObservableCollection<ApprovalRoute> Routes { get; } = [];
-        public ICommand SaveRouteCommand { get; }
+        public ICommand SaveDocumentCommand { get; }
+        public ICommand CancelCommand { get; }
         public SelectRouteViewModel()
         {
             client = App.SupabaseService.Client;
-            SaveRouteCommand = new RelayCommand(SaveRoute, obj => SelectedRoute != null);
+            SaveDocumentCommand = new RelayCommand(SaveDocument, obj => SelectedRoute != null);
+            CancelCommand = new RelayCommand(CloseAction);
             LoadRoutes();
 
         }
-        private async void SaveRoute()
+        private async void SaveDocument()
         {
-            bool success = await documentService.AddDocumentAsync(DocumentTitle, SelectedFileCategory, "На согласовании", SelectedFilePath, SelectedRoute.Id);
+            bool success = await documentService.AddDocumentAsync(DocumentTitle, SelectedFileCategory, "В процессе согласования", SelectedFilePath, SelectedRoute);
             if (success)
             {
                 MessageBox.Show("Документ сохранен", "Сохранение", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -35,6 +38,7 @@ namespace DocumentManagementService.ViewModels
             {
                 MessageBox.Show("Ошибка при сохранении документа", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
+            CloseAction();
         }
         private async void LoadRoutes()
         {

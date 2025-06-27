@@ -1,4 +1,6 @@
-﻿using DocumentManagemnetService;
+﻿using DocumentManagementService.Models;
+using DocumentManagemnetService;
+using DocumentManagemnetService.Views;
 using Supabase;
 using Supabase.Gotrue.Exceptions;
 using System.Windows;
@@ -13,14 +15,29 @@ namespace DocumentManagementService
             this.client = client;
         }
 
-        public async Task<bool> SignUpAsync(string email, string password)
+        public async Task<bool> SignUpAsync(string email, string password, string firstName, string secondName, string thirdName)
         {
             try
             {
                 var response = await client.Auth.SignUp(email, password);
                 if (response.User != null)
                 {
-                    return true;
+
+                    var model = await client.From<User>().Get();
+
+                    if (model != null)
+                    {
+
+                        await client.Rpc("UpdateProfile", new Dictionary<string, object>
+                        {
+                            {"FirstName", firstName},
+                            {"SecondName", secondName},
+                            {"ThirdName", thirdName},
+                            {"UserId",  model.Model.Id}
+                        });
+
+                        return true;
+                    }
                 }
                 MessageBox.Show("Неизвестная ошибка регистрации.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
@@ -64,14 +81,10 @@ namespace DocumentManagementService
 
         }
 
-        public Supabase.Gotrue.User? GetCurrentUser()
-        {
-            return client.Auth.CurrentUser;
-        }
-
         public async Task SignOutAsync()
         {
             await client.Auth.SignOut();
+            App.SupabaseService.DestroySession();
         }
         private string MapError(string error)
         {
@@ -83,6 +96,10 @@ namespace DocumentManagementService
                 return "Неверный email или пароль.";
             if (error.Contains("invalid format"))
                 return "Неправильный формат email.";
+            if (error.Contains("missing email or phone"))
+                return "Заполните все поля.";
+            if (error.Contains("sign-ins are disabled"))
+                return "Заполните все поля";
             return error;
         }
     }
