@@ -12,9 +12,10 @@ namespace DocumentManagementService
         public async Task InitializeAsync()
         {
 
-            var options = new SupabaseOptions
+            var options = new SupabaseOptions //Настройки подключения
             {
-                AutoConnectRealtime = true
+                AutoConnectRealtime = true,
+                AutoRefreshToken = true,            
             };
             client = new Client(url, key, options);
             await client.InitializeAsync();
@@ -38,23 +39,23 @@ namespace DocumentManagementService
         {
             sessionManager.DestroySession();
         }
-        public async Task EnsureSessionIsValidAsync()
+        public async Task EnsureSessionIsValidAsync() //Проверка валидности сессии
         {
             var session = client.Auth.CurrentSession;
 
             if (session == null || string.IsNullOrWhiteSpace(session.AccessToken))
                 return;
 
-            if (session.Expired())
+            if (session.Expired()) //Если время сессии истекло
             {
                 try
                 {
-                    await client.Auth.RefreshSession();
+                    await client.Auth.RefreshSession(); //обновляем её
                     await SaveSessionAsync();
                 }
                 catch
                 {
-                    DestroySession();
+                    DestroySession(); //Если что-то пошло не так, то удаляем
                 }
             }
         }

@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DocumentManagementService.DTO
+﻿namespace DocumentManagementService.DTO
 {
+    //DTO графа для сериализации/десериализации JSON
     public class RouteGraph
     {
         public List<SerializableRouteNode> Nodes { get; set; }

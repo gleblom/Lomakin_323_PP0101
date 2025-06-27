@@ -1,17 +1,23 @@
 ﻿using DocumentManagementService.Models;
-using System;
+using DocumentManagemnetService;
+using DocumentManagemnetService.Views;
 using System.Collections.ObjectModel;
+using System.Windows;
+using System.Windows.Input;
 
 namespace DocumentManagementService.ViewModels
 {
     public class MenuViewModel: BaseViewModel
     {
         public ObservableCollection<MenuItemViewModel> MenuItems { get; }
+        public ICommand LeaveCommand { get; }
+        public Action CloseAction { get; set; } //Делегат для закрытия данного окна (как в LoginViewModel)
 
         private readonly INavigationService navigationService; 
 
         private MenuItemViewModel selectedMenuItem;
-        public Action<string> NavigateAction { get; set; } //Связь между представлением и модель представления
+        private readonly AuthService authService; 
+        
         public MenuItemViewModel SelectedMenuItem 
         {
             get { return selectedMenuItem; }
@@ -29,12 +35,22 @@ namespace DocumentManagementService.ViewModels
         }
         public MenuViewModel(INavigationService navigationService)
         {
+            LeaveCommand = new RelayCommand(Leave);
+            authService = new AuthService(App.SupabaseService.Client);
             this.navigationService = navigationService;
             MenuItems =
             [
                 new("Документы", "FileDocument", "Documents"),
                 new("Маршруты", "Map", "Routes"),
             ];
+            navigationService.Navigate("Documents");
+        }
+        private async void Leave()
+        {
+            await authService.SignOutAsync();
+            Application.Current.MainWindow = new LoginView();
+            Application.Current.MainWindow.Show();
+            CloseAction();
         }
     }
 }

@@ -17,28 +17,10 @@
                     Width="200"
                      materialDesign:HintAssist.Hint="Поиск по названию"
                      Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" BorderBrush="White"/>
-
-            <ComboBox Style="{StaticResource MaterialDesignDataGridComboBox}" Width="180"
-                      Margin="5" 
-                      materialDesign:HintAssist.Hint="Категория"
-                      ItemsSource="{Binding Categories}"
-                      SelectedItem="{Binding SelectedCategory}" BorderBrush="White" />
-
-            <DatePicker BorderThickness="0"
-                        Margin="5" 
-                        Width="160"
-                        materialDesign:HintAssist.Hint="Дата с"
-                        SelectedDate="{Binding FromDate}" Height="22" />
-
-            <DatePicker BorderThickness="0"
-                        Margin="5" 
-                        Width="160"
-                        materialDesign:HintAssist.Hint="Дата по"
-                        SelectedDate="{Binding ToDate}" Height="22" />
-
+            <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Скачать документ" Command="{Binding DownloadCommand}" Cursor="Hand" Foreground="White" />
             <Button Content="Применить"
                     Style="{StaticResource MaterialDesignFlatButton}"
-                    Command="{Binding FilterCommand}" Width="108" Height="26" BorderBrush="{x:Null}" Background="{x:Null}" Foreground="White" />
+                    Command="{Binding SearchCommand}" Width="108" Height="26" BorderBrush="{x:Null}" Background="{x:Null}" Foreground="White" />
         </StackPanel>
 
         <DataGrid Grid.Row="1"
@@ -46,6 +28,7 @@
                   AutoGenerateColumns="False"
                   CanUserAddRows="False"
                   SelectionMode="Single"
+                  IsReadOnly="True"
                   SelectedItem="{Binding SelectedDocument}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Название" Binding="{Binding Title}" Width="*"/>

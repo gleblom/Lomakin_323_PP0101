@@ -5,9 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DocumentManagementService.Views" 
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:i="http://schemas.microsoft.com/xaml/behaviors" 
         mc:Ignorable="d"
-        Title="MenuWindow" Height="720" Width="1200">
+        Title="Единая библиотека корпоративных документов" Height="720" Width="1200">
     <materialDesign:DrawerHost>
         <materialDesign:DrawerHost.LeftDrawerContent>
             <StackPanel Background="#78B24B">
@@ -23,10 +22,13 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
+                <Button Command="{Binding LeaveCommand}" Style="{StaticResource MaterialDesignToolForegroundButton}" >
+                    <materialDesign:PackIcon Kind="ArrowLeftThin"></materialDesign:PackIcon>
+                </Button>
             </StackPanel>
         </materialDesign:DrawerHost.LeftDrawerContent>
         <Grid>
-            <DockPanel Background="#78B24B" Margin="0,10,0,0" Height="61" VerticalAlignment="Top">
+            <DockPanel Background="#78B24B" Height="61" VerticalAlignment="Top">
                 <Button Style="{StaticResource MaterialDesignToolForegroundButton}" 
                  Command="{x:Static materialDesign:DrawerHost.OpenDrawerCommand}"
                   CommandParameter="{x:Static Dock.Left}"
@@ -38,13 +40,7 @@
                            Foreground="White" FontSize="16"
                            Margin="8"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="8">
-                    <Button Style="{StaticResource MaterialDesignToolForegroundButton}"
-                           >
-                        <materialDesign:PackIcon Kind="Bell" />
-                    </Button>
-                    <Button Style="{StaticResource MaterialDesignToolForegroundButton}">
-                        <materialDesign:PackIcon Kind="AccountCircle" />
-                    </Button>
+                    <Button Command="{Binding AccountCommand}" Style="{StaticResource MaterialDesignToolForegroundButton}"/>
                 </StackPanel>
             </DockPanel>
             <Frame x:Name="MainFrame"

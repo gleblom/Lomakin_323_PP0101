@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace DocumentManagementService
 {
-    public class SessionManager //Класс-обработчик сохранения сессии
+    public class SessionManager //Класс для управления сессией
     {
         private readonly string sessionFilePath;
 
@@ -16,7 +16,7 @@ namespace DocumentManagementService
             Directory.CreateDirectory(folder);
             sessionFilePath = Path.Combine(folder, "session.json");
         }
-        public void DestroySession()
+        public void DestroySession() //Удаление сессии
         {
             if (File.Exists(sessionFilePath))
             {

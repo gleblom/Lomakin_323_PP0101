@@ -10,8 +10,13 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <StackPanel>
         <StackPanel Orientation="Horizontal" Background="#78B24B" Height="50">
-            <Button Style="{StaticResource MaterialDesignFlatButton}"  Margin="5" Content="Создать маршрут" Command="{Binding CreateRouteCommand}" Foreground="White"/>
-            <Button Style="{StaticResource MaterialDesignFlatButton}"  Margin="5" Content="Изменить выбранный маршрут" Command="{Binding EditRouteCommand}" Foreground="White"/>
+            <Button Name="CreateRoute"
+                    Style="{StaticResource MaterialDesignFlatButton}"  
+                    Margin="5" Content="Создать маршрут" 
+                    Command="{Binding CreateRouteCommand}" Foreground="White" Cursor="Hand" Visibility="Collapsed"/>
+            <Button Name="EditRoute"
+                    Style="{StaticResource MaterialDesignFlatButton}"  Margin="5" Content="Изменить выбранный маршрут" 
+                    Command="{Binding EditRouteCommand}" Foreground="White" Visibility="Collapsed"/>
         </StackPanel>
         <Grid Background="White"  Width="{Binding ActualWidth,
               RelativeSource = {RelativeSource AncestorType = {x:Type UserControl}}}"
@@ -46,8 +51,9 @@
             <Border Margin="10,10,10,10"
                 Grid.Column="1" BorderBrush="LightGray" BorderThickness="1"  Background="{DynamicResource PrimaryHueDarkBrush}">
                 <graph:RouteGraphLayout x:Name="graphLayout"
+                                        IsEnabled="False"
                                Graph="{Binding Graph}"
-                               LayoutAlgorithmType="Linear"
+                                LayoutAlgorithmType="Tree"
                                OverlapRemovalAlgorithmType="FSA" />
             </Border>
         </Grid>

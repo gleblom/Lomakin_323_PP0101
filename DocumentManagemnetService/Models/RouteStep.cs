@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace DocumentManagementService.Models
 {
+    //Модель шага(этапа) для построения графа
     public class RouteStep: BaseViewModel
     {
+        public string Id { get; set; }
         private string name;
         private int stepNumber;
         public string Name {
