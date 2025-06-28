@@ -5,12 +5,12 @@ namespace DocumentManagementService.ViewModels
 {
     public class DocumentsViewModel: BaseViewModel
     {
-        public ObservableCollection<MenuItemViewModel> MenuItems { get; }
+        public ObservableCollection<MenuItemModel> MenuItems { get; }
 
         private readonly INavigationService navigationService;
 
-        private MenuItemViewModel selectedMenuItem;
-        public MenuItemViewModel SelectedMenuItem
+        private MenuItemModel selectedMenuItem;
+        public MenuItemModel SelectedMenuItem
         {
             get { return selectedMenuItem; }
             set

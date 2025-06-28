@@ -9,16 +9,16 @@ namespace DocumentManagementService.ViewModels
 {
     public class MenuViewModel: BaseViewModel
     {
-        public ObservableCollection<MenuItemViewModel> MenuItems { get; }
+        public ObservableCollection<MenuItemModel> MenuItems { get; }
         public ICommand LeaveCommand { get; }
         public Action CloseAction { get; set; } //Делегат для закрытия данного окна (как в LoginViewModel)
 
         private readonly INavigationService navigationService; 
 
-        private MenuItemViewModel selectedMenuItem;
+        private MenuItemModel selectedMenuItem;
         private readonly AuthService authService; 
         
-        public MenuItemViewModel SelectedMenuItem 
+        public MenuItemModel SelectedMenuItem 
         {
             get { return selectedMenuItem; }
             set
