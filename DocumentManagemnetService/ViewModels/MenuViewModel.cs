@@ -31,20 +31,34 @@ namespace DocumentManagementService.ViewModels
 
                    navigationService.Navigate(selectedMenuItem?.PageKey); //Когда пользователь выбирает пункт меню, вызывается переход
                 }
-            } 
+            }
         }
         public MenuViewModel(INavigationService navigationService)
         {
-            LeaveCommand = new RelayCommand(Leave);
             authService = new AuthService(App.SupabaseService.Client);
+            LeaveCommand = new RelayCommand(Leave);
             this.navigationService = navigationService;
             MenuItems =
             [
-                new("Документы", "FileDocument", "Documents"),
-                new("Маршруты", "Map", "Routes"),
+                new("Новый документ", "PencilPlus", "UploadDocument"),
+                new("Все документы", "File", "AllDocuments"),
+                new("Мои документы", "AccountFileTextOutline", "MyDocuments"),
+                new("Входящие", "ArrowRightThin", "Incoming"),
+                new("Исходящие", "ArrowLeftThin", "Outcoming"),
             ];
-            navigationService.Navigate("Documents");
+            navigationService.Navigate("AllDocuments");
         }
+        //public MenuViewModel(INavigationService navigationService)
+        //{
+        //    LeaveCommand = new RelayCommand(Leave);
+        //    authService = new AuthService(App.SupabaseService.Client);
+        //    this.navigationService = navigationService;
+        //    MenuItems =
+        //    [
+        //        new("Документы", "FileDocument", "Documents"),
+        //    ];
+        //    navigationService.Navigate("Documents");
+        //}
         private async void Leave()
         {
             await authService.SignOutAsync();

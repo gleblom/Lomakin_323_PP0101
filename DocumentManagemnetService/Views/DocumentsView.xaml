@@ -8,7 +8,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="900">
     <Grid Background="White">
-        <StackPanel Orientation="Vertical" Background="#78B24B" HorizontalAlignment="Left" Width="190">
+        <StackPanel Orientation="Vertical" Background="#FF78B24B" HorizontalAlignment="Left" Width="190">
             <ListBox Style="{StaticResource MenuListBoxStyle}"
                      BorderThickness="0" ItemsSource="{Binding MenuItems}"
                      SelectedItem="{Binding SelectedMenuItem, Mode=TwoWay}" 

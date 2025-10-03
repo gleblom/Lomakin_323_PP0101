@@ -16,7 +16,6 @@ namespace DocumentManagementService
             routes["Documents"] = () => new DocumentsView();
             routes["AllDocuments"] = () => new PublicDocumentsView();
             routes["UploadDocument"] = () => new UploadDocumentView();
-            routes["Routes"] = () => new RoutesView();
             routes["Incoming"] = () => new ApprovalView();
         }
 

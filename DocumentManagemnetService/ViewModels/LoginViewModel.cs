@@ -11,37 +11,16 @@ namespace DocumentManagementService.ViewModels
         public Action CloseAction { get; set; } //Делегат для связи модели представления и code-behind. Закрывает LoginView при переходе в главное окно.
 
         //Привязка текста для Textbox'ов
-        public string Email { get; set; }
-        public string Password { get; set; }
-        public string Name { get; set; }
-        public string SecondName { get; set; }
-        public string ThirdName { get; set; }
         public string SignInEmail { get; set; }
         public string SignInPassword { get; set; }
         public ICommand SignUpCommand { get; }
         public ICommand SignInCommand { get; }
         public LoginViewModel() 
         {
-            SignUpCommand = new RelayCommand(SignUp, obj => 
-            Name != null && 
-            SecondName != null 
-            && ThirdName != null);
 
             SignInCommand = new RelayCommand(SignIn);
 
             auth = new AuthService(App.SupabaseService.Client);
-        }
-        private async void SignUp()
-        {
-            if (await auth.SignUpAsync(Email, Password, Name, SecondName, ThirdName))
-            {
-                Email = string.Empty;
-                Password = string.Empty;
-                Name = string.Empty;
-                SecondName = string.Empty;
-                ThirdName = string.Empty;
-                MessageBox.Show("Проверьте почту для подтверждения.");
-            }
         }
         private async void SignIn()
         {

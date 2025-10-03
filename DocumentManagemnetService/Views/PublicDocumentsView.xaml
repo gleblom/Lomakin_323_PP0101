@@ -6,21 +6,65 @@
              xmlns:local="clr-namespace:DocumentManagementService.Views" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              d:DesignHeight="420" d:DesignWidth="900">
-    <Grid Background="{DynamicResource PrimaryHueDarkBrush}">
+    <UserControl.Resources>
+        <DataTemplate x:Key="ComboboxItemTemplate">
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox IsChecked="True" 
+                              Background="{DynamicResource PrimaryHueDarkBrush}"/>
+                    <TextBlock Text="{Binding Title}"/>
+                </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="SelectionBoxTemplate">
+            <TextBlock Text="Тип документа" Foreground="Gray" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="ComboBoxTemplate">
+            <ContentPresenter x:Name="Presenter"
+               Content="{Binding}"
+               ContentTemplate="{StaticResource ComboboxItemTemplate}" />
+            
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ComboBoxItem}}" 
+                             Value="{x:Null}">
+                    <Setter TargetName="Presenter" Property="ContentTemplate" 
+                            Value="{StaticResource SelectionBoxTemplate}" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </UserControl.Resources>
+    
+    <Grid Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal"  Grid.Row="0" Margin="8,0,0,10">
-            <TextBox Style="{StaticResource MaterialDesignTextBox}" Margin="5" 
+            <StackPanel Orientation="Horizontal">
+                <TextBox                     
                     Width="200"
-                     materialDesign:HintAssist.Hint="Поиск по названию"
-                     Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" BorderBrush="White"/>
-            <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Скачать документ" Command="{Binding DownloadCommand}" Cursor="Hand" Foreground="White" />
-            <Button Content="Применить"
-                    Style="{StaticResource MaterialDesignFlatButton}"
-                    Command="{Binding SearchCommand}" Width="108" Height="26" BorderBrush="{x:Null}" Background="{x:Null}" Foreground="White" />
+                    materialDesign:HintAssist.Hint="Поиск"
+                    Text="{Binding SearchQuery}"/>
+                <materialDesign:PackIcon Kind="Magnify" Height="26" Width="25" />
+            </StackPanel>
+            <ComboBox ItemTemplate="{StaticResource ComboBoxTemplate}" 
+                      ItemsSource="{Binding ItemsSource}" 
+                      Margin="20,0,0,0" 
+                      materialDesign:HintAssist.Hint="Тип документа" Height="33">
+            </ComboBox>
+            <ComboBox Margin="20,0,0,0" materialDesign:HintAssist.Hint="Автор" Height="33"/>
+            <TextBlock Margin="20,10,0,0" Text="Дата загрузки:" Height="18" Foreground="Gray"/>
+            <DatePicker Margin="10,0,0,0"
+                        Width="100"
+                        materialDesign:HintAssist.Hint="От"
+                        materialDesign:TextFieldAssist.HasClearButton="True"
+                        Style="{StaticResource MaterialDesignFloatingHintDatePicker}"/>
+            <DatePicker Margin="10,0,0,0"
+                        Width="100"
+                        materialDesign:HintAssist.Hint="До"
+                        materialDesign:TextFieldAssist.HasClearButton="True"
+                        Style="{StaticResource MaterialDesignFloatingHintDatePicker}"/>
         </StackPanel>
 
         <DataGrid Grid.Row="1"

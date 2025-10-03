@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Net.Http;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using static Supabase.Postgrest.Constants;
 
@@ -17,6 +18,12 @@ namespace DocumentManagementService.ViewModels
         public string SearchQuery { get; set; }
         public ObservableCollection<Document> FilteredDocuments { get; } = [];
         public ICommand SearchCommand { get; }
+        public ObservableCollection<MenuItemModel> ItemsSource { get; } =
+            [
+                new("Новый документ", "PencilPlus", "UploadDocument"),
+                new("Все документы", "File", "AllDocuments"),
+                new("Входящие", "ArrowBottomLeftThin", "Incoming"),
+            ];
         public ICommand DownloadCommand { get; }
         public Document SelectedDocument { get; set; }
 

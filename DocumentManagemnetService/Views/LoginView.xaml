@@ -6,55 +6,25 @@
         xmlns:local="clr-namespace:DocumentManagemnetService.Views"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Height="450" Width="390" ResizeMode="NoResize" Topmost="True" WindowStartupLocation="CenterScreen">
+        Height="645" Width="960" ResizeMode="NoResize" Topmost="True" WindowStartupLocation="CenterScreen">
     <Grid Background="White">
-        <TabControl>
-            <TabItem Header="Вход">
-                <Grid Background="White">
-                    <TextBox Text="{Binding SignInEmail}" MaxLength="100" Style="{StaticResource MaterialDesignTextBox}"
-               x:Name="EmailBox"
-               materialDesign:HintAssist.Hint="Email" Margin="40,113,40,0" Height="50" VerticalAlignment="Top"/>
-                    <TextBox Text="{Binding SignInPassword}" MaxLength="50" Style="{StaticResource MaterialDesignTextBox}"
-               x:Name="PasswordBox"
-               materialDesign:HintAssist.Hint="Пароль"
-               Margin="40,180,40,0" Height="65" VerticalAlignment="Top" />
-                    <Button Command="{Binding SignInCommand}" Style="{StaticResource MaterialDesignOutlinedSecondaryLightButton}" x:Name="SignIn" 
-          Content="Войти" Margin="139,0,151,58" 
-          FontSize="14" FontWeight="Bold" Height="32" VerticalAlignment="Bottom"/>
-                </Grid>
-            </TabItem>
-            <TabItem Header="Регистрация">
-                <Grid>
-                    <TextBox Text="{Binding Name}" MaxLength="50"
-                             Style="{StaticResource MaterialDesignTextBox}"
-               x:Name="Name"
-               materialDesign:HintAssist.Hint="Имя"
-               Margin="40,-3,40,0" Height="65" VerticalAlignment="Top" />
-                    <TextBox Text="{Binding SecondName}" MaxLength="50" 
-                               Style="{StaticResource MaterialDesignTextBox}"
-               x:Name="SecondName"
-               materialDesign:HintAssist.Hint="Фамилия"
-               Margin="40,63,40,0" Height="65" VerticalAlignment="Top" />
-                    <TextBox Text="{Binding ThirdName}" MaxLength="50" 
-                          Style="{StaticResource MaterialDesignTextBox}"
-               x:Name="ThirdName"
-               materialDesign:HintAssist.Hint="Отчество"
-               Margin="41,133,39,0" Height="65" VerticalAlignment="Top" />
-                    <TextBox Text="{Binding Email}" MaxLength="100" 
-                               Style="{StaticResource MaterialDesignTextBox}"
-               x:Name="EmailRegisterBox"
-               materialDesign:HintAssist.Hint="Email" Margin="41,198,39,0" Height="50" VerticalAlignment="Top"/>
-                    <TextBox Text="{Binding Password}" MaxLength="50"
-                             Style="{StaticResource MaterialDesignTextBox}"
-               x:Name="PasswordRegisterBox"
-               materialDesign:HintAssist.Hint="Пароль"
-               Margin="38,254,42,0" Height="65" VerticalAlignment="Top" />
-                    <Button Command="{Binding SignUpCommand}" Style="{StaticResource MaterialDesignOutlinedSecondaryLightButton}" x:Name="SignUp" 
-      Content="Зарегистрироваться" Margin="95,334,93,0" 
-      FontSize="14" FontWeight="Bold" 
-          RenderTransformOrigin="0.55,0.781" Height="32" VerticalAlignment="Top"/>
-                </Grid>
-            </TabItem>
-        </TabControl>
+        <TextBox Text="{Binding SignInEmail}" 
+            x:Name="EmailBox"
+            materialDesign:HintAssist.Hint="Email" Margin="321,217,323,0" Height="50" VerticalAlignment="Top" BorderBrush="#B2000000"/>
+        <PasswordBox materialDesign:PasswordBoxAssist.Password="{Binding SignInPassword}"
+            Style="{StaticResource MaterialDesignFloatingHintRevealPasswordBox}"
+            materialDesign:TextFieldAssist.HasClearButton="True"
+            x:Name="PasswordBox"
+            materialDesign:HintAssist.Hint="Пароль"
+            Margin="321,310,323,0" Height="49" VerticalAlignment="Top" />
+        <Button Command="{Binding SignInCommand}" 
+                x:Name="SignIn" 
+            Content="Войти" Margin="415,415,417,0" 
+            FontSize="16" FontWeight="Normal" Height="32" VerticalAlignment="Top" 
+                Background="#78B24B"
+                BorderBrush="{x:Null}" Foreground="White"/>
+        <Label Content="   Система управления корпоративными  &#xA;&#x9;         документами"
+               Margin="279,86,281,0" VerticalAlignment="Top"
+               Background="#78B24B" Height="70" Foreground="#E5FFFFFF" FontSize="20"/>
     </Grid>
 </Window>
