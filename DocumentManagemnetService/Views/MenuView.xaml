@@ -35,12 +35,18 @@
                         DockPanel.Dock="Left" Margin="8">
                     <materialDesign:PackIcon Kind="Menu" Height="26" Width="22" HorizontalAlignment="Center" />
                 </Button>
+
                 <TextBlock Text="Система управления корпоративными документами" 
                            VerticalAlignment="Center"
                            Foreground="White" FontSize="20"
                            Margin="8"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="8">
-                    <Button Command="{Binding AccountCommand}" Style="{StaticResource MaterialDesignToolForegroundButton}"/>
+                    <Button Style="{StaticResource MaterialDesignToolForegroundButton}" 
+                        Command="{Binding AccountCommand}"
+                        CommandParameter="{x:Static Dock.Left}"
+                        DockPanel.Dock="Left" Margin="8">
+                        <materialDesign:PackIcon Kind="Settings" Height="26" Width="22" HorizontalAlignment="Center" />
+                    </Button>
                 </StackPanel>
             </DockPanel>
             <Frame x:Name="MainFrame"

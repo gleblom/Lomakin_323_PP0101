@@ -10,7 +10,8 @@
     <Grid Background="White">
         <TextBox Text="{Binding SignInEmail}" 
             x:Name="EmailBox"
-            materialDesign:HintAssist.Hint="Email" Margin="321,217,323,0" Height="50" VerticalAlignment="Top" BorderBrush="#B2000000"/>
+            materialDesign:HintAssist.Hint="Email" Margin="321,217,323,0" Height="50" 
+            VerticalAlignment="Top" BorderBrush="#B2000000"/>
         <PasswordBox materialDesign:PasswordBoxAssist.Password="{Binding SignInPassword}"
             Style="{StaticResource MaterialDesignFloatingHintRevealPasswordBox}"
             materialDesign:TextFieldAssist.HasClearButton="True"

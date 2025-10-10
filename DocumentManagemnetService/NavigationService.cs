@@ -17,6 +17,8 @@ namespace DocumentManagementService
             routes["AllDocuments"] = () => new PublicDocumentsView();
             routes["UploadDocument"] = () => new UploadDocumentView();
             routes["Incoming"] = () => new ApprovalView();
+            routes["Account"] = () => new AccountView();
+            routes["Profile"] = () => new ProfileView();
         }
 
         public void Navigate(string pageKey)

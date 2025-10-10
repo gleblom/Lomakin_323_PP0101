@@ -11,6 +11,7 @@ namespace DocumentManagementService.ViewModels
     {
         public ObservableCollection<MenuItemModel> MenuItems { get; }
         public ICommand LeaveCommand { get; }
+        public ICommand AccountCommand { get; }
         public Action CloseAction { get; set; } //Делегат для закрытия данного окна (как в LoginViewModel)
 
         private readonly INavigationService navigationService; 
@@ -37,6 +38,7 @@ namespace DocumentManagementService.ViewModels
         {
             authService = new AuthService(App.SupabaseService.Client);
             LeaveCommand = new RelayCommand(Leave);
+            AccountCommand = new RelayCommand(Account);
             this.navigationService = navigationService;
             MenuItems =
             [
@@ -59,6 +61,10 @@ namespace DocumentManagementService.ViewModels
         //    ];
         //    navigationService.Navigate("Documents");
         //}
+        private void Account()
+        {
+            navigationService.Navigate("Account");
+        }
         private async void Leave()
         {
             await authService.SignOutAsync();
