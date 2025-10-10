@@ -1,5 +1,4 @@
-﻿using DocumentManagementService.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,15 +16,13 @@ using System.Windows.Shapes;
 namespace DocumentManagementService.Views
 {
     /// <summary>
-    /// Логика взаимодействия для PublicDocumentsView.xaml
+    /// Логика взаимодействия для ViewerView.xaml
     /// </summary>
-    public partial class PublicDocumentsView : UserControl
+    public partial class ViewerView : UserControl
     {
-        public PublicDocumentsView(Frame frame)
+        public ViewerView()
         {
             InitializeComponent();
-            var navigationService = new NavigationService(frame);
-            DataContext = new PublicDocumentsViewModel(navigationService);
         }
     }
 }

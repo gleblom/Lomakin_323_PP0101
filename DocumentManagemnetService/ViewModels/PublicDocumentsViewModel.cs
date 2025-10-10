@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Navigation;
 using static Supabase.Postgrest.Constants;
 
 namespace DocumentManagementService.ViewModels
@@ -15,6 +16,7 @@ namespace DocumentManagementService.ViewModels
     public class PublicDocumentsViewModel : BaseViewModel
     {
         private readonly Client client;
+        private readonly INavigationService navigationService;
         public string SearchQuery { get; set; }
         public ObservableCollection<Document> FilteredDocuments { get; } = [];
         public ICommand SearchCommand { get; }
@@ -25,11 +27,27 @@ namespace DocumentManagementService.ViewModels
                 new("Входящие", "ArrowBottomLeftThin", "Incoming"),
             ];
         public ICommand DownloadCommand { get; }
-        public Document SelectedDocument { get; set; }
 
-        public PublicDocumentsViewModel()
+        private Document selectedDocument;
+        public Document SelectedDocument 
         { 
+            get { return selectedDocument; }
+            set
+            {
+                if (selectedDocument != value)
+                {
 
+                    selectedDocument = value;
+                    OnPropertyChanged();
+
+                    navigationService.Navigate("Viewer"); //Когда пользователь выбирает пункт меню, вызывается переход
+                }
+            }
+        }
+
+        public PublicDocumentsViewModel(INavigationService navigationService)
+        { 
+            this.navigationService = navigationService; 
             client = App.SupabaseService.Client;
             SearchCommand = new RelayCommand(Search, 
                 obj => SearchQuery != null);
