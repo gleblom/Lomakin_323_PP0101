@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:DocumentManagementService.Views" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:local="clr-namespace:DocumentManagementService.Views" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              d:DesignHeight="420" d:DesignWidth="900">
     <UserControl.Resources>
@@ -67,7 +68,7 @@
                         Style="{StaticResource MaterialDesignFloatingHintDatePicker}"/>
         </StackPanel>
 
-        <DataGrid Grid.Row="1"
+        <DataGrid x:Name="DocumentGrid" Grid.Row="1"
                   ItemsSource="{Binding FilteredDocuments}"
                   AutoGenerateColumns="False"
                   CanUserAddRows="False"
@@ -79,6 +80,14 @@
                 <DataGridTextColumn Header="Категория" Binding="{Binding Category}" Width="150"/>
                 <DataGridTextColumn Header="Дата" Binding="{Binding CreatedAt, StringFormat=d}" Width="120"/>
             </DataGrid.Columns>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDoubleClick">
+                    <i:InvokeCommandAction 
+                                Command="{Binding MouseDoubleClickCommand}"
+                                CommandParameter="{Binding ElementName=DocumentGrid, 
+                                Path=SelectedItem}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
         </DataGrid>
     </Grid>
 </UserControl>

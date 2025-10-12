@@ -5,46 +5,52 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:DocumentManagementService.Views"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" Cursor="Hand">
-    <Grid Background="#78B24B">
+             mc:Ignorable="d" Cursor="Hand" Height="482" Width="829">
+    <Grid Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Margin="0,0,0,304" Grid.RowSpan="2" >
+        <StackPanel Grid.Row="0" Margin="0,0,0,235" Grid.RowSpan="2" >
             <TextBox 
-                    Style="{StaticResource MaterialDesignTextBox}"                 
+                    Style="{StaticResource MaterialDesignFilledTextBox}"                 
                     Margin="5"
                      materialDesign:HintAssist.Hint="Название документа"
-                     Text="{Binding DocumentTitle, UpdateSourceTrigger=PropertyChanged}" Width="500" Height="38" Foreground="White" BorderBrush="White" />
+                     Text="{Binding DocumentTitle, UpdateSourceTrigger=PropertyChanged}" Width="313" Height="47" />
 
             <ComboBox Margin="10"
                       materialDesign:HintAssist.Hint="Категория"
-                      ItemContainerStyle="{StaticResource MaterialDesignDataGridComboBoxItemStyle}"
+                      ItemContainerStyle="{StaticResource MaterialDesignFilledComboBox}"
                       ItemsSource="{Binding Categories}"
-                      SelectedItem="{Binding SelectedFileCategory}" Width="500" Height="29" />
+                      SelectedItem="{Binding SelectedFileCategory}" Width="313" Height="29" Background="#0C000000" />
+            <DatePicker Margin="10,0,0,0"
+                        Width="323"
+                        materialDesign:HintAssist.Hint="Действителен до"
+                        materialDesign:TextFieldAssist.HasClearButton="True"
+                        Style="{StaticResource MaterialDesignFloatingHintDatePicker}"/>
+            <TextBox Margin="20" materialDesign:HintAssist.Hint="Описание"
+                Style="{StaticResource MaterialDesignOutlinedTextBox}" Width="320" Height="76"/>
 
         </StackPanel>
 
         <Border Grid.Row="1"
-                BorderBrush="White"
+                BorderBrush="#FF050000"
                 BorderThickness="2"
                 CornerRadius="8"
-                Margin="63,189,61,0"
+                Margin="202,274,178,0"
                 Padding="40"
                 VerticalAlignment="Top"
-                AllowDrop="True" Height="228" DragEnter="Border_DragEnter" DragLeave="Border_DragLeave">
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                AllowDrop="True" Height="158" DragEnter="Border_DragEnter" DragLeave="Border_DragLeave">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Height="78">
                 <TextBlock Text="Перетащите сюда файл документа"
                            HorizontalAlignment="Center"
                            FontSize="16"
-                           Foreground="White"/>
+                           Foreground="Black"/>
                 <Button Content="Выбрать файл"
                         Margin="20"
                         Command="{Binding SelectFileCommand}"
-                        Style="{StaticResource MaterialDesignOutlinedButton}" Foreground="White" BorderBrush="White" />
+                        Style="{StaticResource MaterialDesignOutlinedButton}" Foreground="Black" BorderBrush="Black" />
                 <TextBlock Text="{Binding SelectedFileName}"
                            Foreground="DarkSlateGray"
                            FontWeight="Bold"
@@ -59,9 +65,9 @@
                     Grid.Row="1"
                     VerticalAlignment="Bottom"
                     >
-            <Button Content="Отправить на согласование"
+            <Button Content="Загрузить в систему"
                     Command="{Binding SubmitCommand}"
-                    Style="{StaticResource MaterialDesignFlatButton}" Foreground="White" />
+                    Style="{StaticResource MaterialDesignFlatButton}" Foreground="#FF200000" />
         </StackPanel>
     </Grid>
 </UserControl>

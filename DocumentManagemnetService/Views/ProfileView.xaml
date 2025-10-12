@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:DocumentManagementService.Views"
+             xmlns:local="clr-namespace:DocumentManagementService.Views" xmlns:models="clr-namespace:DocumentManagementService.Models"
              mc:Ignorable="d" 
              d:DesignHeight="550" d:DesignWidth="649">
     <Grid Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}">
@@ -11,18 +11,18 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <StackPanel Margin="10,0,319,0" Grid.Column="0" Grid.ColumnSpan="2">
+        <StackPanel DataContext="{Binding User}" Margin="10,0,319,0" Grid.Column="0" Grid.ColumnSpan="2">
             <TextBlock  Text="Фамилия" FontSize="20"/>
             <TextBox Margin="10"
                     Style="{DynamicResource MaterialDesignDataGridComboBoxEditableTextBox}" 
-                      Height="32"/>
+                     Text="{Binding Surname}" Height="32"/>
             <TextBlock Text="Имя" FontSize="20"/>
             <TextBox Margin="10" 
                     Style="{StaticResource MaterialDesignDataGridComboBoxEditableTextBox}" 
-                     Height="32"/>
+                     Text="{Binding Name}" Height="32"/>
             <TextBlock Text="Отчество" FontSize="20"/>
             <TextBox Margin="10"
-                    
+                    Text="{Binding MiddleName}" 
                      Style="{StaticResource MaterialDesignDataGridComboBoxEditableTextBox}"
                      Height="32"/>
             <TextBlock Text="Email" FontSize="20"/>

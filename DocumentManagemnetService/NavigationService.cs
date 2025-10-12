@@ -14,11 +14,12 @@ namespace DocumentManagementService
             mainFraim = frame;
 
             routes["Documents"] = () => new DocumentsView();
-            routes["AllDocuments"] = () => new PublicDocumentsView();
+            routes["AllDocuments"] = () => new PublicDocumentsView(mainFraim);
             routes["UploadDocument"] = () => new UploadDocumentView();
             routes["Incoming"] = () => new ApprovalView();
             routes["Account"] = () => new AccountView();
             routes["Profile"] = () => new ProfileView();
+            routes["Viewer"] = () => new ViewerView();
         }
 
         public void Navigate(string pageKey)

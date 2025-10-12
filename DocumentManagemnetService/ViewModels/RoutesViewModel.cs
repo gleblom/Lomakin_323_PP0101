@@ -116,7 +116,7 @@ namespace DocumentManagementService.ViewModels
                   Get();
             if (user.Model != null) 
             {
-                if(user.Model.Role == "admin")
+                if(user.Model.Role == 1)
                 {
                     ShowAction(); //Если пользователь админ, отображаем кнопки создания и редактирования
                 }
