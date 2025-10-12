@@ -15,34 +15,34 @@
             <TextBlock  Text="Фамилия" FontSize="20"/>
             <TextBox Margin="10"
                     Style="{DynamicResource MaterialDesignDataGridComboBoxEditableTextBox}" 
-                     Text="{Binding Surname}" Height="32"/>
+                      Height="32"/>
             <TextBlock Text="Имя" FontSize="20"/>
             <TextBox Margin="10" 
                     Style="{StaticResource MaterialDesignDataGridComboBoxEditableTextBox}" 
-                     Text="{Binding Name}" Height="32"/>
+                     Height="32"/>
             <TextBlock Text="Отчество" FontSize="20"/>
             <TextBox Margin="10"
-                    Text="{Binding MiddleName}" 
+                    
                      Style="{StaticResource MaterialDesignDataGridComboBoxEditableTextBox}"
                      Height="32"/>
             <TextBlock Text="Email" FontSize="20"/>
             <TextBox Margin="10" 
-                    Text="{Binding Email}" 
+                    
                      Style="{StaticResource MaterialDesignDataGridComboBoxEditableTextBox}"
                      Height="32"/>
             <TextBlock Text="Телефон" FontSize="20"/>
             <TextBox Margin="10"
-                    Text="{Binding Telephone}" 
+                    
                      Style="{StaticResource MaterialDesignDataGridComboBoxEditableTextBox}"
                      Height="32"/>
             <TextBlock Text="Должность" FontSize="20"/>
             <TextBox Margin="10"
-                    Text="{Binding Position}" 
+                    
                      Style="{StaticResource MaterialDesignDataGridComboBoxEditableTextBox}"
                      Height="32"/>
             <TextBlock Text="Отдел" FontSize="20"/>
             <TextBox Margin="10"
-                     Text="{Binding Unit}" 
+                     
                      Style="{StaticResource MaterialDesignDataGridComboBoxEditableTextBox}"
                      Height="32"/>
         </StackPanel>
