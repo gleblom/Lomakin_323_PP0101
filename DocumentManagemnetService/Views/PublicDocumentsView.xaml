@@ -9,11 +9,11 @@
              d:DesignHeight="420" d:DesignWidth="900">
     <UserControl.Resources>
         <DataTemplate x:Key="ComboboxItemTemplate">
-            <StackPanel Orientation="Horizontal">
-                <CheckBox IsChecked="True" 
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox IsChecked="True" 
                               Background="{DynamicResource PrimaryHueDarkBrush}"/>
-                <TextBlock Text="{Binding Title}"/>
-            </StackPanel>
+                    <TextBlock Text="{Binding Title}"/>
+                </StackPanel>
         </DataTemplate>
 
         <DataTemplate x:Key="SelectionBoxTemplate">
@@ -24,7 +24,7 @@
             <ContentPresenter x:Name="Presenter"
                Content="{Binding}"
                ContentTemplate="{StaticResource ComboboxItemTemplate}" />
-
+            
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ComboBoxItem}}" 
                              Value="{x:Null}">
@@ -34,7 +34,7 @@
             </DataTemplate.Triggers>
         </DataTemplate>
     </UserControl.Resources>
-
+    
     <Grid Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -68,13 +68,13 @@
                         Style="{StaticResource MaterialDesignFloatingHintDatePicker}"/>
         </StackPanel>
 
-        <DataGrid x:Name="DocumentGrid"
+        <DataGrid x:Name="DocumentGrid" Grid.Row="1"
                   ItemsSource="{Binding FilteredDocuments}"
                   AutoGenerateColumns="False"
                   CanUserAddRows="False"
                   SelectionMode="Single"
                   IsReadOnly="True"
-                  SelectedItem="{Binding SelectedDocument}" Margin="539,-281,-539,324" Grid.RowSpan="2">
+                  SelectedItem="{Binding SelectedDocument}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Название" Binding="{Binding Title}" Width="*"/>
                 <DataGridTextColumn Header="Категория" Binding="{Binding Category}" Width="150"/>

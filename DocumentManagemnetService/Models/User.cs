@@ -24,8 +24,10 @@ namespace DocumentManagementService.Models
         [Column("email")]
         public string Email { get; set; }
 
-        [Column("role")]
-        public string Role { get; set; }
+        [Column("roles")]
+        public int Role { get; set; }
+        [Column("phone")]
+        public string Telephone { get; set; }
         public string Display => $"{SecondName} {FirstName} {SecondName}";
     }
 }
