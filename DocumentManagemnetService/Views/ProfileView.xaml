@@ -5,34 +5,35 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:DocumentManagementService.Views" xmlns:models="clr-namespace:DocumentManagementService.Models"
              mc:Ignorable="d" 
-             d:DesignHeight="550" d:DesignWidth="649">
+             d:DesignHeight="600" d:DesignWidth="900">
     <Grid Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="300"/>
+            <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <StackPanel DataContext="{Binding User}" Margin="10,0,319,0" Grid.Column="0" Grid.ColumnSpan="2">
+        <StackPanel DataContext="{Binding User}" Margin="5"  Grid.Column="0" >
             <TextBlock  Text="Фамилия" FontSize="20"/>
             <TextBox Margin="10"
                     Style="{DynamicResource MaterialDesignDataGridComboBoxEditableTextBox}" 
-                     Text="{Binding Surname}" Height="32"/>
+                     Text="{Binding SecondName}" Height="32"/>
             <TextBlock Text="Имя" FontSize="20"/>
             <TextBox Margin="10" 
                     Style="{StaticResource MaterialDesignDataGridComboBoxEditableTextBox}" 
-                     Text="{Binding Name}" Height="32"/>
+                     Text="{Binding FirstName}" Height="32"/>
             <TextBlock Text="Отчество" FontSize="20"/>
             <TextBox Margin="10"
-                    Text="{Binding MiddleName}" 
+                    Text="{Binding ThirdName}" 
                      Style="{StaticResource MaterialDesignDataGridComboBoxEditableTextBox}"
                      Height="32"/>
             <TextBlock Text="Email" FontSize="20"/>
             <TextBox Margin="10" 
-                    
+                    Text="{Binding Email}"
                      Style="{StaticResource MaterialDesignDataGridComboBoxEditableTextBox}"
                      Height="32"/>
             <TextBlock Text="Телефон" FontSize="20"/>
             <TextBox Margin="10"
-                    
+                    Text="{Binding Telephone}"
                      Style="{StaticResource MaterialDesignDataGridComboBoxEditableTextBox}"
                      Height="32"/>
             <TextBlock Text="Должность" FontSize="20"/>
@@ -45,6 +46,33 @@
                      
                      Style="{StaticResource MaterialDesignDataGridComboBoxEditableTextBox}"
                      Height="32"/>
+            <Button Margin="10,10,10,10" Content="Сохранить" 
+                    BorderBrush="{x:Null}" Background="{x:Null}"/>
+        </StackPanel>
+        <Border BorderThickness="1,0,1,0" BorderBrush="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}" Grid.Column="1" Margin="0,-1,2,6"/>
+        <StackPanel Margin="10,0,10,0" Grid.Column="2">
+            <TextBlock  FontSize="18" FontWeight="Bold" Text="Обновление пароля"/>
+            <TextBlock Text="Старый пароль" FontSize="18"/>
+            <TextBox Margin="10" Text="{Binding Telephone}" 
+                     Style="{StaticResource MaterialDesignFilledTextBox}"
+                     Height="38"/>
+            <TextBlock  Text="Новый пароль" FontSize="18"/>
+            <TextBox Margin="10" Text="{Binding Position}" 
+                     Style="{StaticResource MaterialDesignFilledTextBox}"
+                     Height="38"/>
+            <TextBlock Text="Подтверждение нового пароля" 
+                           FontSize="18"/>
+            <TextBox Margin="10" Text="{Binding Position}" 
+                     Style="{StaticResource MaterialDesignFilledTextBox}"
+                     Height="38"/>
+            <Button Margin="10,10,10,10" Content="Обновить пароль" 
+                    BorderBrush="{x:Null}" Background="{x:Null}"/>
+        </StackPanel>
+        <StackPanel Grid.Column="1">
+            <TextBlock Text="Двухфакторная аунтефикация" 
+                           FontSize="18" FontWeight="Bold" TextAlignment="Center"/>
+            <Button Margin="10,10,10,10" Content="Включить" 
+        BorderBrush="{x:Null}" Background="{x:Null}" Width="170"/>
         </StackPanel>
     </Grid>
 </UserControl>

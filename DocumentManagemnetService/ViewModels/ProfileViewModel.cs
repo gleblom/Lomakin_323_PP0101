@@ -13,7 +13,21 @@ namespace DocumentManagementService.ViewModels
     class ProfileViewModel: BaseViewModel
     {
         private readonly Client client;
-        public User User { get; set; } 
+
+        private User user;
+        public User User 
+        { 
+            get => user;
+            set
+            {
+                if (user != value) 
+                {
+                    user = value;
+                    OnPropertyChanged(nameof(user));
+                }
+            }
+
+        }
         public ProfileViewModel()
         {
             client = App.SupabaseService.Client;
@@ -21,7 +35,7 @@ namespace DocumentManagementService.ViewModels
         }
         public async void LoadUserInfo()  
         {
-            if (client.Auth.CurrentUser != null) 
+            if (client.Auth.CurrentUser != null)
             {
                 var model = await client.From<User>().Get();
                 User = model.Model;

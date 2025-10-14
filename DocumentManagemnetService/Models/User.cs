@@ -1,5 +1,6 @@
 ﻿using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
+using System.ComponentModel;
 using ColumnAttribute = Supabase.Postgrest.Attributes.ColumnAttribute;
 using TableAttribute = Supabase.Postgrest.Attributes.TableAttribute;
 
@@ -10,11 +11,9 @@ namespace DocumentManagementService.Models
     public class User: BaseModel
     {
         [PrimaryKey("id")]
-        public Guid Id { get; set; }
-
+        public Guid Id { get; set; }    
         [Column("first_name")]
         public string FirstName { get; set; }
-
         [Column("second_name")]
         public string SecondName { get; set; }
 
@@ -23,11 +22,11 @@ namespace DocumentManagementService.Models
 
         [Column("email")]
         public string Email { get; set; }
-
         [Column("roles")]
         public int Role { get; set; }
+
         [Column("phone")]
         public string Telephone { get; set; }
-        public string Display => $"{SecondName} {FirstName} {SecondName}";
+        public string Display => $"{SecondName} {FirstName} {ThirdName}";
     }
 }

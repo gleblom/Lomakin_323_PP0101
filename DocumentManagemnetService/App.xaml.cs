@@ -1,4 +1,5 @@
 ﻿using DocumentManagementService;
+using DocumentManagementService.Models;
 using DocumentManagementService.Views;
 using DocumentManagemnetService.Views;
 using Supabase;
@@ -8,6 +9,7 @@ namespace DocumentManagemnetService
 {
     public partial class App : Application
     {
+        public static Document SelectedDocument { get; set; }
         public static SupabaseService SupabaseService { get; private set; }
 
         protected override async void OnStartup(StartupEventArgs e)

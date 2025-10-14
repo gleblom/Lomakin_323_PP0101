@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace DocumentManagementService.ViewModels
+namespace DocumentManagementService.Views
 {
     /// <summary>
-    /// Логика взаимодействия для SecurityView.xaml
+    /// Логика взаимодействия для DirectorView.xaml
     /// </summary>
-    public partial class SecurityView : UserControl
+    public partial class DirectorView : UserControl
     {
-        public SecurityView()
+        public DirectorView()
         {
             InitializeComponent();
         }

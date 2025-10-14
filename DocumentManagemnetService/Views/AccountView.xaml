@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:DocumentManagementService.Views" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
-             d:DesignHeight="420" d:DesignWidth="900">
+             d:DesignHeight="420" d:DesignWidth="1000">
     <Grid Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -13,12 +13,12 @@
         </Grid.ColumnDefinitions>
         <Border Grid.Row="0" BorderThickness="0,0,1,0" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}">
             <StackPanel>
-                <ListBox 
+                <ListBox
                          ItemsSource="{Binding Items}"
                      SelectedItem="{Binding SelectedMenuItem, Mode=TwoWay}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Width="251" Orientation="Horizontal" Margin="8">
+                            <StackPanel Width="110" Orientation="Horizontal" Margin="8">
                                 <materialDesign:PackIcon Kind="{Binding Icon}" Margin="4" />
                                 <TextBlock Text="{Binding Title}" Margin="4"/>
                             </StackPanel>

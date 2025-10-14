@@ -29,7 +29,8 @@ namespace DocumentManagementService.ViewModels
             this.navigationService = navigationService;
             Items =
                 [
-                    new("Профиль", "Account", "Profile")
+                    new("Профиль", "Account", "Profile"),
+                    new("Дирекция", "Account", "Director")
                 ];
         }
     }

@@ -40,6 +40,7 @@ namespace DocumentManagementService.ViewModels
                     selectedDocument = value;
                     OnPropertyChanged();
 
+                    App.SelectedDocument = SelectedDocument;
                     navigationService.Navigate("Viewer"); //Когда пользователь выбирает пункт меню, вызывается переход
                 }
             }
