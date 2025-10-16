@@ -1,6 +1,7 @@
 ﻿using DocumentManagementService.Models;
 using DocumentManagemnetService;
 using Microsoft.Office.Interop.Word;
+using PdfiumViewer;
 using Supabase;
 using System;
 using System.Collections.Generic;
@@ -18,16 +19,16 @@ namespace DocumentManagementService.ViewModels
         private readonly Client client;
         public ObservableCollection<MenuItemModel> DocumentItems { get; }
         public Document SelectedDocument { get; set; }
-        private XpsDocument xpsDocument;
-        public XpsDocument XpsDocument
+        private PdfDocument document;
+        public PdfDocument Document
         {
-            get { return xpsDocument; }
+            get { return document; }
             set
             {
-                if(xpsDocument != null)
+                if(document != null)
                 {
-                    xpsDocument = value;
-                    OnPropertyChanged(nameof(xpsDocument)); 
+                    document = value;
+                    OnPropertyChanged(nameof(document)); 
                 }
 
             }
@@ -53,6 +54,9 @@ namespace DocumentManagementService.ViewModels
             {
                
                 var url = await client.Storage.From("documents").CreateSignedUrl(SelectedDocument.Url, 60);
+
+                var pdfDocument = PdfDocument.Load(url);
+                Document = pdfDocument;
 
                 //Application wordApp = new Application();
                 //Microsoft.Office.Interop.Word.Document _doc = wordApp.Documents.Open(url);
