@@ -26,7 +26,7 @@
       <HintPath>..\..\..\..\..\..\Program Files\Microsoft Visual Studio\2022\Community\dotnet\net8.0\runtime\shared\Microsoft.WindowsDesktop.App\8.0.18\System.Windows.Forms.dll</HintPath>
     </Reference>
     <Reference Include="WindowsFormsIntegration">
-      <HintPath>..\..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\WindowsFormsIntegration.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\8.0.20\WindowsFormsIntegration.dll</HintPath>
     </Reference>
   </ItemGroup>
 

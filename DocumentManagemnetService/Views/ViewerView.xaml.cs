@@ -13,9 +13,6 @@ using UserControl = System.Windows.Controls.UserControl;
 
 namespace DocumentManagementService.Views
 {
-    /// <summary>
-    /// Логика взаимодействия для ViewerView.xaml
-    /// </summary>
     public partial class ViewerView : UserControl
     {
         private readonly Client client;

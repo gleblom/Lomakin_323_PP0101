@@ -5,14 +5,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:DocumentManagementService.Views"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             mc:Ignorable="d" Cursor="Hand" Height="482" Width="829">
-    <Grid Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}">
+             mc:Ignorable="d" Height="634" Width="1200">
+    <Grid Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}" Margin="0,0,0,-38">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="350"/>
+            <RowDefinition Height="205"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Margin="0,0,0,235" Grid.RowSpan="2" >
+        <StackPanel Grid.Row="0" >
             <TextBox 
                     Style="{StaticResource MaterialDesignFilledTextBox}"                 
                     Margin="5"
@@ -23,25 +24,25 @@
                       materialDesign:HintAssist.Hint="Категория"
                       ItemContainerStyle="{StaticResource MaterialDesignFilledComboBox}"
                       ItemsSource="{Binding Categories}"
-                      SelectedItem="{Binding SelectedFileCategory}" Width="313" Height="29" Background="#0C000000" />
+                      SelectedItem="{Binding SelectedFileCategory}" 
+                      Width="310" Height="29" Background="#0C000000" />
             <DatePicker Margin="10,0,0,0"
-                        Width="323"
+                        Width="310"
                         materialDesign:HintAssist.Hint="Действителен до"
                         materialDesign:TextFieldAssist.HasClearButton="True"
                         Style="{StaticResource MaterialDesignFloatingHintDatePicker}"/>
             <TextBox Margin="20" materialDesign:HintAssist.Hint="Описание"
-                Style="{StaticResource MaterialDesignOutlinedTextBox}" Width="320" Height="76"/>
+                Style="{StaticResource MaterialDesignOutlinedTextBox}" Width="320" Height="106"/>
 
         </StackPanel>
 
         <Border Grid.Row="1"
                 BorderBrush="#FF050000"
                 BorderThickness="2"
-                CornerRadius="8"
-                Margin="202,274,178,0"
+                CornerRadius="8"               
                 Padding="40"
                 VerticalAlignment="Top"
-                AllowDrop="True" Height="158" DragEnter="Border_DragEnter" DragLeave="Border_DragLeave">
+                AllowDrop="True" Height="205" DragEnter="Border_DragEnter" DragLeave="Border_DragLeave" Margin="325,0,261,0">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Height="78">
                 <TextBlock Text="Перетащите сюда файл документа"
                            HorizontalAlignment="Center"
@@ -61,7 +62,7 @@
 
         <StackPanel Orientation="Horizontal"
                     HorizontalAlignment="Right"
-                    Margin="0 20 0 0"
+                    Margin="0,0,20,0"
                     Grid.Row="1"
                     VerticalAlignment="Bottom"
                     >
