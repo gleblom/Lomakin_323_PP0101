@@ -6,9 +6,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Net.Http;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Navigation;
 using static Supabase.Postgrest.Constants;
 
 namespace DocumentManagementService.ViewModels
@@ -18,18 +16,13 @@ namespace DocumentManagementService.ViewModels
         private readonly Client client;
         private readonly INavigationService navigationService;
         public string SearchQuery { get; set; }
-        public ObservableCollection<Document> FilteredDocuments { get; } = [];
+        public ObservableCollection<ViewDocument> FilteredDocuments { get; } = [];
         public ICommand SearchCommand { get; }
-        public ObservableCollection<MenuItemModel> ItemsSource { get; } =
-            [
-                new("Новый документ", "PencilPlus", "UploadDocument"),
-                new("Все документы", "File", "AllDocuments"),
-                new("Входящие", "ArrowBottomLeftThin", "Incoming"),
-            ];
+        public ObservableCollection<MenuItemModel> ItemsSource { get; }
         public ICommand DownloadCommand { get; }
 
-        private Document selectedDocument;
-        public Document SelectedDocument 
+        private ViewDocument selectedDocument;
+        public ViewDocument SelectedDocument 
         { 
             get { return selectedDocument; }
             set
@@ -58,7 +51,7 @@ namespace DocumentManagementService.ViewModels
         private async void LoadDocuments()
         {
             FilteredDocuments.Clear();
-            var documents = await client.From<Document>().
+            var documents = await client.From<ViewDocument>().
                     Where(x => x.Status == "Опубликован").
                     Get();
             foreach (var document in documents.Models)
@@ -92,7 +85,7 @@ namespace DocumentManagementService.ViewModels
         private async void Search()
         {
             FilteredDocuments.Clear();
-            var response = await client.From<Document>()
+            var response = await client.From<ViewDocument>()
                 .Where(x => x.Status == "Опубликован")
                 .Filter(x => x.Title, Operator.ILike, $"%{SearchQuery}%")
                 .Get();

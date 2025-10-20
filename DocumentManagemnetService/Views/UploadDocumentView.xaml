@@ -6,10 +6,20 @@
              xmlns:local="clr-namespace:DocumentManagementService.Views"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" Height="634" Width="1200">
-    <Grid Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}" Margin="0,0,0,-38">
+    <UserControl.Resources>
+
+        <DataTemplate x:Key="ComboboxItemTemplate">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding CategoryName}"/>
+            </StackPanel>
+        </DataTemplate>
+
+    </UserControl.Resources>
+
+    <Grid Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}" >
         <Grid.RowDefinitions>
-            <RowDefinition Height="350"/>
-            <RowDefinition Height="205"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="260"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
@@ -20,18 +30,23 @@
                      materialDesign:HintAssist.Hint="Название документа"
                      Text="{Binding DocumentTitle, UpdateSourceTrigger=PropertyChanged}" Width="313" Height="47" />
 
-            <ComboBox Margin="10"
+            <ComboBox ItemTemplate="{StaticResource ComboboxItemTemplate}" 
+                      Margin="10"
                       materialDesign:HintAssist.Hint="Категория"
-                      ItemContainerStyle="{StaticResource MaterialDesignFilledComboBox}"
                       ItemsSource="{Binding Categories}"
                       SelectedItem="{Binding SelectedFileCategory}" 
-                      Width="310" Height="29" Background="#0C000000" />
-            <DatePicker Margin="10,0,0,0"
+                      Width="310" Height="29" Background="#0C000000" >
+            </ComboBox>
+            <DatePicker IsEnabled="{Binding IsEnabled}"
+                        Margin="10,0,0,0"
                         Width="310"
                         materialDesign:HintAssist.Hint="Действителен до"
                         materialDesign:TextFieldAssist.HasClearButton="True"
                         Style="{StaticResource MaterialDesignFloatingHintDatePicker}"/>
             <TextBox Margin="20" materialDesign:HintAssist.Hint="Описание"
+                         MaxLength="200"
+    TextWrapping="Wrap"
+    VerticalScrollBarVisibility="Auto"
                 Style="{StaticResource MaterialDesignOutlinedTextBox}" Width="320" Height="106"/>
 
         </StackPanel>
@@ -42,8 +57,12 @@
                 CornerRadius="8"               
                 Padding="40"
                 VerticalAlignment="Top"
-                AllowDrop="True" Height="205" DragEnter="Border_DragEnter" DragLeave="Border_DragLeave" Margin="325,0,261,0">
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Height="78">
+                AllowDrop="True" Height="201" 
+                Drop="Border_Drop"
+                DragEnter="Border_DragEnter" 
+                DragLeave="Border_DragLeave" 
+                Margin="325,34,261,0">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Height="113" Width="610">
                 <TextBlock Text="Перетащите сюда файл документа"
                            HorizontalAlignment="Center"
                            FontSize="16"
@@ -51,7 +70,7 @@
                 <Button Content="Выбрать файл"
                         Margin="20"
                         Command="{Binding SelectFileCommand}"
-                        Style="{StaticResource MaterialDesignOutlinedButton}" Foreground="Black" BorderBrush="Black" />
+                        Style="{StaticResource MaterialDesignOutlinedButton}" Foreground="Black" BorderBrush="Black" Width="240" />
                 <TextBlock Text="{Binding SelectedFileName}"
                            Foreground="DarkSlateGray"
                            FontWeight="Bold"

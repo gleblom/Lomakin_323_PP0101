@@ -18,7 +18,7 @@ namespace DocumentManagementService.ViewModels
     {
         private readonly Client client;
         public ObservableCollection<MenuItemModel> DocumentItems { get; }
-        public Document SelectedDocument { get; set; }
+        public ViewDocument SelectedDocument { get; set; }
         private PdfDocument document;
         public PdfDocument Document
         {
@@ -46,33 +46,6 @@ namespace DocumentManagementService.ViewModels
                     new("Прошлые версии", "ClockOutline", "Versions"),
                     new("Согласование", "Check", "Approvement")
                 ];
-            ConvertWordDocToXPSDoc();
-        }
-        public async void ConvertWordDocToXPSDoc()
-        {
-            try
-            {
-               
-                var url = await client.Storage.From("documents").CreateSignedUrl(SelectedDocument.Url, 60);
-
-                var pdfDocument = PdfDocument.Load(url);
-                Document = pdfDocument;
-
-                //Application wordApp = new Application();
-                //Microsoft.Office.Interop.Word.Document _doc = wordApp.Documents.Open(url);
-                //_doc.SaveAs2(url, WdSaveFormat.wdFormatXPS);
-                //_doc.Close(false);
-                //wordApp.Quit();
-
-                //Marshal.ReleaseComObject(_doc);
-
-
-                //XpsDocument = new XpsDocument(url, FileAccess.Read);
-            }
-            catch (Exception exp)
-            {
-                string str = exp.Message;
-            }
         }
     }
 }

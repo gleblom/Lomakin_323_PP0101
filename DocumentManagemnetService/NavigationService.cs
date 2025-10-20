@@ -1,8 +1,7 @@
 ﻿using DocumentManagementService.ViewModels;
 using DocumentManagementService.Views;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Navigation;
+
 
 namespace DocumentManagementService
 {
@@ -22,6 +21,8 @@ namespace DocumentManagementService
             routes["Profile"] = () => new ProfileView();
             routes["Viewer"] = () => new ViewerView();
             routes["Director"] = () => new DirectorView();
+            routes["MyDocuments"] = () => new MyDocumentsView(mainFraim);
+            routes["RouteView"] = () => new RoutesView(mainFraim);
         }
 
         public void Navigate(string pageKey)

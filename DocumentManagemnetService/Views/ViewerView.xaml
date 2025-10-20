@@ -8,16 +8,17 @@
              xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
              xmlns:wfi="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration" xmlns:pdfiumviewer="clr-namespace:PdfiumViewer;assembly=PdfiumViewer"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800"
+             d:DesignHeight="450" d:DesignWidth="800" Unloaded="UserControl_Unloaded"
              >
     <Grid Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <StackPanel Grid.Column="1" Margin="50,0,-600,0">
-            <wfi:WindowsFormsHost Name="pdfHost" Height="450" />
-        </StackPanel>
+
+
+        <wfi:WindowsFormsHost Grid.Column="1" Name="pdfHost" />
+
         <StackPanel Grid.Column="0" Background="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}" HorizontalAlignment="Left" Width="177">
             <ListBox
                      ItemsSource="{Binding DocumentItems}"

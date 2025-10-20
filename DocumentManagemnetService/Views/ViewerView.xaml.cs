@@ -3,11 +3,9 @@ using DocumentManagementService.ViewModels;
 using DocumentManagemnetService;
 using PdfiumViewer;
 using Supabase;
-using System.Drawing;
 using System.IO;
 using System.Net.Http;
 using System.Windows.Forms;
-using System.Windows.Forms.Integration;
 using UserControl = System.Windows.Controls.UserControl;
 
 
@@ -17,8 +15,11 @@ namespace DocumentManagementService.Views
     {
         private readonly Client client;
 
-        private PdfViewer _pdfViewer;
-        public Document SelectedDocument { get; set; }
+        private PdfViewer pdfViewer;
+
+        private Stream pdfStream;
+
+        private ViewDocument SelectedDocument;
         public ViewerView()
         {
             InitializeComponent();
@@ -37,17 +38,29 @@ namespace DocumentManagementService.Views
             using var httpClient = new HttpClient();
             byte[] pdfBytes = await httpClient.GetByteArrayAsync(url);
 
-            using var stream = new MemoryStream(pdfBytes);
-            var document = PdfDocument.Load(stream);
+            // Сохраняем ссылку на поток для последующего освобождения
+            pdfStream = new MemoryStream(pdfBytes);
+            var document = PdfDocument.Load(pdfStream);
 
-            _pdfViewer = new PdfViewer
+            pdfViewer = new PdfViewer
             {
                 Document = document,
                 Dock = DockStyle.Fill,
             };
-            var viewerHost = pdfHost;
-            viewerHost.Child = _pdfViewer;
 
+            pdfHost.Child = pdfViewer;
+
+        }
+
+        private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+            pdfHost.Child = null;
+            pdfViewer?.Document?.Dispose();
+            pdfViewer?.Dispose();
+            pdfStream?.Dispose();
+
+            pdfViewer = null;
+            pdfStream = null;
         }
     }
 }

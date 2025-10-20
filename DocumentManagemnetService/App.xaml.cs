@@ -9,7 +9,7 @@ namespace DocumentManagemnetService
 {
     public partial class App : Application
     {
-        public static Document SelectedDocument { get; set; }
+        public static ViewDocument SelectedDocument { get; set; }
         public static SupabaseService SupabaseService { get; private set; }
 
         protected override async void OnStartup(StartupEventArgs e)

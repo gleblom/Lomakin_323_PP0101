@@ -1,6 +1,5 @@
 ﻿using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
-using System.ComponentModel;
 using ColumnAttribute = Supabase.Postgrest.Attributes.ColumnAttribute;
 using TableAttribute = Supabase.Postgrest.Attributes.TableAttribute;
 
@@ -22,7 +21,7 @@ namespace DocumentManagementService.Models
 
         [Column("email")]
         public string Email { get; set; }
-        [Column("roles")]
+        [Column("role")]
         public int Role { get; set; }
 
         [Column("phone")]

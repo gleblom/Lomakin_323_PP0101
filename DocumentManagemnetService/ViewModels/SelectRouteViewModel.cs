@@ -29,16 +29,16 @@ namespace DocumentManagementService.ViewModels
         }
         private async void SaveDocument()
         {
-            bool success = await documentService.AddDocumentAsync(DocumentTitle, SelectedFileCategory, "В процессе согласования", SelectedFilePath, SelectedRoute);
-            if (success)
-            {
-                MessageBox.Show("Документ сохранен", "Сохранение", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            else
-            {
-                MessageBox.Show("Ошибка при сохранении документа", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
-            CloseAction();
+            //bool success = await documentService.AddDocumentAsync(DocumentTitle, SelectedFileCategory, "В процессе согласования", SelectedFilePath, SelectedRoute);
+            //if (success)
+            //{
+            //    MessageBox.Show("Документ сохранен", "Сохранение", MessageBoxButton.OK, MessageBoxImage.Information);
+            //}
+            //else
+            //{
+            //    MessageBox.Show("Ошибка при сохранении документа", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+            //}
+            //CloseAction();
         }
         private async void LoadRoutes()
         {

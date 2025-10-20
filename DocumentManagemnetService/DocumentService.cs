@@ -1,11 +1,9 @@
 ﻿using DocumentManagementService.DTO;
 using DocumentManagementService.Models;
 using Supabase;
-using System.Collections.ObjectModel;
 using System.IO;
+using System.Security.Policy;
 using System.Text.Json;
-using System.Windows;
-using System.Windows.Controls;
 
 
 namespace DocumentManagementService
@@ -18,7 +16,7 @@ namespace DocumentManagementService
         {
             this.client = client; 
         }
-        public async Task<bool> AddDocumentAsync(string title, string category, string status, string localFilePath, ApprovalRoute route)
+        public async Task<bool> AddDocumentAsync(string title, int category, int status, string localFilePath)
         {
             var user = client.Auth.CurrentUser;
             if (user == null)
@@ -26,7 +24,7 @@ namespace DocumentManagementService
                 return false;
             }
             var fileName = Path.GetFileName(localFilePath);
-            var storagePath = $"{user.Id}/{Guid.NewGuid()}_{fileName}";
+            var storagePath = $"{user.Id}/{fileName}/{Guid.NewGuid()}_{fileName}";
 
             var url = await UploadFileAsync(localFilePath, storagePath);
             if (url == null) {
@@ -40,24 +38,62 @@ namespace DocumentManagementService
                 CreatedAt = DateTime.Now,
                 AuthorId = user.Id,
                 Status = status,
-                Url = url,
-                RouteId = route.Id
+                Url = url
             };
             var response = await client.From<Document>().Insert(document);
-            if(status == "В процессе согласования")
+            //if(status == 2)
+            //{
+            //    var dto = JsonSerializer.Deserialize<RouteGraph>(route.GraphJson); //Из маршрута получаем граф
+
+         
+            //    await client.Rpc("InsertNotification", //После отправки на солгласованме уведомляем первого подписанта
+            //              new Dictionary<string, object> {
+            //            {"UserId",  dto.Nodes[document.CurrentStepIndex].UserId}, //Из десериализованного графа получаем id первого подписанта
+            //            {"DocumentId",   response.Model.Id}
+            //    });
+
+            //}
+          
+            return response.Models.Count == 1;
+        }
+        public async Task<bool> Update(string localFilePath, ViewDocument document)
+        {
+            var user = client.Auth.CurrentUser;
+
+            var fileName = Path.GetFileName(localFilePath);
+
+            var storagePath = $"{user.Id}/{fileName}/{Guid.NewGuid()}_{fileName}";
+
+            var url = UploadFileAsync(localFilePath, storagePath);
+
+            if (url == null)
+            {
+                return false;
+            }
+            var update = await client.From<Document>()
+                .Where(x => x.Id == document.Id)
+                .Set(x => x.Url, url)
+                .Update();
+           return update.Models.Count == 1;
+        }
+        public async Task OnApprove(ViewDocument document, ApprovalRoute route)
+        {
+            if (document.Status == "На согласовании")
             {
                 var dto = JsonSerializer.Deserialize<RouteGraph>(route.GraphJson); //Из маршрута получаем граф
 
-         
+
                 await client.Rpc("InsertNotification", //После отправки на солгласованме уведомляем первого подписанта
                           new Dictionary<string, object> {
                         {"UserId",  dto.Nodes[document.CurrentStepIndex].UserId}, //Из десериализованного графа получаем id первого подписанта
-                        {"DocumentId",   response.Model.Id}
+                        {"DocumentId",   document.Id}
                 });
+                var update = await client.From<Document>()
+                    .Where(x => x.Id == document.Id)
+                    .Set(x => x.Status, 2)
+                    .Update();
 
             }
-          
-            return response.Models.Count == 1;
         }
         public async Task<string?> UploadFileAsync(string localFilePath, string storageFilePath)
         {
@@ -119,14 +155,14 @@ namespace DocumentManagementService
 
             if (!approved)
             {
-                model.Status = "Отклонён";
+                model.Status = 1;
 
                 await client.From<Document>().Update(model);
             }
             else if (currentIndex >= steps.Count - 1)
             {
 
-                model.Status = "Опубликован";
+                model.Status = 3;
                 model.CurrentStepIndex = currentIndex + 1;
 
                 await client.From<Document>().Update(model);
@@ -134,7 +170,7 @@ namespace DocumentManagementService
             }
             else
             {
-                model.Status = "В процессе согласования";
+                model.Status = 2;
                 model.CurrentStepIndex = currentIndex + 1;
               
                 var nextNode = steps[model.CurrentStepIndex];

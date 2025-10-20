@@ -1,25 +1,76 @@
-﻿using DocumentManagementService.Views;
+﻿using DocumentManagementService.Models;
+using DocumentManagementService.Views;
 using DocumentManagemnetService;
 using Microsoft.Win32;
+using Supabase;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Windows;
 using System.Windows.Input;
 
 namespace DocumentManagementService.ViewModels
 {
     public class UploadDocumentViewModel: BaseViewModel
     {
-        public string DocumentTitle { get; set; }
+        private readonly Client client;
+        private readonly DocumentService documentService;
         public string SelectedFileName { get; set; }
-        public string SelectedFileCategory { get; set; }
         public bool IsDraggingFile { get; set; }
-        public ObservableCollection<string> Categories { get; } = ["Регламент", "Инструкция", "Методика", "Политика"];
+        public ObservableCollection<Category> Categories { get; } = [];
         public ICommand SelectFileCommand { get; }
         public ICommand SubmitCommand { get; }
 
         private string selectedFilePath;
 
-        private DocumentService documentService;
+
+        private string documentTitle;
+        public string DocumentTitle
+        {
+            get { return documentTitle; }
+            set
+            {
+                if(documentTitle != value)
+                {
+                    documentTitle = value;
+                    OnPropertyChanged(nameof(documentTitle));
+                }
+            }
+        }
+
+        private Category category;
+        public Category SelectedFileCategory
+        {
+            get {  return category; }
+            set
+            { 
+                if(category != value)
+                {
+                    category = value;
+                    OnPropertyChanged(nameof(category));
+                    if (category.CategoryName != "Инструкция")
+                    {
+                        IsEnabled = true;
+                    }
+                    else
+                    {
+                       IsEnabled = false;
+                    }
+                }
+            }
+        }
+        private bool isEnabled;
+        public bool IsEnabled
+        {
+            get { return isEnabled; }
+            set
+            {
+                if (isEnabled != value)
+                {
+                    isEnabled = value;
+                    OnPropertyChanged(nameof(isEnabled));
+                }
+            }
+        }
 
         public UploadDocumentViewModel(DocumentService documentService) 
         {
@@ -29,14 +80,24 @@ namespace DocumentManagementService.ViewModels
             && DocumentTitle != null 
             && SelectedFileName != null 
             && !App.IsWindowOpen<SelectRouteView>()));
-
+            client = App.SupabaseService.Client;
             this.documentService = documentService;
+            LoadCategries();
+        }
+        public async void LoadCategries()
+        {
+            Categories.Clear();
+            var categories = await client.From<Category>().Get();
+            foreach (var category in categories.Models) 
+            {
+                Categories.Add(category);
+            }
         }
         private void OpenFileDialog()
         {
             var dialoig = new OpenFileDialog()
             {
-                Filter = "Документы (*.pdf;*.docx;*.xlsx)|*.pdf;*.docx;*.xlsx",
+                Filter = "Документы (*.pdf;*.docx)|*.pdf;*.docx",
                 Multiselect = false
             };
             if (dialoig.ShowDialog() == true) 
@@ -46,19 +107,17 @@ namespace DocumentManagementService.ViewModels
                 OnPropertyChanged(nameof(SelectedFileName));
             }
         }
-        private void SubmitDocument()
+        private async void SubmitDocument()
         {
-            var selectWindow = new SelectRouteView();
-            SelectRouteViewModel vm = new SelectRouteViewModel();
-            vm.DocumentTitle = DocumentTitle;
-            vm.SelectedFilePath = selectedFilePath;
-            vm.SelectedFileCategory = SelectedFileCategory;
-            vm.documentService = documentService;
-            vm.CloseAction ??= new Action(selectWindow.Close);
-
-            selectWindow.DataContext = vm;
-
-            selectWindow.Show();
+            bool success = await documentService.AddDocumentAsync(DocumentTitle, SelectedFileCategory.Id, 1, selectedFilePath);
+            if (success)
+            {
+                MessageBox.Show("Документ сохранен", "Сохранение", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else
+            {
+                MessageBox.Show("Ошибка при сохранении документа", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
         public void HandleDropFile(string filePath)
         {
