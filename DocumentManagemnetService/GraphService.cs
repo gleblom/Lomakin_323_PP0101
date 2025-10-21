@@ -1,6 +1,4 @@
-﻿
-
-using DocumentManagementService.DTO;
+﻿using DocumentManagementService.DTO;
 using DocumentManagementService.Models;
 using DocumentManagemnetService;
 using QuickGraph;
@@ -15,11 +13,12 @@ namespace DocumentManagementService
     public class GraphService
     {
         private readonly Client client;
+        public ObservableCollection<RouteStep> Steps { get; } = [];
         public GraphService()
         {
             client = App.SupabaseService.Client;
         }
-        private BidirectionalGraph<RouteNode, RouteEdge> BuildGraph(ObservableCollection<RouteStep> Steps)
+        private BidirectionalGraph<RouteNode, RouteEdge> BuildGraph()
         {
 
             var graph = new BidirectionalGraph<RouteNode, RouteEdge>();
@@ -45,7 +44,7 @@ namespace DocumentManagementService
             //OnPropertyChanged(nameof(Graph));
             //ReindexSteps();
         }
-        private async void SaveRoute(ObservableCollection<RouteStep> Steps, ApprovalRoute editingRoute, string RouteName)
+        private async void SaveRoute(ApprovalRoute editingRoute, string RouteName)
         {
 
             var nodes = Steps.Select((s, i) => new SerializableRouteNode  //Преобразование списка шагов в список узлов графа для сохранения в таблице
@@ -84,7 +83,7 @@ namespace DocumentManagementService
             {
                 Id = Guid.NewGuid(),
                 CreatedBy = userId,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
             };
 
             route.Name = RouteName;
@@ -101,11 +100,23 @@ namespace DocumentManagementService
             //UpdateAction();
             //MessageBox.Show("Маршрутная карта успешно сохранена!", "Сохранение", MessageBoxButton.OK, MessageBoxImage.Information);
         }
-        public void UpdateRoute()
+        public async void UpdateRoute(ApprovalRoute editingRoute)
         {
-
+            var model = await client.From<User>().Get();
+            var Users = model.Models;
+            for (int i = 0; i < Steps.Count; i++)
+            {
+                if (Steps[i].UserId == Users[i].Id)
+                {
+                    if (Steps[i].Name != Users[i].Display)
+                    {
+                        Steps[i].Name = Users[i].Display;
+                    }
+                }
+            }
+            SaveRoute(editingRoute, editingRoute.Name);
         }
-        private BidirectionalGraph<RouteNode, RouteEdge> LoadRoute(string json, ObservableCollection<RouteStep> Steps)
+        private BidirectionalGraph<RouteNode, RouteEdge> LoadRoute(string json)
         {
             var dto = JsonSerializer.Deserialize<RouteGraph>(json); //Десериализация графа
             if (dto is null)
@@ -123,7 +134,7 @@ namespace DocumentManagementService
                 idToStep[node.Id] = step;
             }
 
-            return BuildGraph(Steps);
+            return BuildGraph();
         }
         private async void DeleteRoute(ApprovalRoute editingRoute)
         {

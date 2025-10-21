@@ -56,7 +56,13 @@ namespace DocumentManagementService.ViewModels
         }
         private void AddStep()
         {
-            var newStep = new RouteStep {Id = SelectedUser.Id.ToString(), Name = SelectedUser.Display, StepNumber = Steps.Count + 1};
+            var newStep = new RouteStep 
+            {
+                Id = SelectedUser.Id.ToString(), 
+                Name = SelectedUser.Display, 
+                StepNumber = Steps.Count + 1,
+                UserId = SelectedUser.Id
+            };
             Steps.Add(newStep);
             SelectedStep = newStep;
             BuildGraph();
@@ -106,8 +112,8 @@ namespace DocumentManagementService.ViewModels
             Name = s.Name,          
             StepNumber = index + 1,
             Id = s.Id,
-            
-            
+            UserId = s.UserId
+                     
          }).ToList(); 
 
             foreach (var node in nodes) 
