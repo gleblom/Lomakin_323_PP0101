@@ -14,11 +14,12 @@ namespace DocumentManagementService
     {
         private readonly Client client;
         public ObservableCollection<RouteStep> Steps { get; } = [];
+        public ObservableCollection<ApprovalRoute> Routes { get; } = [];
         public GraphService()
         {
             client = App.SupabaseService.Client;
         }
-        private BidirectionalGraph<RouteNode, RouteEdge> BuildGraph()
+        public BidirectionalGraph<RouteNode, RouteEdge> BuildGraph()
         {
 
             var graph = new BidirectionalGraph<RouteNode, RouteEdge>();
@@ -44,7 +45,7 @@ namespace DocumentManagementService
             //OnPropertyChanged(nameof(Graph));
             //ReindexSteps();
         }
-        private async void SaveRoute(ApprovalRoute editingRoute, string RouteName)
+        public async void SaveRoute(ApprovalRoute editingRoute, string RouteName)
         {
             var nodes = Steps.Select((s, i) => new SerializableRouteNode  //Преобразование списка шагов в список узлов графа для сохранения в таблице
             {
@@ -115,7 +116,7 @@ namespace DocumentManagementService
             }
             SaveRoute(editingRoute, editingRoute.Name);
         }
-        private BidirectionalGraph<RouteNode, RouteEdge> LoadRoute(string json)
+        public BidirectionalGraph<RouteNode, RouteEdge> LoadRoute(string json)
         {
             var dto = JsonSerializer.Deserialize<RouteGraph>(json); //Десериализация графа
             if (dto is null)
@@ -135,7 +136,8 @@ namespace DocumentManagementService
 
             return BuildGraph();
         }
-        private async void DeleteRoute(ApprovalRoute editingRoute)
+
+        public async void DeleteRoute(ApprovalRoute editingRoute)
         {
             var result = MessageBox.Show("Вы точно хотите удалить маршрут?", "Внимание!", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
             if (result == MessageBoxResult.OK)
@@ -148,6 +150,19 @@ namespace DocumentManagementService
                 //BuildGraph();
                 //OnPropertyChanged();
                 //editingRoute = null;
+            }
+        }
+        public async void LoadRoutes()
+        {
+            var response = await client
+                .From<ApprovalRoute>()
+                .Select("*")
+                .Get();
+
+            Routes.Clear();
+            foreach (var route in response.Models)
+            {
+                Routes.Add(route);
             }
         }
     }

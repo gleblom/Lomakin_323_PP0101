@@ -17,6 +17,7 @@ namespace DocumentManagementService.ViewModels
         private readonly DocumentService documentService;
         private readonly INavigationService navigationService;
         private readonly ViewDocument document;
+        private readonly GraphService graphService;
 
         public ICommand CreateRouteCommand { get; }
         public ICommand OnApproveCommand { get; }
@@ -39,7 +40,8 @@ namespace DocumentManagementService.ViewModels
                     OnPropertyChanged();
                     if (selectedRoute != null)
                     {
-                        LoadRoute(selectedRoute?.GraphJson);
+                       Graph = graphService.LoadRoute(selectedRoute?.GraphJson);
+                       //graphService.UpdateRoute(selectedRoute);
                     }
                 }             
             } 
@@ -55,34 +57,18 @@ namespace DocumentManagementService.ViewModels
             client = App.SupabaseService.Client;
             documentService = new(client);
             document = App.SelectedDocument;
+            graphService = new();
             this.navigationService = navigationService;
 
             LoadRoutes();
             LoadUserInfo();
+
+ 
         }
 
         public void BuildGraph()
         {
-            var graph = new BidirectionalGraph<RouteNode, RouteEdge>();
-
-            var nodes = Steps.Select((s, index) => new RouteNode
-            {
-                Name = s.Name,
-                StepNumber = index + 1,
-                Id = s.Id,
-
-
-            }).ToList();
-
-            foreach (var node in nodes)
-            {
-                graph.AddVertex(node);
-            }
-            for (int i = 0; i < nodes.Count - 1; i++)
-            {
-                graph.AddEdge(new RouteEdge(nodes[i], nodes[i + 1]));
-            }
-            Graph = graph;
+            Graph = graphService.BuildGraph();
             OnPropertyChanged(nameof(Graph));
         }
         private void Unselect()
@@ -91,26 +77,10 @@ namespace DocumentManagementService.ViewModels
             Steps.Clear();
             BuildGraph();
         }
-        private void LoadRoute(string json)
-        {
-            var dto = JsonSerializer.Deserialize<RouteGraph>(json);
-            if (dto is null)
-            {
-                return;
-            }
-
-            Steps.Clear();
-            var idToStep = new Dictionary<string, RouteStep>();
-
-            foreach (var node in dto.Nodes)
-            {
-                var step = new RouteStep { Name = node.Name, StepNumber = node.StepNumber };
-                Steps.Add(step);
-                idToStep[node.Id] = step;
-            }
-
-            BuildGraph();
-        }
+        //private void LoadRoute(string json)
+        //{
+        //    graphService.LoadRoute(json);
+        //}
         public async Task<User?> LoadUserInfo()
         {
             var model = await client.From<User>().
@@ -122,7 +92,6 @@ namespace DocumentManagementService.ViewModels
         private async void OpenRoutesEditorWindow()
         {
             var user = await LoadUserInfo();
-            MessageBox.Show(user.FirstName);
             if (user.Role == 1)
             {
                 var window = new RouteEditorWindow();
