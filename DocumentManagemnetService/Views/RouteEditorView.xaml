@@ -7,13 +7,12 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:graph="clr-namespace:DocumentManagementService"
         mc:Ignorable="d"
-        Title="Редактирование маршрутной карты" Height="450" Width="800" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
-    <Grid Background="#78B24B">
+        Title="Редактирование маршрутной карты" Height="680" Width="1000" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+    <Grid Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*"/>
             <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
-
 
         <Border Grid.Column="0" BorderBrush="LightGray" BorderThickness="1" Margin="10">
             <graph:RouteGraphLayout x:Name="graphLayout"
@@ -24,14 +23,19 @@
         </Border>
 
 
-        <StackPanel Grid.Column="1" Margin="10">
-            <StackPanel Orientation="Horizontal">
+        <StackPanel Grid.Column="1" Margin="10" Cursor="Hand">
+            
+            <StackPanel Orientation="Vertical">
+                <TextBlock Margin="10" Text="Название маршрута" FontSize="22"/>
                 <TextBox Text="{Binding RouteName}"
-                    materialDesign:HintAssist.Hint="Маршрут" Style="{StaticResource MaterialDesignTextBox}" Margin="5" Width="282" Foreground="White" FontWeight="Bold" BorderBrush="White"/>
+                Style="{StaticResource MaterialDesignOutlinedTextBox}"  Width="379"
+                         Foreground="Black" FontWeight="Bold" BorderBrush="Black"/>
             </StackPanel>
-            <TextBlock Text="Этапы маршрута:" FontWeight="Bold" FontSize="16" Foreground="White"/>
+            
+            <TextBlock Text="Этапы маршрута:" Margin="10" FontWeight="Bold" FontSize="22"/>
             <ScrollViewer>
-                <ListBox ItemsSource="{Binding Steps}" SelectedItem="{Binding SelectedStep}" Height="45">
+                <ListBox ItemsSource="{Binding Steps}" SelectedItem="{Binding SelectedStep}" 
+                         Height="66" BorderBrush="#FF020000">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Display}" />
@@ -39,36 +43,70 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
             </ScrollViewer>
-            <StackPanel Orientation="Horizontal" Margin="8">
-                <Button Style="{StaticResource MaterialDesignFlatButton}"  Margin="5" Content="Вверх" Command="{Binding MoveUpCommand}" Foreground="White"/>
-                <Button Style="{StaticResource MaterialDesignFlatButton}"  Margin="5" Content="Вниз" Command="{Binding MoveDownCommand}" Foreground="White"/>
-            </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="8">
-                <Button Style="{StaticResource MaterialDesignFlatButton}" Margin="5" Content="Добавить" Command="{Binding AddStepCommand}" Foreground="White"/>
-                <ComboBox 
+                <StackPanel Orientation="Horizontal" Cursor="Hand" Width="144" Height="55">
+                    <materialDesign:PackIcon Kind="ArrowUp" 
+                                             Margin="0,10,0,0" Height="40" Width="32" Foreground="#FF0A0000" />
+                    <Button Style="{StaticResource MaterialDesignFlatButton}"  
+                            Margin="5" Content="Вверх" Command="{Binding MoveUpCommand}"
+                            Width="100" FontSize="22" Height="40"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="ArrowDown" 
+                                             Margin="0,10,0,0" Height="40" Width="32" Foreground="#FF0A0000" />
+                    <Button Style="{StaticResource MaterialDesignFlatButton}"  
+                            Margin="5" Content="Вниз" Command="{Binding MoveDownCommand}" 
+                            FontSize="22" Height="40"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Width="203">
+                    <materialDesign:PackIcon Kind="CloseCircleOutline" 
+                                             Margin="0,10,0,0" Height="37" Width="32" Foreground="#FF0A0000" />
+                    <Button Style="{StaticResource MaterialDesignFlatButton}"
+                            Margin="5" Content="Удалить" Command="{Binding RemoveStepCommand}"
+                            FontSize="22" Height="40"/>
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel>
+                <TextBlock Text="Отдел" Width="300" FontSize="22"/>
+                <ComboBox Margin="10" Style="{StaticResource MaterialDesignOutlinedComboBox}"
                         ItemsSource="{Binding Users}"
-                          SelectedItem="{Binding SelectedUser}"
-                    materialDesign:HintAssist.Hint="Подписант" 
-                    Width="247" Height="28" Background="{x:Null}">
+                          SelectedItem="{Binding SelectedUser}"                    Width="301" Height="64" Background="{x:Null}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Display}" />
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
+                <TextBlock Text="Сотрудник" Width="300" FontSize="22"/>
+                <ComboBox Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                        ItemsSource="{Binding Users}"
+                          SelectedItem="{Binding SelectedUser}"
+                    
+                    Width="299" Height="64" Margin="10" Background="{x:Null}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Display}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
+                <Button Style="{StaticResource MaterialDesignFlatButton}" Margin="5" Content="Добавить" Command="{Binding AddStepCommand}" Cursor="Hand" Width="313"/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="8">
-                <Button Style="{StaticResource MaterialDesignFlatButton}" Margin="5" Content="Удалить" Command="{Binding RemoveStepCommand}" Foreground="White"/>
-            </StackPanel>
+            
+            
+            
             <Button
                     Style="{StaticResource MaterialDesignFlatButton}"
                     Content="Сохранить маршрут"
                     Command="{Binding SaveCommand}"
-                    Margin="0 20 0 0" Foreground="White"/>
+                    Margin="0 20 0 0"/>
             <Button Command="{Binding DeleteCommand}"
                     Style="{StaticResource MaterialDesignFlatButton}" 
                     Content="Удалить маршрут"  Foreground="Red"/>
+            
         </StackPanel>
+        
     </Grid>
 </Window>

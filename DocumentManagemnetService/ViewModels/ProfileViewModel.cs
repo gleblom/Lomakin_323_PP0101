@@ -1,7 +1,6 @@
 ﻿using DocumentManagementService.Models;
 using DocumentManagemnetService;
 using Supabase;
-using System.Windows;
 
 namespace DocumentManagementService.ViewModels
 {

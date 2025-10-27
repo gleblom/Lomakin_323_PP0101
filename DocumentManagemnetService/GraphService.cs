@@ -46,7 +46,6 @@ namespace DocumentManagementService
         }
         private async void SaveRoute(ApprovalRoute editingRoute, string RouteName)
         {
-
             var nodes = Steps.Select((s, i) => new SerializableRouteNode  //Преобразование списка шагов в список узлов графа для сохранения в таблице
             {
                 Id = $"n{i}",

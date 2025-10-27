@@ -1,6 +1,7 @@
 ﻿using DocumentManagementService.DTO;
 using DocumentManagementService.Models;
 using Supabase;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Security.Policy;
 using System.Text.Json;
@@ -12,9 +13,9 @@ namespace DocumentManagementService
     {
         private readonly Client client;
 
-        public DocumentService(Client client) 
+        public DocumentService(Client client)
         {
-            this.client = client; 
+            this.client = client;
         }
         public async Task<bool> AddDocumentAsync(string title, int category, int status, string localFilePath)
         {
@@ -27,7 +28,8 @@ namespace DocumentManagementService
             var storagePath = $"{user.Id}/{fileName}/{Guid.NewGuid()}_{fileName}";
 
             var url = await UploadFileAsync(localFilePath, storagePath);
-            if (url == null) {
+            if (url == null)
+            {
                 return false;
             }
 
@@ -39,13 +41,14 @@ namespace DocumentManagementService
                 AuthorId = user.Id,
                 Status = status,
                 Url = url
+
             };
             var response = await client.From<Document>().Insert(document);
             //if(status == 2)
             //{
             //    var dto = JsonSerializer.Deserialize<RouteGraph>(route.GraphJson); //Из маршрута получаем граф
 
-         
+
             //    await client.Rpc("InsertNotification", //После отправки на солгласованме уведомляем первого подписанта
             //              new Dictionary<string, object> {
             //            {"UserId",  dto.Nodes[document.CurrentStepIndex].UserId}, //Из десериализованного графа получаем id первого подписанта
@@ -53,7 +56,7 @@ namespace DocumentManagementService
             //    });
 
             //}
-          
+
             return response.Models.Count == 1;
         }
         public async Task<bool> Update(string localFilePath, ViewDocument document)
@@ -74,7 +77,7 @@ namespace DocumentManagementService
                 .Where(x => x.Id == document.Id)
                 .Set(x => x.Url, url)
                 .Update();
-           return update.Models.Count == 1;
+            return update.Models.Count == 1;
         }
         public async Task OnApprove(ViewDocument document, ApprovalRoute route)
         {
@@ -139,7 +142,7 @@ namespace DocumentManagementService
             }
 
             var currentUserId = client.Auth.CurrentUser?.Id;
- 
+
 
             var approval = new DocumentApprovals
             {
@@ -172,13 +175,13 @@ namespace DocumentManagementService
             {
                 model.Status = 2;
                 model.CurrentStepIndex = currentIndex + 1;
-              
+
                 var nextNode = steps[model.CurrentStepIndex];
 
                 await client.From<Document>().Update(model);
 
-                await client.Rpc("InsertNotification", 
-                    new Dictionary<string, object> { 
+                await client.Rpc("InsertNotification",
+                    new Dictionary<string, object> {
                         {"UserId", nextNode.UserId},
                         {"DocumentId",  doc.Id}
                     });

@@ -26,6 +26,11 @@ namespace DocumentManagementService.Models
 
         [Column("phone")]
         public string Telephone { get; set; }
+        [Column("company_id")]
+        public int CompanyId { get; set; }
+        [Column("unit_id")]
+        public int UnitId { get; set; }
         public string Display => $"{SecondName} {FirstName} {ThirdName}";
+
     }
 }
