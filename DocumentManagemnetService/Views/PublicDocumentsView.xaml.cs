@@ -6,11 +6,10 @@ namespace DocumentManagementService.Views
 
     public partial class PublicDocumentsView : UserControl
     {
-        public PublicDocumentsView(Frame frame)
+        public PublicDocumentsView()
         {
             InitializeComponent();
-            var navigationService = new NavigationService(frame);
-            DataContext = new PublicDocumentsViewModel(navigationService);
+            DataContext = new PublicDocumentsViewModel();
         }
     }
 }

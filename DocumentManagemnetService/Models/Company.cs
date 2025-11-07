@@ -8,11 +8,11 @@ namespace DocumentManagementService.Models
     [Table("companies")]
     public class Company: BaseModel
     {
-        [PrimaryKey("company_id")]
-        public int CompanyId { get; set; }
+        [Column("company_id")]
+        public Guid CompanyId { get; set; }
         [Column("company_name")]
-        public int CompanyName { get; set; }
+        public string CompanyName { get; set; }
         [Column("director")]
-        public int DirectorId { get; set; }
+        public Guid DirectorId { get; set; }
     }
 }

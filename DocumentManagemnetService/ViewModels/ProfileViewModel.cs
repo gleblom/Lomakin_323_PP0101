@@ -11,13 +11,13 @@ namespace DocumentManagementService.ViewModels
         private User user;
         public User User 
         { 
-            get => user;
+            get {  return user; }
             set
             {
                 if (user != value) 
                 {
                     user = value;
-                    OnPropertyChanged(nameof(user));
+                    OnPropertyChanged();
                 }
             }
 

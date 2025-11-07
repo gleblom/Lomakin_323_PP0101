@@ -14,7 +14,7 @@ namespace DocumentManagementService.Models
         public int Id { get; set; }
 
         [Column("category")]
-        public string CategoryName {  get; set; }
+        public string Name {  get; set; }
         private bool isChecked = true;
         public bool IsChecked 
         {
@@ -24,7 +24,8 @@ namespace DocumentManagementService.Models
                 isChecked = value;
                 OnPropertyChanged();
             }
-        } 
+        }
+
 
         public event PropertyChangedEventHandler? PropertyChanged;
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

@@ -1,16 +1,13 @@
 ﻿using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
-using ColumnAttribute = Supabase.Postgrest.Attributes.ColumnAttribute;
-using TableAttribute = Supabase.Postgrest.Attributes.TableAttribute;
-
 
 namespace DocumentManagementService.Models
 {
-    [Table("profiles")]
-    public class User: BaseModel
+    [Table("users_view")]
+    public class UserView: User
     {
         [PrimaryKey("id")]
-        public Guid Id { get; set; }    
+        public Guid Id { get; set; }
         [Column("first_name")]
         public string FirstName { get; set; }
         [Column("second_name")]
@@ -30,7 +27,15 @@ namespace DocumentManagementService.Models
         public Guid CompanyId { get; set; }
         [Column("unit_id")]
         public int UnitId { get; set; }
-        public string Display => $"{SecondName} {FirstName} {ThirdName}";
 
+        [Reference(typeof(Unit))]
+        public Unit? Unit { get; set; }
+
+        [Reference(typeof(Role))]
+        public Role? Role { get; set; }
+
+        [Reference(typeof(Company))]
+        public Company? Company { get; set; }
+        public string Display => $"{SecondName} {FirstName} {ThirdName}";
     }
 }

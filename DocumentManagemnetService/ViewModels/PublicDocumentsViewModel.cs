@@ -39,9 +39,9 @@ namespace DocumentManagementService.ViewModels
             }
         }
 
-        public PublicDocumentsViewModel(INavigationService navigationService)
+        public PublicDocumentsViewModel()
         { 
-            this.navigationService = navigationService; 
+            navigationService = App.NavigationService; 
             client = App.SupabaseService.Client;
             SearchCommand = new RelayCommand(Search, 
                 obj => SearchQuery != null);
@@ -72,7 +72,7 @@ namespace DocumentManagementService.ViewModels
             {
                 return;
             }
-            using (HttpClient httpClient = new HttpClient())
+            using (HttpClient httpClient = new())
             {
                 var response = await httpClient.GetStreamAsync(url);
                 using (var fileStream = File.Create(dialog.FileName))

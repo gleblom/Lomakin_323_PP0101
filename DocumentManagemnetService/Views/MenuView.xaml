@@ -50,7 +50,7 @@
             </DockPanel>
             <Frame x:Name="MainFrame"
                    NavigationUIVisibility="Hidden"
-                   Margin="0,70,0,0" />
+                   Margin="0,70,0,0" Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}" />
         </Grid>
     </materialDesign:DrawerHost>
 </Window>

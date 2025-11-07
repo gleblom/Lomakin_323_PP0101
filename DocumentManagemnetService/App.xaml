@@ -4,7 +4,8 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:graph="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls" 
-             xmlns:local1="clr-namespace:DocumentManagementService.Models" ShutdownMode="OnMainWindowClose"
+             xmlns:local1="clr-namespace:DocumentManagementService.Models" 
+             ShutdownMode="OnMainWindowClose"
              >
     <Application.Resources>
         <ResourceDictionary>
@@ -32,7 +33,69 @@
             <SolidColorBrush x:Key="SecondaryAccentBrush" Color="#627af0"/>
             <SolidColorBrush x:Key="SecondaryAccentForegroundBrush" Color="#627af0"/>
 
+            <DataTemplate x:Key="ComboboxItemTemplate">
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay}" 
+                              Background="{DynamicResource PrimaryHueDarkBrush}"/>
+                    <TextBlock Text="{Binding Name}"/>
+                </StackPanel>
+            </DataTemplate>
 
+            <DataTemplate x:Key="SelectionBoxTemplate">
+                <TextBlock Text="Тип документа" Foreground="Gray" />
+            </DataTemplate>
+
+            <DataTemplate x:Key="SelectionRoleBoxTemplate">
+                <TextBlock Text="Должность" Foreground="Gray" />
+            </DataTemplate>
+
+            <DataTemplate x:Key="SelectionUnitBoxTemplate">
+                <TextBlock Text="Должность" Foreground="Gray" />
+            </DataTemplate>
+
+            <DataTemplate x:Key="ComboBoxTemplate">
+                <ContentPresenter x:Name="Presenter"
+               Content="{Binding}"
+               ContentTemplate="{StaticResource ComboboxItemTemplate}" />
+
+                <DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ComboBoxItem}}" 
+                             Value="{x:Null}">
+                        <Setter TargetName="Presenter" Property="ContentTemplate" 
+                            Value="{StaticResource SelectionBoxTemplate}" />
+                    </DataTrigger>
+                </DataTemplate.Triggers>
+            </DataTemplate>
+
+
+            <DataTemplate x:Key="RoleComboBoxTemplate">
+                <ContentPresenter x:Name="Presenter"
+               Content="{Binding}"
+               ContentTemplate="{StaticResource ComboboxItemTemplate}" />
+
+                <DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ComboBoxItem}}" 
+                             Value="{x:Null}">
+                        <Setter TargetName="Presenter" Property="ContentTemplate" 
+                            Value="{StaticResource SelectionRoleBoxTemplate}" />
+                    </DataTrigger>
+                </DataTemplate.Triggers>
+            </DataTemplate>
+
+
+            <DataTemplate x:Key="UnitComboBoxTemplate">
+                <ContentPresenter x:Name="Presenter"
+               Content="{Binding}"
+               ContentTemplate="{StaticResource ComboboxItemTemplate}" />
+
+                <DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ComboBoxItem}}" 
+                             Value="{x:Null}">
+                        <Setter TargetName="Presenter" Property="ContentTemplate" 
+                            Value="{StaticResource SelectionUnitBoxTemplate}" />
+                    </DataTrigger>
+                </DataTemplate.Triggers>
+            </DataTemplate>
 
 
             <DataTemplate DataType="{x:Type local1:RouteNode}" x:Key="RouteNodeTemplate">
@@ -55,7 +118,11 @@
                 </Setter>
             </Style>
 
-
+            <DataTemplate x:Key="ModelComboboxItem">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="{Binding Name, Mode=TwoWay}"/>
+                </StackPanel>
+            </DataTemplate>
 
             <Style TargetType="ListBox" x:Key="MenuListBoxStyle">
                 <Setter Property="Background" Value="#78B24B"/>

@@ -1,4 +1,5 @@
 ﻿using DocumentManagementService.ViewModels;
+using DocumentManagemnetService;
 using System.Windows;
 
 
@@ -10,7 +11,8 @@ namespace DocumentManagementService.Views
         {
             InitializeComponent();
             var navigationService = new NavigationService(MainFrame);
-            MenuViewModel vm = new(navigationService);
+            App.NavigationService = navigationService;
+            MenuViewModel vm = new(App.CurrentUser.RoleId);
             DataContext = vm;
             vm.CloseAction ??= new Action(Close);
         }

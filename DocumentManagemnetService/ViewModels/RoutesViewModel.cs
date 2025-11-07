@@ -1,12 +1,9 @@
-﻿using DocumentManagementService.DTO;
-using DocumentManagementService.Models;
+﻿using DocumentManagementService.Models;
 using DocumentManagementService.Views;
 using DocumentManagemnetService;
 using QuickGraph;
 using Supabase;
 using System.Collections.ObjectModel;
-using System.Text.Json;
-using System.Windows;
 using System.Windows.Input;
 
 namespace DocumentManagementService.ViewModels
@@ -26,8 +23,18 @@ namespace DocumentManagementService.ViewModels
 
         public ObservableCollection<ApprovalRoute> Routes { get; } = [];
         public ObservableCollection<RouteStep> Steps { get; } = [];
-        public IBidirectionalGraph<RouteNode, RouteEdge> Graph { get; set; }
         public Action ShowAction { get; set; }
+
+        private IBidirectionalGraph<RouteNode, RouteEdge> graph;
+        public IBidirectionalGraph<RouteNode, RouteEdge> Graph
+        {
+            get { return graph; }
+            set 
+            { 
+                graph = value;
+                OnPropertyChanged();
+            }
+        }
         private ApprovalRoute selectedRoute;
         public ApprovalRoute? SelectedRoute
         {
@@ -40,7 +47,7 @@ namespace DocumentManagementService.ViewModels
                     OnPropertyChanged();
                     if (selectedRoute != null)
                     {
-                       Graph = graphService.LoadRoute(selectedRoute?.GraphJson);
+                       Graph = graphService.LoadRoute(selectedRoute?.GraphJson, Steps);
                        //graphService.UpdateRoute(selectedRoute);
                     }
                 }             
@@ -48,7 +55,7 @@ namespace DocumentManagementService.ViewModels
         }
 
 
-        public RoutesViewModel(INavigationService navigationService) {
+        public RoutesViewModel() {
             CreateRouteCommand = new RelayCommand(ConfirmSelection, obj => !App.IsWindowOpen<RouteEditorWindow>());
             EditRouteCommand = new RelayCommand(OpenRoutesEditorWindow, obj => selectedRoute != null && !App.IsWindowOpen<RouteEditorWindow>());
             OnApproveCommand = new RelayCommand(OnApprove, obj => selectedRoute != null);
@@ -58,7 +65,7 @@ namespace DocumentManagementService.ViewModels
             documentService = new(client);
             document = App.SelectedDocument;
             graphService = new();
-            this.navigationService = navigationService;
+            navigationService = App.NavigationService;
 
             LoadRoutes();
             LoadUserInfo();
@@ -68,7 +75,7 @@ namespace DocumentManagementService.ViewModels
 
         public void BuildGraph()
         {
-            Graph = graphService.BuildGraph();
+            Graph = graphService.BuildGraph(Steps);
             OnPropertyChanged(nameof(Graph));
         }
         private void Unselect()
@@ -77,10 +84,7 @@ namespace DocumentManagementService.ViewModels
             Steps.Clear();
             BuildGraph();
         }
-        //private void LoadRoute(string json)
-        //{
-        //    graphService.LoadRoute(json);
-        //}
+
         public async Task<User?> LoadUserInfo()
         {
             var model = await client.From<User>().
@@ -92,7 +96,7 @@ namespace DocumentManagementService.ViewModels
         private async void OpenRoutesEditorWindow()
         {
             var user = await LoadUserInfo();
-            if (user.Role == 1)
+            if (user.RoleId == 2)
             {
                 var window = new RouteEditorWindow();
                 RouteEditorViewModel vm = new(selectedRoute);
@@ -103,19 +107,7 @@ namespace DocumentManagementService.ViewModels
                 window.Show();
             }
         }
-        //private async void LoadUserInfo()
-        //{
-        //    var user = await client.From<User>().
-        //          Where(x => x.Email == client.Auth.CurrentUser.Email).
-        //          Get();
-        //    if (user.Model != null) 
-        //    {
-        //        if(user.Model.Role == 1)
-        //        {
-        //            ShowAction(); //Если пользователь админ, отображаем кнопки создания и редактирования
-        //        }
-        //    }
-        //}
+
 
         private async void LoadRoutes()
         {

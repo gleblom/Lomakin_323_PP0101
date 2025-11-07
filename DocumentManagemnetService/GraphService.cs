@@ -5,7 +5,6 @@ using QuickGraph;
 using Supabase;
 using System.Collections.ObjectModel;
 using System.Text.Json;
-using System.Windows;
 
 namespace DocumentManagementService
 {
@@ -13,13 +12,13 @@ namespace DocumentManagementService
     public class GraphService
     {
         private readonly Client client;
-        public ObservableCollection<RouteStep> Steps { get; } = [];
+        //public ObservableCollection<RouteStep> Steps { get; } = [];
         public ObservableCollection<ApprovalRoute> Routes { get; } = [];
         public GraphService()
         {
             client = App.SupabaseService.Client;
         }
-        public BidirectionalGraph<RouteNode, RouteEdge> BuildGraph()
+        public BidirectionalGraph<RouteNode, RouteEdge> BuildGraph(ObservableCollection<RouteStep> Steps)
         {
 
             var graph = new BidirectionalGraph<RouteNode, RouteEdge>();
@@ -41,11 +40,11 @@ namespace DocumentManagementService
             {
                 graph.AddEdge(new RouteEdge(nodes[i], nodes[i + 1])); //Рёбра графа
             }
+            ReindexSteps(Steps);
             return graph;
             //OnPropertyChanged(nameof(Graph));
-            //ReindexSteps();
         }
-        public async void SaveRoute(ApprovalRoute editingRoute, string RouteName)
+        public async void SaveRoute(ApprovalRoute editingRoute, string RouteName, ObservableCollection<RouteStep> Steps)
         {
             var nodes = Steps.Select((s, i) => new SerializableRouteNode  //Преобразование списка шагов в список узлов графа для сохранения в таблице
             {
@@ -100,13 +99,20 @@ namespace DocumentManagementService
             //UpdateAction();
             //MessageBox.Show("Маршрутная карта успешно сохранена!", "Сохранение", MessageBoxButton.OK, MessageBoxImage.Information);
         }
-        public async void UpdateRoute(ApprovalRoute editingRoute)
+        private void ReindexSteps(ObservableCollection<RouteStep> Steps) //Автоматическое изменение номера шага (этапа)
+        {
+            for (int i = 0; i < Steps.Count; i++)
+            {
+                Steps[i].StepNumber = i + 1;
+            }
+        }
+        public async void UpdateRoute(ApprovalRoute editingRoute, ObservableCollection<RouteStep> Steps)
         {
             var model = await client.From<User>().Get();
             var Users = model.Models;
             for (int i = 0; i < Steps.Count; i++)
             {
-                if (Steps[i].UserId == Users[i].Id)
+                if (Steps[i].User.Id == Users[i].Id)
                 {
                     if (Steps[i].Name != Users[i].Display)
                     {
@@ -114,9 +120,9 @@ namespace DocumentManagementService
                     }
                 }
             }
-            SaveRoute(editingRoute, editingRoute.Name);
+            SaveRoute(editingRoute, editingRoute.Name, Steps);
         }
-        public BidirectionalGraph<RouteNode, RouteEdge> LoadRoute(string json)
+        public BidirectionalGraph<RouteNode, RouteEdge> LoadRoute(string json, ObservableCollection<RouteStep> Steps)
         {
             var dto = JsonSerializer.Deserialize<RouteGraph>(json); //Десериализация графа
             if (dto is null)
@@ -134,23 +140,7 @@ namespace DocumentManagementService
                 idToStep[node.Id] = step;
             }
 
-            return BuildGraph();
-        }
-
-        public async void DeleteRoute(ApprovalRoute editingRoute)
-        {
-            var result = MessageBox.Show("Вы точно хотите удалить маршрут?", "Внимание!", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
-            if (result == MessageBoxResult.OK)
-            {
-                await client.From<ApprovalRoute>().Where(x => x.Id == editingRoute.Id).Delete();
-                //Steps.Clear();
-                //RouteName = "";
-                //UnselectAction();
-                //UpdateAction();
-                //BuildGraph();
-                //OnPropertyChanged();
-                //editingRoute = null;
-            }
+            return BuildGraph(Steps);
         }
         public async void LoadRoutes()
         {

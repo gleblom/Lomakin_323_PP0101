@@ -1,4 +1,5 @@
 ﻿using DocumentManagementService.ViewModels;
+using DocumentManagemnetService;
 using System.Windows.Controls;
 
 namespace DocumentManagementService.Views
@@ -6,11 +7,10 @@ namespace DocumentManagementService.Views
 
     public partial class RoutesView : UserControl
     {
-        public RoutesView(Frame frame)
+        public RoutesView()
         {
             InitializeComponent();
-            INavigationService navigationService = new NavigationService(frame);
-            RoutesViewModel vm = new(navigationService);
+            RoutesViewModel vm = new();
             DataContext = vm;
             vm.ShowAction ??= new Action(ShowButtons);
 

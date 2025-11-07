@@ -11,6 +11,17 @@ namespace DocumentManagemnetService
     {
         public static ViewDocument SelectedDocument { get; set; }
         public static SupabaseService SupabaseService { get; private set; }
+        public static User CurrentUser { get; set; }
+        public static UserView SelectedUser { get; set; }
+        public static INavigationService NavigationService { get; set; }  
+        public async Task<User?> LoadUserInfo()
+        {
+            var model = await SupabaseService.Client.From<User>().
+                 Where(x => x.Email == SupabaseService.Client.Auth.CurrentUser.Email).
+                 Get();
+            var models = model.Models;
+            return model.Model;
+        }
 
         protected override async void OnStartup(StartupEventArgs e)
         {
@@ -23,6 +34,7 @@ namespace DocumentManagemnetService
 
             if (SupabaseService.IsAuthenticated) 
             {
+                CurrentUser = await LoadUserInfo();
                 new MenuWindow().Show(); //Если пользователь залогинен открывается главное окно
             }
             else

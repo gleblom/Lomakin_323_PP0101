@@ -11,7 +11,7 @@ namespace DocumentManagementService.Models
     public class RouteStep: BaseViewModel
     {
         public string Id { get; set; }
-        public Guid UserId { get; set; }
+        public User User { get; set; }
         private string name;
         private int stepNumber;
         public string Name {

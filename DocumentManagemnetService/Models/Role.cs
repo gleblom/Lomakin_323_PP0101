@@ -1,22 +1,27 @@
-﻿
-using Supabase.Postgrest.Attributes;
+﻿using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading.Tasks;
 using ColumnAttribute = Supabase.Postgrest.Attributes.ColumnAttribute;
 using TableAttribute = Supabase.Postgrest.Attributes.TableAttribute;
 
 namespace DocumentManagementService.Models
 {
-    [Table("units")]
-    public class Unit: BaseModel, INotifyPropertyChanged
+    [Table("roles")]
+    public class Role: BaseModel, INotifyPropertyChanged
     {
-        [Column("id")]
+        [Column("role_id")]
         public int Id { get; set; }
-        [Column("unit_name")]
+
+        [Column("role")]
         public string Name { get; set; }
-        [Column("company_id")]
-        public Guid CompanyId { get; set; }
+
         private bool isChecked = true;
         public bool IsChecked
         {
@@ -27,6 +32,12 @@ namespace DocumentManagementService.Models
                 OnPropertyChanged();
             }
         }
+
+        [Reference(typeof(RoleCategory))]
+        public List<RoleCategory> RoleCategories  { get; set; }
+
+        public List<Category> Categories =>
+            RoleCategories?.Select(rc => rc.Category).ToList() ?? [];
 
         public event PropertyChangedEventHandler? PropertyChanged;
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

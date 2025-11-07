@@ -34,33 +34,35 @@ namespace DocumentManagementService.ViewModels
                 }
             }
         }
-        public MenuViewModel(INavigationService navigationService)
+        public MenuViewModel(int userRole)
         {
             authService = new AuthService(App.SupabaseService.Client);
             LeaveCommand = new RelayCommand(Leave);
             AccountCommand = new RelayCommand(Account);
-            this.navigationService = navigationService;
-            MenuItems =
-            [
-                new("Новый документ", "PencilPlus", "UploadDocument"),
-                new("Все документы", "File", "AllDocuments"),
-                new("Мои документы", "AccountFileTextOutline", "MyDocuments"),
-                new("Входящие", "ArrowRightThin", "Incoming"),
-                new("Исходящие", "ArrowLeftThin", "Outcoming"),
-            ];
-            navigationService.Navigate("AllDocuments");
+            navigationService = App.NavigationService;
+            switch (userRole)
+            {
+                case 1:
+                    navigationService.Navigate("AdminView");
+                    break;
+                case 2:
+                    navigationService.Navigate("ClerkView");
+                    break;
+                default:
+                    MenuItems =
+                    [
+                        new("Новый документ", "PencilPlus", "UploadDocument"),
+                        new("Все документы", "File", "AllDocuments"),
+                        new("Мои документы", "AccountFileTextOutline", "MyDocuments"),
+                        new("Входящие", "ArrowRightThin", "Incoming"),
+                        new("Исходящие", "ArrowLeftThin", "Outcoming"),
+                   ];
+                    navigationService.Navigate("AllDocuments");
+                    break;
+
+            }
         }
-        //public MenuViewModel(INavigationService navigationService)
-        //{
-        //    LeaveCommand = new RelayCommand(Leave);
-        //    authService = new AuthService(App.SupabaseService.Client);
-        //    this.navigationService = navigationService;
-        //    MenuItems =
-        //    [
-        //        new("Документы", "FileDocument", "Documents"),
-        //    ];
-        //    navigationService.Navigate("Documents");
-        //}
+
         private void Account()
         {
             navigationService.Navigate("Account");

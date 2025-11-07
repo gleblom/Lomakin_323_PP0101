@@ -47,7 +47,7 @@ namespace DocumentManagementService.ViewModels
                 {
                     category = value;
                     OnPropertyChanged(nameof(category));
-                    if (category.CategoryName != "Инструкция")
+                    if (category.Name != "Инструкция")
                     {
                         IsEnabled = true;
                     }
@@ -75,13 +75,16 @@ namespace DocumentManagementService.ViewModels
         public UploadDocumentViewModel(DocumentService documentService) 
         {
             SelectFileCommand = new RelayCommand(OpenFileDialog);
+
             SubmitCommand = new RelayCommand(SubmitDocument, obj => 
             (SelectedFileCategory != null 
             && DocumentTitle != null 
             && SelectedFileName != null 
             && !App.IsWindowOpen<SelectRouteView>()));
+
             client = App.SupabaseService.Client;
             this.documentService = documentService;
+
             LoadCategries();
         }
         public async void LoadCategries()

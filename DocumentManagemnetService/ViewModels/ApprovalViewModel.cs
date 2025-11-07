@@ -57,7 +57,7 @@ namespace DocumentManagementService.ViewModels
             {
                 return;
             }
-            using (HttpClient httpClient = new HttpClient())
+            using (HttpClient httpClient = new())
             {
                 var response = await httpClient.GetStreamAsync(url);
 

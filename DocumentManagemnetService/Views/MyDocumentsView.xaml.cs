@@ -1,5 +1,6 @@
 ﻿using DocumentManagementService.Models;
 using DocumentManagementService.ViewModels;
+using DocumentManagemnetService;
 using Microsoft.Win32;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,11 +16,11 @@ namespace DocumentManagementService.Views
         private ViewDocument selectedDocument;
         private readonly DocumentService documentService;
         private readonly INavigationService navigationService;
-        public MyDocumentsView(Frame frame)
+        public MyDocumentsView()
         {
             InitializeComponent();
-            navigationService = new NavigationService(frame);
-            MyDocumentsViewModel vm = new(navigationService);
+            navigationService = App.NavigationService;
+            MyDocumentsViewModel vm = new();
             DataContext = vm;
         }
 

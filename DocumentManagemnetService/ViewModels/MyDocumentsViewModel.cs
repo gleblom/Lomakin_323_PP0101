@@ -67,9 +67,9 @@ namespace DocumentManagementService.ViewModels
                 ApplyFilters();
             } 
         }
-        public MyDocumentsViewModel(INavigationService navigationService)
+        public MyDocumentsViewModel()
         {
-            this.navigationService = navigationService;
+            navigationService = App.NavigationService;
             client = App.SupabaseService.Client;
 
             LoadDocuments();
@@ -120,7 +120,7 @@ namespace DocumentManagementService.ViewModels
 
             // Фильтр по категориям
             if (Categories.Any(c => c.IsChecked) &&
-                !Categories.Where(c => c.IsChecked).Any(c => c.CategoryName == doc.Category))
+                !Categories.Where(c => c.IsChecked).Any(c => c.Name == doc.Category))
                 return false;
 
             // Фильтр по дате

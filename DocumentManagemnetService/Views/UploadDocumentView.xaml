@@ -6,15 +6,6 @@
              xmlns:local="clr-namespace:DocumentManagementService.Views"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" Height="634" Width="1200">
-    <UserControl.Resources>
-
-        <DataTemplate x:Key="ComboboxItemTemplate">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="{Binding CategoryName}"/>
-            </StackPanel>
-        </DataTemplate>
-
-    </UserControl.Resources>
 
     <Grid Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}" >
         <Grid.RowDefinitions>
@@ -30,7 +21,7 @@
                      materialDesign:HintAssist.Hint="Название документа"
                      Text="{Binding DocumentTitle, UpdateSourceTrigger=PropertyChanged}" Width="313" Height="47" />
 
-            <ComboBox ItemTemplate="{StaticResource ComboboxItemTemplate}" 
+            <ComboBox ItemTemplate="{StaticResource ModelComboboxItem}" 
                       Margin="10"
                       materialDesign:HintAssist.Hint="Категория"
                       ItemsSource="{Binding Categories}"

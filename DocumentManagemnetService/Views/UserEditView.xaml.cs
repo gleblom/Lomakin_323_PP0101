@@ -1,16 +1,17 @@
 ﻿using DocumentManagementService.ViewModels;
-using System.Windows.Controls;
+using System.Windows;
+
 
 
 namespace DocumentManagementService.Views
 {
 
-    public partial class AdminView : UserControl
+    public partial class UserEditView : Window
     {
-        public AdminView()
+        public UserEditView()
         {
             InitializeComponent();
-            AdminViewModel vm = new();
+            UserEditViewModel vm = new();
             DataContext = vm;
         }
     }

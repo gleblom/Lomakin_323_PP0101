@@ -8,33 +8,6 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" 
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.Resources>
-        <DataTemplate x:Key="ComboboxItemTemplate">
-            <StackPanel Orientation="Horizontal">
-                <CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay}" 
-                              Background="{DynamicResource PrimaryHueDarkBrush}"/>
-                <TextBlock Text="{Binding CategoryName}"/>
-            </StackPanel>
-        </DataTemplate>
-
-        <DataTemplate x:Key="SelectionBoxTemplate">
-            <TextBlock Text="Тип документа" Foreground="Gray" />
-        </DataTemplate>
-
-        <DataTemplate x:Key="ComboBoxTemplate">
-            <ContentPresenter x:Name="Presenter"
-               Content="{Binding}"
-               ContentTemplate="{StaticResource ComboboxItemTemplate}" />
-
-            <DataTemplate.Triggers>
-                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ComboBoxItem}}" 
-                             Value="{x:Null}">
-                    <Setter TargetName="Presenter" Property="ContentTemplate" 
-                            Value="{StaticResource SelectionBoxTemplate}" />
-                </DataTrigger>
-            </DataTemplate.Triggers>
-        </DataTemplate>
-    </UserControl.Resources>
 
     <Grid Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}">
         <Grid.RowDefinitions>
@@ -47,7 +20,7 @@
                 <TextBox                     
                     Width="200"
                     materialDesign:HintAssist.Hint="Поиск"
-                    Text="{Binding Title}"/>
+                    Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"/>
                 <materialDesign:PackIcon Kind="Magnify" Height="26" Width="25" />
             </StackPanel>
             <ComboBox ItemTemplate="{StaticResource ComboBoxTemplate}" 
