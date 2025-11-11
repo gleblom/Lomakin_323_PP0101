@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using ColumnAttribute = Supabase.Postgrest.Attributes.ColumnAttribute;
@@ -23,6 +24,7 @@ namespace DocumentManagementService.Models
         public string Name { get; set; }
 
         private bool isChecked = true;
+        [IgnoreDataMember]
         public bool IsChecked
         {
             get { return isChecked; }
@@ -36,6 +38,7 @@ namespace DocumentManagementService.Models
         [Reference(typeof(RoleCategory))]
         public List<RoleCategory> RoleCategories  { get; set; }
 
+        [IgnoreDataMember]
         public List<Category> Categories =>
             RoleCategories?.Select(rc => rc.Category).ToList() ?? [];
 

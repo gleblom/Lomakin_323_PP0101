@@ -10,12 +10,12 @@ namespace DocumentManagementService
     {
         private readonly Client client;
 
-        public AuthService(Client client)
+        public AuthService()
         {
-            this.client = client;
+            client = App.SupabaseService.Client;
         }
 
-        public async Task<bool> SignUpAsync(string email, string password, string firstName, string secondName, string thirdName)
+        public async Task<bool> SignUpAsync(string email, string password, string firstName, string secondName, string thirdName, string phone, int roleId, int unitId)
         {
             try
             {
@@ -33,9 +33,14 @@ namespace DocumentManagementService
                             {"FirstName", firstName},
                             {"SecondName", secondName},
                             {"ThirdName", thirdName},
-                            {"UserId",  model.Model.Id}
-                        });
+                            {"UserId",  model.Model.Id},
+                            {"Phone", phone},
+                            {"CompanyId", App.CurrentUser.CompanyId },
+                            {"RoleId", roleId},
+                            {"UnitId", unitId }
 
+                        });
+    
                         return true;
                     }
                 }

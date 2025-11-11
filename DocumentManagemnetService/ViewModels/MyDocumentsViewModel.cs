@@ -91,12 +91,14 @@ namespace DocumentManagementService.ViewModels
             var categories = await client.From<Category>().Get();
             foreach (var category in categories.Models)
             {
+                category.IsChecked = true;
                 Categories.Add(category);
             }
             foreach (var item in Categories)
             {
                 item.PropertyChanged += (s, e) => ApplyFilters();
             }
+            ApplyFilters();
         }
         private async void LoadDocuments()
         {
@@ -111,19 +113,23 @@ namespace DocumentManagementService.ViewModels
         }
         private bool FilterDocument(ViewDocument doc)
         {
-            if (doc == null) return false;
+            if(Categories.All(c => c.IsChecked == false)) 
+                return false;
 
-            // Фильтр по названию
+
+            if (doc == null) 
+                return false;
+
+
             if (!string.IsNullOrWhiteSpace(Title) &&
                 !doc.Title.Contains(Title, StringComparison.OrdinalIgnoreCase))
                 return false;
-
-            // Фильтр по категориям
+   
             if (Categories.Any(c => c.IsChecked) &&
-                !Categories.Where(c => c.IsChecked).Any(c => c.Name == doc.Category))
-                return false;
+                !Categories.Where(c => c.IsChecked).Any(c => c.Name == doc.Category) )
 
-            // Фильтр по дате
+                    return false;
+
             if (FromDate.HasValue && doc.CreatedAt < FromDate.Value)
                 return false;
             if (ToDate.HasValue && doc.CreatedAt > ToDate.Value)

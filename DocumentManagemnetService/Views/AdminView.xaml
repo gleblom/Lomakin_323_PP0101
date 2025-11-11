@@ -20,12 +20,12 @@
                     Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
                 <materialDesign:PackIcon Kind="Magnify" Height="26" Width="25" />
             </StackPanel>
-            <ComboBox ItemTemplate="{StaticResource ComboBoxTemplate}" 
+            <ComboBox ItemTemplate="{StaticResource UnitComboBoxTemplate}" 
                       ItemsSource="{Binding Units}" 
                       Margin="20,0,0,0" 
                       materialDesign:HintAssist.Hint="Отдел" Height="33">
             </ComboBox>
-            <ComboBox ItemTemplate="{StaticResource UnitComboBoxTemplate}" 
+            <ComboBox ItemTemplate="{StaticResource RoleComboBoxTemplate}" 
                       ItemsSource="{Binding Roles}" 
                       Margin="20,0,0,0" 
                       materialDesign:HintAssist.Hint="Должность" Height="33">

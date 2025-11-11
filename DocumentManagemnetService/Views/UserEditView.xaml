@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:DocumentManagementService.Views"
               xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" 
-             mc:Ignorable="d" ResizeMode="NoResize" Height="420">
+             mc:Ignorable="d" ResizeMode="NoResize" Height="450" Width="850">
 
     <Grid Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}">
         <Grid.ColumnDefinitions>
@@ -19,25 +19,26 @@
 
             <TextBlock  Text="Фамилия" FontSize="20"/>
             <TextBox Margin="10"                
-                     Text="{Binding SecondName}" Height="32"/>
+                     Text="{Binding SecondName, UpdateSourceTrigger=PropertyChanged}" Height="32"/>
 
             <TextBlock Text="Имя" FontSize="20"/>
             <TextBox Margin="10"                  
-                     Text="{Binding FirstName}" Height="32"/>
+                     Text="{Binding FirstName, UpdateSourceTrigger=PropertyChanged}" Height="32"/>
 
             <TextBlock Text="Отчество" FontSize="20"/>
             <TextBox Margin="10"
-                    Text="{Binding ThirdName}"                    
+                    Text="{Binding ThirdName, UpdateSourceTrigger=PropertyChanged}"                    
                      Height="32"/>
 
             <TextBlock Text="Email" FontSize="20"/>
-            <TextBox Margin="10" 
-                    Text="{Binding Email}"             
-                     Height="32"/>
+            <TextBox x:Name="EmailBox"
+                    Margin="10" 
+                    Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"             
+                    Height="32"/>
 
             <TextBlock Text="Телефон" FontSize="20"/>
             <TextBox Margin="10"
-                    Text="{Binding Telephone}"
+                    Text="{Binding Telephone, UpdateSourceTrigger=PropertyChanged}"
                      Height="32"/>
         </StackPanel>
 
@@ -79,32 +80,36 @@
 
             </StackPanel>
 
-            <StackPanel Orientation="Horizontal" Width="255">
-                <Button Command="{Binding SaveUserCommand}" Content="Сохранить" 
+
+            <TextBlock Text="Пароль" FontSize="20"/>
+
+            <PasswordBox materialDesign:HintAssist.HelperText="Пароль доступен только для записи. "
+                         materialDesign:HintAssist.Hint="Пароль"
+                         materialDesign:PasswordBoxAssist.Password="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         materialDesign:TextFieldAssist.HasClearButton="True"
+                         Style="{StaticResource MaterialDesignRevealPasswordBox}" Width="278" Height="32"/>
+
+            <Button Command="{Binding SaveUserCommand}" Content="Сохранить" 
                         Width="105" Margin="0,10" 
                         BorderBrush="{x:Null}" Background="{x:Null}"/>
-                <Button Command="{Binding RemoveUserCommand}" Content="Удалить" 
-                        Width="105" Margin="50, 0" 
-                        BorderBrush="{x:Null}" Background="{x:Null}"/>
-            </StackPanel>
 
         </StackPanel>
 
         <StackPanel Visibility="{Binding IsAddRoleVisible}" Grid.Column="2" Grid.Row="1" Margin="0,0,0,261" HorizontalAlignment="Center">
-            <TextBox Text="{Binding Role}" 
+            <TextBox Text="{Binding CurrentRole, UpdateSourceTrigger=PropertyChanged}" 
                      materialDesign:HintAssist.HelperText="Название должности" 
+                      MaxLength="50"
                      Margin="5"
                      Width="310"/>
 
             <ComboBox Margin="10" Width="310" 
                       ItemsSource="{Binding Categories}"
-                      ItemTemplate="{StaticResource ComboboxItemTemplate}"
+                      ItemTemplate="{StaticResource CategoryComboBoxTemplate}"
+                      materialDesign:HintAssist.Hint="Категории"
                       materialDesign:HintAssist.HelperText="Укажите типы документов, с которыми может работать должность"/>
 
-            <StackPanel Orientation="Horizontal" Margin="10 "  Width="254">
+            <StackPanel Orientation="Horizontal" Margin="10 "  Width="105">
                 <Button Command="{Binding SaveRoleCommand}" Content="Сохранить" Margin="5" Width="110" 
-                    Height="30" Background="{x:Null}" BorderBrush="{x:Null}"/>
-                <Button Command="{Binding RemoveRoleCommand}" Content="Удалить" Margin="5" Width="110" 
                     Height="30" Background="{x:Null}" BorderBrush="{x:Null}"/>
 
             </StackPanel>
@@ -113,20 +118,17 @@
 
         <StackPanel Visibility="{Binding IsAddUnitVisible}" Grid.Column="2" Grid.Row="1" 
                     Margin="0,140,0,0" HorizontalAlignment="Center">
-            <TextBox Text="{Binding Unit}" 
+            <TextBox Text="{Binding CurrentUnit, UpdateSourceTrigger=PropertyChanged}" 
                      materialDesign:HintAssist.HelperText="Название отдела" 
+                     MaxLength="50"
                      Margin="5"
                      Width="310"/>
 
-            <StackPanel Orientation="Horizontal" Margin="10" Width="254">
-                <Button Command="{Binding SaveUnitCommand}" Content="Сохранить" Margin="5" Width="103" 
-                    Height="30" BorderBrush="{x:Null}" Background="{x:Null}"/>
-                <Button Command="{Binding RemoveUnitCommand}" Content="Удалить" Width="110"
-                        Margin="25, 0"
-                        Height="30" BorderBrush="{x:Null}" Background="{x:Null}"/>
-            </StackPanel>
 
-        </StackPanel>
+               <Button Command="{Binding SaveUnitCommand}" Content="Сохранить" Margin="5" Width="103" 
+                    Height="30" BorderBrush="{x:Null}" Background="{x:Null}"/>
+
+            </StackPanel>
 
 
 

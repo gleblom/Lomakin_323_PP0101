@@ -20,7 +20,7 @@ namespace DocumentManagementService.ViewModels
 
             SignInCommand = new RelayCommand(SignIn);
 
-            auth = new AuthService(App.SupabaseService.Client);
+            auth = new AuthService();
         }
         private async void SignIn()
         {

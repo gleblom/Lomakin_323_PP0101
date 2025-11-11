@@ -112,9 +112,8 @@ namespace DocumentManagementService.ViewModels
             {
                 return false;
             }
-            var b = ContainsUser(user);
-            if (/*SelectedUser == user && !ContainsUser(user) && */
-                b)
+             
+            if (ContainsUser(user))
             {
                 return false;
             }
@@ -191,40 +190,6 @@ namespace DocumentManagementService.ViewModels
                 Graph = graphService.BuildGraph(Steps);
             }
         }
-        //private void BuildGraph()
-        //{
-
-        //var graph = new BidirectionalGraph<RouteNode, RouteEdge>();
-
-        //var nodes = Steps.Select((s, index) => new RouteNode //Преобразование списка шагов в список узлов графа
-        //{
-        //    Name = s.Name,          
-        //    StepNumber = index + 1,
-        //    Id = s.Id,
-        //    UserId = s.UserId
-                     
-        // }).ToList(); 
-
-        //    foreach (var node in nodes) 
-        //    {
-        //        graph.AddVertex(node); //Вершины графа
-        //    }
-        //    for (int i = 0; i < nodes.Count - 1; i++) 
-        //    {
-        //        graph.AddEdge(new RouteEdge(nodes[i], nodes[i + 1])); //Рёбра графа
-        //    }
-        //    Graph = graph;
-        //    OnPropertyChanged(nameof(Graph));
-        //    ReindexSteps();
-        //}
-
-        //private void ReindexSteps() //Автоматическое изменение номера шага (этапа)
-        //{
-        //    for (int i = 0; i < Steps.Count; i++)
-        //    {
-        //        Steps[i].StepNumber = i + 1;
-        //    }
-        //}
 
         private async void SaveRoute()
         {
@@ -232,26 +197,7 @@ namespace DocumentManagementService.ViewModels
             UpdateAction();
             MessageBox.Show("Маршрутная карта успешно сохранена!", "Сохранение", MessageBoxButton.OK, MessageBoxImage.Information);
         }
-        //private void LoadRoute(string json)
-        //{
-        //    var dto = JsonSerializer.Deserialize<RouteGraph>(json); //Десериализация графа
-        //    if (dto is null)
-        //    {
-        //        return;
-        //    }
 
-        //    Steps.Clear();
-        //    var idToStep = new Dictionary<string, RouteStep>();
-
-        //    foreach (var node in dto.Nodes)
-        //    {
-        //        var step = new RouteStep { Name = node.Name, StepNumber = node.StepNumber };
-        //        Steps.Add(step);
-        //        idToStep[node.Id] = step;
-        //    }
-
-        //    Graph = graphService.BuildGraph(Steps);
-        //}
         private async void DeleteRoute()
         {
             var result = MessageBox.Show("Вы точно хотите удалить маршрут?", "Внимание!", MessageBoxButton.OKCancel, MessageBoxImage.Warning);

@@ -1,5 +1,4 @@
-﻿using DocumentManagementService.ViewModels;
-using System.Windows;
+﻿using System.Windows;
 
 
 
@@ -11,8 +10,6 @@ namespace DocumentManagementService.Views
         public UserEditView()
         {
             InitializeComponent();
-            UserEditViewModel vm = new();
-            DataContext = vm;
         }
     }
 }

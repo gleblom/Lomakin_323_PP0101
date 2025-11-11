@@ -12,7 +12,6 @@ namespace DocumentManagementService.ViewModels
     public class AdminViewModel : BaseViewModel
     {
         private readonly Client client;
-        private readonly INavigationService navigationService;
         private ObservableCollection<UserView> Users { get; } = [];
         public ObservableCollection<Unit> Units { get; } = [];
         public ObservableCollection<Role> Roles { get; } = [];
@@ -34,8 +33,7 @@ namespace DocumentManagementService.ViewModels
 
                     App.SelectedUser = SelectedUser;
 
-                    
-                    //navigationService.Navigate("UserEdit");
+                   
                 }
             }
         }
@@ -52,12 +50,13 @@ namespace DocumentManagementService.ViewModels
         }
         public AdminViewModel()
         {
-            navigationService = App.NavigationService;
             client = App.SupabaseService.Client;
             CurrentUser = App.CurrentUser;
 
             EditUserCommand = new RelayCommand(OpenUserEditor, 
                 obj => !App.IsWindowOpen<UserEditView>() && SelectedUser != null);
+            AddUserCommand = new RelayCommand(AddUser, 
+                obj => !App.IsWindowOpen<UserEditView>());
 
             LoadUsers();
             LoadRoles();
@@ -69,22 +68,39 @@ namespace DocumentManagementService.ViewModels
             }.View;
 
 
-            FilteredUsers.Filter = obj => FilterUsers(obj as User);
+            FilteredUsers.Filter = obj => FilterUsers(obj as UserView);
         }
 
         private void ApplyFilters() => FilteredUsers.Refresh();
+        private void AddUser()
+        {
+            App.SelectedUser = null;
+            OpenUserEditor();
+        }
         private void OpenUserEditor()
         {
             var userEditWindow = new UserEditView();
             UserEditViewModel vm = new();
             userEditWindow.DataContext = vm;
+            //if (SelectedUser != null) 
+            //{ 
+            //    userEditWindow.EmailBox.IsReadOnly = true;
+            //}
+            //else
+            //{
+            //    userEditWindow.EmailBox.IsReadOnly = false;
+            //}
             userEditWindow.ShowDialog();
 
         }
         private async void LoadRoles()
         {
             Roles.Clear();
-            var roles = await client.From<Role>().Get();
+            var roles = await client.From<Role>()
+                .Where(x => x.Id != 1)
+                .Where(x => x.Id != 2)
+                .Where(x => x.Id != 3)
+                .Get();
             foreach(var role in roles.Models)
             {
                 Roles.Add(role);
@@ -93,6 +109,7 @@ namespace DocumentManagementService.ViewModels
             {
                 item.PropertyChanged += (s, e) => ApplyFilters();
             }
+            ApplyFilters();
         }
         private async void LoadUnits()
         {
@@ -106,6 +123,7 @@ namespace DocumentManagementService.ViewModels
             {
                 item.PropertyChanged += (s, e) => ApplyFilters();
             }
+            ApplyFilters();
         }
         private async void LoadUsers()
         {
@@ -119,13 +137,13 @@ namespace DocumentManagementService.ViewModels
             }
         }
 
-        private bool FilterUsers(User user)
+        private bool FilterUsers(UserView user)
         {
             if(user == null)
             {
                 return false;
             }
-            if (user.RoleId == 1 || user.RoleId == 2 || user.RoleId == 3)
+            if (Units.All(x => x.IsChecked == false) || Roles.All(x => x.IsChecked == false))
             {
                 return false;
             }
@@ -135,18 +153,14 @@ namespace DocumentManagementService.ViewModels
                 return false;
             }
             if (Roles.Any(x => x.IsChecked)
-                && !Roles.Where(x => x.IsChecked).Any(x => x.Id == user.RoleId)) 
-            { 
-                return false; 
+                && !Roles.Where(x => x.IsChecked).Any(x => x.Id == user.RoleId))
+            {
+                return false;
             }
             if (!string.IsNullOrWhiteSpace(Name) &&
                 !user.Display.Contains(Name, StringComparison.OrdinalIgnoreCase))
                 return false;
             return true;
         } 
-        private void AddUser()
-        {
-            navigationService.Navigate("UserEdit");
-        }
     }
 }

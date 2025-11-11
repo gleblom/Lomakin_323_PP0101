@@ -50,7 +50,25 @@
             </DataTemplate>
 
             <DataTemplate x:Key="SelectionUnitBoxTemplate">
-                <TextBlock Text="Должность" Foreground="Gray" />
+                <TextBlock Text="Отдел" Foreground="Gray" />
+            </DataTemplate>
+
+            <DataTemplate x:Key="SelectionCategoryBoxTemplate">
+                <TextBlock Text="Категории" Foreground="Gray" />
+            </DataTemplate>
+
+            <DataTemplate x:Key="CategoryComboBoxTemplate">
+                <ContentPresenter x:Name="Presenter"
+               Content="{Binding}"
+               ContentTemplate="{StaticResource ComboboxItemTemplate}" />
+
+                <DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ComboBoxItem}}" 
+                             Value="{x:Null}">
+                        <Setter TargetName="Presenter" Property="ContentTemplate" 
+                            Value="{StaticResource SelectionCategoryBoxTemplate}" />
+                    </DataTrigger>
+                </DataTemplate.Triggers>
             </DataTemplate>
 
             <DataTemplate x:Key="ComboBoxTemplate">

@@ -9,7 +9,6 @@ namespace DocumentManagemnetService.Views
 {
     public partial class LoginView : Window
     {
-        private readonly AuthService auth;
         public LoginView()
         {
             InitializeComponent();
