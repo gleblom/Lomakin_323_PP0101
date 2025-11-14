@@ -16,7 +16,7 @@ namespace DocumentManagementService.ViewModels
         private readonly GraphService graphService;
         private ApprovalRoute? editingRoute;
         public ObservableCollection<RouteStep> Steps { get; } = []; //Список этапов (шагов) для построения графа
-        public ObservableCollection<User> Users { get; } = [];
+        public ObservableCollection<UserView> Users { get; } = [];
         public ICollectionView FilteredUsers { get;  } 
         public ObservableCollection<Unit> Units { get; } = [];
         public RouteStep SelectedStep { get; set;  }
@@ -31,8 +31,8 @@ namespace DocumentManagementService.ViewModels
         public ICommand SaveCommand { get; }
         public ICommand DeleteCommand { get; }
 
-        private User selectedUser;
-        public User SelectedUser
+        private UserView selectedUser;
+        public UserView SelectedUser
         { 
             get { return selectedUser; }
             set
@@ -99,6 +99,7 @@ namespace DocumentManagementService.ViewModels
             {
                 //LoadRoute(editingRoute.GraphJson);
                Graph = graphService.LoadRoute(editingRoute.GraphJson, Steps);
+               graphService.UpdateRoute(editingRoute, Steps);
             }
             else
             {
@@ -123,19 +124,21 @@ namespace DocumentManagementService.ViewModels
         {
             foreach (var step in Steps)
             {
-                if (step.User?.Id == user.Id)
+                if (step.User.Id == user.Id)
                     { return true; }
             }
             return false;
         }
         private void AddStep()
         {
-            var newStep = new RouteStep 
+            var newStep = new RouteStep
             {
-                Id = SelectedUser.Id.ToString(), 
-                Name = SelectedUser.Display, 
+                Id = SelectedUser.Id.ToString(),
+                Name = SelectedUser.Display,
                 StepNumber = Steps.Count + 1,
-                User = SelectedUser
+                User = SelectedUser,
+                Role = SelectedUser.Role.Name
+
             };
             Steps.Add(newStep);
             SelectedStep = newStep;
@@ -155,7 +158,11 @@ namespace DocumentManagementService.ViewModels
         private async void LoadUsers()
         {
             Users.Clear();
-            var response = await client.From<User>().Where(x => x.UnitId == SelectedUnit.Id).Get();
+            var response = await client.From<UserView>()
+                .Where(x => x.UnitId == SelectedUnit.Id)
+                .Where(x => x.RoleId != 2)
+                .Where(x => x.RoleId != 1)
+                .Get();
             foreach (var user in response.Models) 
             {
                 Users.Add(user);

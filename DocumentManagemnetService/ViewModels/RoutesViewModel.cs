@@ -23,7 +23,6 @@ namespace DocumentManagementService.ViewModels
 
         public ObservableCollection<ApprovalRoute> Routes { get; } = [];
         public ObservableCollection<RouteStep> Steps { get; } = [];
-        public Action ShowAction { get; set; }
 
         private IBidirectionalGraph<RouteNode, RouteEdge> graph;
         public IBidirectionalGraph<RouteNode, RouteEdge> Graph

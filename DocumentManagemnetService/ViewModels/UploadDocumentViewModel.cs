@@ -14,12 +14,12 @@ namespace DocumentManagementService.ViewModels
     {
         private readonly Client client;
         private readonly DocumentService documentService;
+        private readonly User currentUser;
         public string SelectedFileName { get; set; }
         public bool IsDraggingFile { get; set; }
         public ObservableCollection<Category> Categories { get; } = [];
         public ICommand SelectFileCommand { get; }
         public ICommand SubmitCommand { get; }
-
         private string selectedFilePath;
 
 
@@ -75,6 +75,7 @@ namespace DocumentManagementService.ViewModels
         public UploadDocumentViewModel(DocumentService documentService) 
         {
             SelectFileCommand = new RelayCommand(OpenFileDialog);
+            currentUser = App.CurrentUser;
 
             SubmitCommand = new RelayCommand(SubmitDocument, obj => 
             (SelectedFileCategory != null 
@@ -90,10 +91,11 @@ namespace DocumentManagementService.ViewModels
         public async void LoadCategries()
         {
             Categories.Clear();
-            var categories = await client.From<Category>().Get();
+            var categories = await client.From<RoleCategory>()
+                .Where(x => x.RoleId == currentUser.RoleId).Get();
             foreach (var category in categories.Models) 
             {
-                Categories.Add(category);
+                Categories.Add(category.Category);
             }
         }
         private void OpenFileDialog()

@@ -32,7 +32,7 @@
                       SelectedItem="{Binding SelectedCategory}"
                       materialDesign:HintAssist.Hint="Категория документа" 
                           Foreground="White" BorderBrush="White"/>
-            </StackPanel>
+        </StackPanel>
 
         <ListBox Name="RoutesList" 
                  Grid.Row="1" Grid.Column="0"
@@ -63,16 +63,24 @@
                                     OverlapRemovalAlgorithmType="FSA" />
         </Border>
         <StackPanel Grid.Row="2">
-            <Button Content="Отправить на согласование" Width="225"
+            <Button x:Name="OnApprove"
+                    Content="Отправить на согласование" Width="225"
                     Command="{Binding OnApproveCommand}"
                     Background="{x:Null}" 
                     BorderBrush="#FF040000"/>
         </StackPanel>
         <StackPanel Grid.Row="2" Grid.Column="1">
-            <Button Content="Отмена" Width="140"
+            <Button x:Name="Cancel"
+                    Content="Отмена" Width="140"
                     Command="{Binding CancelCommand}"
                     BorderBrush="Black"
                     Background="{x:Null}"/>
         </StackPanel>
+        <Button Command="{Binding CreateRouteCommand}" Grid.Column="1" x:Name="NewRoute" Margin="86,2,156,2" Visibility="Collapsed" Background="{x:Null}" BorderBrush="{x:Null}">
+            <StackPanel Orientation="Horizontal">
+                <materialDesign:PackIcon Kind="Add"/>
+                <TextBlock Text="Новый маршрут"/>
+            </StackPanel>
+        </Button>
     </Grid>
 </UserControl>

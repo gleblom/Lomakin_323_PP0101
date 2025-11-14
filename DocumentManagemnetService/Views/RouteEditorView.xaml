@@ -39,7 +39,10 @@
                          Height="66" BorderBrush="#FF020000">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Display}" />
+                            <StackPanel>
+                                <TextBlock Text="{Binding Display}"/>
+                                <TextBlock FontSize="10" Text="{Binding Role}"/>
+                            </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
@@ -91,11 +94,12 @@
                 <TextBlock Text="Отдел" Width="300" FontSize="16"/>
                 <ComboBox Margin="10"                        
                            ItemsSource="{Binding Units}"
+                          
                           SelectedItem="{Binding SelectedUnit}"                    
                           Width="300" Height="50" Background="{x:Null}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding UnitName}" FontSize="16" />
+                            <TextBlock Text="{Binding Name}" FontSize="16" />
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>

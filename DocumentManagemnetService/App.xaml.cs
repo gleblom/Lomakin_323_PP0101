@@ -2,7 +2,6 @@
 using DocumentManagementService.Models;
 using DocumentManagementService.Views;
 using DocumentManagemnetService.Views;
-using Supabase;
 using System.Windows;
 
 namespace DocumentManagemnetService

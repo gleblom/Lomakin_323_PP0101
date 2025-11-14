@@ -117,10 +117,11 @@
 
 
             <DataTemplate DataType="{x:Type local1:RouteNode}" x:Key="RouteNodeTemplate">
-                <Border Background="LightBlue" CornerRadius="8" Padding="8" BorderBrush="SteelBlue" BorderThickness="1">
+                <Border Background="{Binding NodeColour}" CornerRadius="8" Padding="8">
                     <StackPanel>
                         <TextBlock Text="{Binding StepNumber, StringFormat='Этап {0}'}"  FontWeight="Bold" />
                         <TextBlock Text="{Binding Name}" FontStyle="Italic" />
+                        <TextBlock Text="{Binding Role}"  FontStyle="Italic"/>
                     </StackPanel>
                 </Border>
             </DataTemplate>

@@ -24,7 +24,8 @@ namespace DocumentManagementService
             routes["MyDocuments"] = () => new MyDocumentsView();
             routes["RouteView"] = () => new RoutesView();
             routes["AdminView"] = () => new AdminView();
-            routes["CkerkView"] = () => new RoutesView();
+            routes["ClerkView"] = () => new RoutesView();
+            routes["View"] = () => new PdfViewerView();
         }
 
         public void Navigate(string pageKey)

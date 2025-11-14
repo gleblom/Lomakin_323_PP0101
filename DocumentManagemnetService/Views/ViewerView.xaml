@@ -5,19 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:DocumentManagementService.Views" 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"     
-             xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
-             xmlns:wfi="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration" xmlns:pdfiumviewer="clr-namespace:PdfiumViewer;assembly=PdfiumViewer"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" Unloaded="UserControl_Unloaded"
+             d:DesignHeight="450" d:DesignWidth="800"
              >
     <Grid Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-
-
-        <wfi:WindowsFormsHost Grid.Column="1" Name="pdfHost" />
 
         <StackPanel Grid.Column="0" Background="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}" HorizontalAlignment="Left" Width="177">
             <ListBox
@@ -33,6 +28,8 @@
                 </ListBox.ItemTemplate>
             </ListBox>
         </StackPanel>
-
+        <Frame Grid.Column="2" x:Name="DocFrame"
+                   NavigationUIVisibility="Hidden"
+                   Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}" />
     </Grid>
 </UserControl>

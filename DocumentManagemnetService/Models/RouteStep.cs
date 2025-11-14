@@ -1,9 +1,4 @@
 ﻿using DocumentManagementService.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DocumentManagementService.Models
 {
@@ -12,8 +7,19 @@ namespace DocumentManagementService.Models
     {
         public string Id { get; set; }
         public User User { get; set; }
+
+        private string role;
+        public string Role
+        {
+            get {  return role; }
+            set
+            {
+                role = value;
+                OnPropertyChanged();
+            }
+        }
+
         private string name;
-        private int stepNumber;
         public string Name {
             get => name;
             set
@@ -23,6 +29,7 @@ namespace DocumentManagementService.Models
                 OnPropertyChanged(nameof(Display));
             }
         }
+        private int stepNumber;
         public int StepNumber
         {
             get => stepNumber;

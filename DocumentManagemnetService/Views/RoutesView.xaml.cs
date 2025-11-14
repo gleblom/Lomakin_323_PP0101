@@ -1,6 +1,7 @@
 ﻿using DocumentManagementService.ViewModels;
 using DocumentManagemnetService;
 using System.Windows.Controls;
+using System.Windows;
 
 namespace DocumentManagementService.Views
 {
@@ -12,13 +13,15 @@ namespace DocumentManagementService.Views
             InitializeComponent();
             RoutesViewModel vm = new();
             DataContext = vm;
-            vm.ShowAction ??= new Action(ShowButtons);
 
-        }
-        public void ShowButtons()
-        {
-            //CreateRoute.Visibility = Visibility.Visible;
-            //EditRoute.Visibility = Visibility.Visible;
+
+            if (App.CurrentUser.RoleId == 2)
+            {
+                NewRoute.Visibility = Visibility.Visible;
+                Cancel.Visibility = Visibility.Collapsed;
+                OnApprove.Visibility = Visibility.Collapsed;
+            }
+
         }
     }
 }

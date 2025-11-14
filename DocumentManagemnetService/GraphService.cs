@@ -28,6 +28,8 @@ namespace DocumentManagementService
                 Name = s.Name,
                 StepNumber = index + 1,
                 Id = s.Id,
+                Role = s.Role
+               
 
 
             }).ToList();
@@ -51,7 +53,7 @@ namespace DocumentManagementService
                 Id = $"n{i}",
                 StepNumber = s.StepNumber,
                 Name = s.Name,
-                UserId = s.Id
+                UserId = s.User.Id.ToString(),
 
             }).ToList();
 
@@ -108,7 +110,7 @@ namespace DocumentManagementService
         }
         public async void UpdateRoute(ApprovalRoute editingRoute, ObservableCollection<RouteStep> Steps)
         {
-            var model = await client.From<User>().Get();
+            var model = await client.From<UserView>().Get();
             var Users = model.Models;
             for (int i = 0; i < Steps.Count; i++)
             {
@@ -117,6 +119,7 @@ namespace DocumentManagementService
                     if (Steps[i].Name != Users[i].Display)
                     {
                         Steps[i].Name = Users[i].Display;
+                        Steps[i].Role = Users[i].Role.Name;
                     }
                 }
             }

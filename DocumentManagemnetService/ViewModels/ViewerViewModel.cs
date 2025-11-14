@@ -1,51 +1,40 @@
 ﻿using DocumentManagementService.Models;
-using DocumentManagemnetService;
-using Microsoft.Office.Interop.Word;
-using PdfiumViewer;
-using Supabase;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Windows.Xps.Packaging;
-using Document = DocumentManagementService.Models.Document;
+
 
 namespace DocumentManagementService.ViewModels
 {
     class ViewerViewModel: BaseViewModel
     {
-        private readonly Client client;
+        private readonly INavigationService navigationService;
         public ObservableCollection<MenuItemModel> DocumentItems { get; }
-        public ViewDocument SelectedDocument { get; set; }
-        private PdfDocument document;
-        public PdfDocument Document
+
+        private MenuItemModel selectedDocumentItem;
+        public MenuItemModel SelectedDocumentItem
         {
-            get { return document; }
+            get { return selectedDocumentItem; }
             set
             {
-                if(document != null)
+                if (selectedDocumentItem != value)
                 {
-                    document = value;
-                    OnPropertyChanged(nameof(document)); 
-                }
 
+                    selectedDocumentItem = value;
+                    OnPropertyChanged();
+
+                    navigationService.Navigate(selectedDocumentItem?.PageKey); 
+                }
             }
         }
-        public ViewerViewModel()
+        public ViewerViewModel(INavigationService navigationService)
         {
-            client = App.SupabaseService.Client;
-            SelectedDocument = App.SelectedDocument;
- 
+            this.navigationService = navigationService;
             DocumentItems =
                 [
                     new("Просмотр", "Image", "View"),
-                    new("Связанные документы",  "LinkVariant", "Link"),
                     new("Комментарии", "CommentOutline", "Comments"),
-                    new("Прошлые версии", "ClockOutline", "Versions"),
                     new("Согласование", "Check", "Approvement")
                 ];
+            navigationService.Navigate("View");
         }
     }
 }
