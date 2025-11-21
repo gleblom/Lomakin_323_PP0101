@@ -1,4 +1,4 @@
-﻿<Window x:Class="DocumentManagemnetService.Views.LoginView"
+﻿<UserControl x:Class="DocumentManagemnetService.Views.LoginView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:DocumentManagemnetService.Views"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Height="645" Width="960" ResizeMode="NoResize" Topmost="True" WindowStartupLocation="CenterScreen">
+        Height="645" Width="960">
     <Grid Background="White">
         <TextBox Text="{Binding SignInEmail}" 
             x:Name="EmailBox"
@@ -27,5 +27,8 @@
         <Label Content="   Система управления корпоративными  &#xA;&#x9;         документами"
                Margin="279,86,281,0" VerticalAlignment="Top"
                Background="#78B24B" Height="70" Foreground="#E5FFFFFF" FontSize="20"/>
+        <TextBlock Text="Ещё не в системе?" Margin="350,586,459,41" FontWeight="Bold" FontSize="16"/>
+        <Button Content="Зарегистрироваться" Command="{Binding SignUpCommand}" Margin="487,581,300,32" 
+                FontWeight="Bold" Background="{x:Null}" BorderBrush="{x:Null}"/>
     </Grid>
-</Window>
+</UserControl>

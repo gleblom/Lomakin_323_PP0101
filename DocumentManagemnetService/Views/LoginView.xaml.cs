@@ -1,20 +1,18 @@
 ﻿using DocumentManagementService;
 using DocumentManagementService.ViewModels;
-using DocumentManagementService.Views;
-using Supabase;
-using System.Windows;
+
+using System.Windows.Controls;
 
 
 namespace DocumentManagemnetService.Views
 {
-    public partial class LoginView : Window
+    public partial class LoginView : UserControl
     {
         public LoginView()
         {
             InitializeComponent();
             LoginViewModel vm = new();
             DataContext = vm;
-            vm.CloseAction ??= new Action(Close);
         }
     }
 }

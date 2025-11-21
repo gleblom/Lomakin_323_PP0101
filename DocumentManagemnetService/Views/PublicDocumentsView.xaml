@@ -23,12 +23,14 @@
                     Text="{Binding SearchQuery}"/>
                 <materialDesign:PackIcon Kind="Magnify" Height="26" Width="25" />
             </StackPanel>
-            <ComboBox ItemTemplate="{StaticResource ComboBoxTemplate}" 
-                      ItemsSource="{Binding ItemsSource}" 
+            <ComboBox ItemTemplate="{StaticResource CategoryComboBoxTemplate}" 
+                      ItemsSource="{Binding Categories}" 
                       Margin="20,0,0,0" 
                       materialDesign:HintAssist.Hint="Тип документа" Height="33">
             </ComboBox>
-            <ComboBox Margin="20,0,0,0" materialDesign:HintAssist.Hint="Автор" Height="33"/>
+            <ComboBox Margin="20,0,0,0" materialDesign:HintAssist.Hint="Автор" Height="33" Width="100"
+                      ItemsSource="{Binding Users}"
+                      ItemTemplate="{StaticResource AuthorComboBoxTemplate}"/>
             <TextBlock Margin="20,10,0,0" Text="Дата загрузки:" Height="18" Foreground="Gray"/>
             <DatePicker Margin="10,0,0,0"
                         Width="100"
@@ -58,7 +60,7 @@
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseDoubleClick">
                     <i:InvokeCommandAction 
-                                Command="{Binding MouseDoubleClickCommand}"
+                                Command="{Binding SelectionCommand}"
                                 CommandParameter="{Binding ElementName=DocumentGrid, 
                                 Path=SelectedItem}" />
                 </i:EventTrigger>

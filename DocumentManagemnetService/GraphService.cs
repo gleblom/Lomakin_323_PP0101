@@ -5,6 +5,7 @@ using QuickGraph;
 using Supabase;
 using System.Collections.ObjectModel;
 using System.Text.Json;
+using System.Windows.Media;
 
 namespace DocumentManagementService
 {
@@ -12,11 +13,68 @@ namespace DocumentManagementService
     public class GraphService
     {
         private readonly Client client;
-        //public ObservableCollection<RouteStep> Steps { get; } = [];
         public ObservableCollection<ApprovalRoute> Routes { get; } = [];
+        public ObservableCollection<UserView> Users { get; } = [];
         public GraphService()
         {
             client = App.SupabaseService.Client;
+            LoadUsers();
+        }
+        private async void LoadUsers()
+        {
+            Users.Clear();
+            var response = await client.From<UserView>()
+                .Where(x => x.RoleId != 2)
+                .Where(x => x.RoleId != 1)
+                .Get();
+            foreach (var user in response.Models)
+            {
+                Users.Add(user);
+            }
+
+        }
+        public BidirectionalGraph<RouteNode, RouteEdge> BuildGraph(ObservableCollection<RouteStep> Steps, ViewDocument document)
+        {
+
+            var graph = new BidirectionalGraph<RouteNode, RouteEdge>();
+
+            var nodes = Steps.Select((s, index) => new RouteNode //Преобразование списка шагов в список узлов графа
+            {
+                Name = s.Name,
+                StepNumber = index + 1,
+                Id = s.Id,
+                Role = s.Role,
+                User = s.User,
+
+
+
+            }).ToList();
+
+            int currentStep = document.CurrentStepIndex;
+
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                if (currentStep > 0 && document.Status != "Отклонён")
+                {
+                    nodes[i].NodeColour = Brushes.LightGreen;
+                }
+                if (currentStep > 0 && document.Status == "Отклонён")
+                {
+                    nodes[i].NodeColour = Brushes.Red;
+                }
+                currentStep--;
+                graph.AddVertex(nodes[i]);
+            }
+            //foreach (var node in nodes)
+            //{
+            //    graph.AddVertex(node); //Вершины графа
+            //}
+            for (int i = 0; i < nodes.Count - 1; i++)
+            {
+                graph.AddEdge(new RouteEdge(nodes[i], nodes[i + 1])); //Рёбра графа
+            }
+            ReindexSteps(Steps);
+            return graph;
         }
         public BidirectionalGraph<RouteNode, RouteEdge> BuildGraph(ObservableCollection<RouteStep> Steps)
         {
@@ -54,6 +112,7 @@ namespace DocumentManagementService
                 StepNumber = s.StepNumber,
                 Name = s.Name,
                 UserId = s.User.Id.ToString(),
+                Role = s.Role
 
             }).ToList();
 
@@ -116,17 +175,15 @@ namespace DocumentManagementService
             {
                 if (Steps[i].User.Id == Users[i].Id)
                 {
-                    if (Steps[i].Name != Users[i].Display)
-                    {
-                        Steps[i].Name = Users[i].Display;
-                        Steps[i].Role = Users[i].Role.Name;
-                    }
+                     Steps[i].Name = Users[i].Display;
+                     Steps[i].Role = Users[i].Role.Name;
                 }
             }
             SaveRoute(editingRoute, editingRoute.Name, Steps);
         }
         public BidirectionalGraph<RouteNode, RouteEdge> LoadRoute(string json, ObservableCollection<RouteStep> Steps)
         {
+
             var dto = JsonSerializer.Deserialize<RouteGraph>(json); //Десериализация графа
             if (dto is null)
             {
@@ -138,12 +195,49 @@ namespace DocumentManagementService
 
             foreach (var node in dto.Nodes)
             {
-                var step = new RouteStep { Name = node.Name, StepNumber = node.StepNumber };
+                var user = Users.Where(x => x.Id.ToString() == node.UserId).First();
+                var step = new RouteStep 
+                { 
+                    Name = node.Name,
+                    StepNumber = node.StepNumber, 
+                    Role = node.Role,
+                    User = user,
+                    
+                };
                 Steps.Add(step);
                 idToStep[node.Id] = step;
             }
 
             return BuildGraph(Steps);
+        }
+        public BidirectionalGraph<RouteNode, RouteEdge> LoadRoute(string json, ObservableCollection<RouteStep> Steps, ViewDocument document)
+        {
+
+            var dto = JsonSerializer.Deserialize<RouteGraph>(json); //Десериализация графа
+            if (dto is null)
+            {
+                return null;
+            }
+
+            Steps.Clear();
+            var idToStep = new Dictionary<string, RouteStep>();
+
+            foreach (var node in dto.Nodes)
+            {
+                var user = Users.Where(x => x.Id.ToString() == node.UserId).First();
+                var step = new RouteStep
+                {
+                    Name = node.Name,
+                    StepNumber = node.StepNumber,
+                    Role = node.Role,
+                    User = user,
+
+                };
+                Steps.Add(step);
+                idToStep[node.Id] = step;
+            }
+
+            return BuildGraph(Steps, document);
         }
         public async void LoadRoutes()
         {

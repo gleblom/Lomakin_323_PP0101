@@ -1,4 +1,5 @@
 ﻿using DocumentManagementService.Models;
+using DocumentManagementService.Views;
 using DocumentManagemnetService;
 using DocumentManagemnetService.Views;
 using System.Collections.ObjectModel;
@@ -34,7 +35,7 @@ namespace DocumentManagementService.ViewModels
                 }
             }
         }
-        public MenuViewModel(int userRole)
+        public MenuViewModel(int? userRole)
         {
             authService = new AuthService();
             LeaveCommand = new RelayCommand(Leave);
@@ -48,6 +49,18 @@ namespace DocumentManagementService.ViewModels
                 case 2:
                     navigationService.Navigate("ClerkView");
                     break;
+                case 3:
+                    MenuItems =
+                    [
+                        new("Новый документ", "PencilPlus", "UploadDocument"),
+                        new("Все документы", "File", "AllDocuments"),
+                        new("Мои документы", "AccountFileTextOutline", "MyDocuments"),
+                        new("Входящие", "ArrowRightThin", "Incoming"),
+                        new("Дирекция", "AccountArrowUpOutline", "Director")
+                   ];
+                   
+                    navigationService.Navigate("AllDocuments");
+                    break;
                 default:
                     MenuItems =
                     [
@@ -55,7 +68,6 @@ namespace DocumentManagementService.ViewModels
                         new("Все документы", "File", "AllDocuments"),
                         new("Мои документы", "AccountFileTextOutline", "MyDocuments"),
                         new("Входящие", "ArrowRightThin", "Incoming"),
-                        new("Исходящие", "ArrowLeftThin", "Outcoming"),
                    ];
                     navigationService.Navigate("AllDocuments");
                     break;
@@ -70,7 +82,7 @@ namespace DocumentManagementService.ViewModels
         private async void Leave()
         {
             await authService.SignOutAsync();
-            Application.Current.MainWindow = new LoginView();
+            Application.Current.MainWindow = new StartupView();
             Application.Current.MainWindow.Show();
             CloseAction();
         }

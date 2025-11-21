@@ -9,12 +9,11 @@ using System.Windows.Input;
 
 namespace DocumentManagementService.ViewModels
 {
-    public class AdminViewModel : BaseViewModel
+    public class DirectorViewModel: BaseViewModel
     {
         private readonly Client client;
+        public ObservableCollection<ViewRole> Roles { get; } = [];
         private ObservableCollection<UserView> Users { get; } = [];
-        public ObservableCollection<Unit> Units { get; } = [];
-        public ObservableCollection<Role> Roles { get; } = [];
         public ICollectionView FilteredUsers { get; }
         public ICommand AddUserCommand { get; }
         public ICommand EditUserCommand { get; }
@@ -33,7 +32,7 @@ namespace DocumentManagementService.ViewModels
 
                     App.SelectedUser = SelectedUser;
 
-                   
+
                 }
             }
         }
@@ -48,19 +47,19 @@ namespace DocumentManagementService.ViewModels
                 ApplyFilters();
             }
         }
-        public AdminViewModel()
+        public DirectorViewModel()
         {
             client = App.SupabaseService.Client;
             CurrentUser = App.CurrentUser;
 
-            EditUserCommand = new RelayCommand(OpenUserEditor, 
-                obj => !App.IsWindowOpen<UserEditView>() && SelectedUser != null);
-            AddUserCommand = new RelayCommand(AddUser, 
-                obj => !App.IsWindowOpen<UserEditView>());
+            EditUserCommand = new RelayCommand(OpenUserEditor,
+    obj => !App.IsWindowOpen<ClerkEditView>() && SelectedUser != null);
+            AddUserCommand = new RelayCommand(AddUser,
+                obj => !App.IsWindowOpen<ClerkEditView>());
 
             LoadUsers();
             LoadRoles();
-            LoadUnits();
+
 
             FilteredUsers = new CollectionViewSource
             {
@@ -70,7 +69,6 @@ namespace DocumentManagementService.ViewModels
 
             FilteredUsers.Filter = obj => FilterUsers(obj as UserView);
         }
-
         private void ApplyFilters() => FilteredUsers.Refresh();
         private void AddUser()
         {
@@ -79,8 +77,8 @@ namespace DocumentManagementService.ViewModels
         }
         private void OpenUserEditor()
         {
-            var userEditWindow = new UserEditView();
-            UserEditViewModel vm = new();
+            var userEditWindow = new ClerkEditView();
+            ClerkEditViewModel vm = new();
             userEditWindow.DataContext = vm;
             userEditWindow.ShowDialog();
 
@@ -88,12 +86,10 @@ namespace DocumentManagementService.ViewModels
         private async void LoadRoles()
         {
             Roles.Clear();
-            var roles = await client.From<Role>()
-                .Where(x => x.Id != 1)
-                .Where(x => x.Id != 2)
-                .Where(x => x.Id != 3)
+            var roles = await client.From<ViewRole>()
+                .Where(x => x.Id == 1 || x.Id == 2)
                 .Get();
-            foreach(var role in roles.Models)
+            foreach (var role in roles.Models)
             {
                 Roles.Add(role);
             }
@@ -103,44 +99,21 @@ namespace DocumentManagementService.ViewModels
             }
             ApplyFilters();
         }
-        private async void LoadUnits()
-        {
-            Units.Clear();
-            var units = await client.From<Unit>().Where(x => x.CompanyId == CurrentUser.CompanyId).Get();
-            foreach(var unit in units.Models)
-            {
-                Units.Add(unit);
-            }
-            foreach (var item in Units)
-            {
-                item.PropertyChanged += (s, e) => ApplyFilters();
-            }
-            ApplyFilters();
-        }
         private async void LoadUsers()
         {
-            var users = await client.From<UserView>().
-                Where(x => x.CompanyId == App.CurrentUser.CompanyId).
-                Get();
+            var users = await client.From<UserView>()
+                .Where(x => x.CompanyId == App.CurrentUser.CompanyId)
+                .Where(x => x.RoleId == 2 || x.RoleId == 1)
+                .Get();
 
             foreach (var user in users.Models)
             {
                 Users.Add(user);
             }
         }
-
         private bool FilterUsers(UserView user)
         {
-            if(user == null)
-            {
-                return false;
-            }
-            if (Units.All(x => x.IsChecked == false) || Roles.All(x => x.IsChecked == false))
-            {
-                return false;
-            }
-            if (Units.Any(x => x.IsChecked)
-                && !Units.Where(x => x.IsChecked).Any(x => x.Id == user.UnitId)) 
+            if (user == null)
             {
                 return false;
             }
@@ -153,6 +126,6 @@ namespace DocumentManagementService.ViewModels
                 !user.Display.Contains(Name, StringComparison.OrdinalIgnoreCase))
                 return false;
             return true;
-        } 
+        }
     }
 }

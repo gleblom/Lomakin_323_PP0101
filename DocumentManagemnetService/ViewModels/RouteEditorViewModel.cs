@@ -69,12 +69,12 @@ namespace DocumentManagementService.ViewModels
         }
 
         private void ApplyFilters() => FilteredUsers.Refresh();
-        public RouteEditorViewModel(ApprovalRoute? route = null)
+        public RouteEditorViewModel(GraphService graphService, ApprovalRoute? route = null)
         {
             CurrentUser = App.CurrentUser;
             client = App.SupabaseService.Client;
             editingRoute = route;
-            graphService = new GraphService();
+            this.graphService = graphService;
 
             AddStepCommand = new RelayCommand(AddStep, obj => SelectedUser != null);
             RemoveStepCommand = new RelayCommand(RemoveStep, obj => SelectedStep != null);
@@ -93,7 +93,7 @@ namespace DocumentManagementService.ViewModels
 
             }.View;
 
-            FilteredUsers.Filter = obj => FilterUsers(obj as User);
+            FilteredUsers.Filter = obj => FilterUsers(obj as UserView);
 
             if (editingRoute != null)
             {
@@ -106,7 +106,7 @@ namespace DocumentManagementService.ViewModels
                 Graph = graphService.BuildGraph(Steps);
             }
         }
-        private bool FilterUsers(User user)
+        private bool FilterUsers(UserView user)
         {
 
             if (user == null)
@@ -120,7 +120,7 @@ namespace DocumentManagementService.ViewModels
             }
             return true;
         }
-        private bool ContainsUser(User user)
+        private bool ContainsUser(UserView user)
         {
             foreach (var step in Steps)
             {

@@ -122,8 +122,14 @@ namespace DocumentManagementService.Views
             pdfViewer?.Dispose();
             pdfStream?.Dispose();
 
-            File.Delete(pdfFile);
-            File.Delete(docFile);
+            if (pdfViewer != null) 
+            {
+                File.Delete(pdfFile);
+            }
+            if(docFile != null)
+            {
+                File.Delete(docFile);
+            }
 
             pdfViewer = null;
             pdfStream = null;

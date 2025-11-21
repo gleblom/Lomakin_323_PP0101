@@ -1,16 +1,16 @@
-﻿using System.Windows;
+﻿using DocumentManagementService.ViewModels;
+using System.Windows.Controls;
 using System.Windows.Input;
-
-
 
 namespace DocumentManagementService.Views
 {
 
-    public partial class UserEditView : Window
+    public partial class CompanyRegisterView : UserControl
     {
-        public UserEditView()
+        public CompanyRegisterView()
         {
             InitializeComponent();
+            DataContext = new CompanyRegisterViewModel();
         }
 
         private void TextBox_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -20,10 +20,5 @@ namespace DocumentManagementService.Views
                 e.Handled = true;
             }
         }
-        public void DisableEmailBox()
-        {
-            EmailBox.IsEnabled = false;
-        }
-
     }
 }

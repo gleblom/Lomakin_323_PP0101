@@ -108,6 +108,7 @@ namespace DocumentManagementService.Views
 
         private void OnApprove()
         {
+            App.SelectedDocument = selectedDocument;
             navigationService.Navigate("RouteView");
         }
 

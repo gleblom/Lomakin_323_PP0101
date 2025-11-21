@@ -59,11 +59,14 @@
                 <DataGridTemplateColumn Width="100">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button 
+                            <Button
+                                
                                 Style="{StaticResource MaterialDesignIconButton}" 
                                 MouseRightButtonDown="Button_Click" 
                                 Width="50" Height="20">
-                                <materialDesign:PackIcon Kind="DotsHorizontal" />
+                                <StackPanel>
+                                    <materialDesign:PackIcon Kind="DotsHorizontal" />
+                                </StackPanel>
                             </Button>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -72,7 +75,7 @@
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseDoubleClick">
                     <i:InvokeCommandAction 
-                                Command="{Binding MouseDoubleClickCommand}"
+                                Command="{Binding SelectionCommand}"
                                 CommandParameter="{Binding ElementName=DocumentGrid}" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>

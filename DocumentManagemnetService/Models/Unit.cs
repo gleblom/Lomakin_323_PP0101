@@ -18,7 +18,7 @@ namespace DocumentManagementService.Models
         [Column("unit_name")]
         public string Name { get; set; }
         [Column("company_id")]
-        public Guid CompanyId { get; set; }
+        public Guid? CompanyId { get; set; }
 
         private bool isChecked = true;
 

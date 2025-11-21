@@ -1,9 +1,8 @@
 ﻿using DocumentManagementService.DTO;
 using DocumentManagementService.Models;
+using DocumentManagemnetService;
 using Supabase;
-using System.Collections.ObjectModel;
 using System.IO;
-using System.Security.Policy;
 using System.Text.Json;
 
 
@@ -13,9 +12,9 @@ namespace DocumentManagementService
     {
         private readonly Client client;
 
-        public DocumentService(Client client)
+        public DocumentService()
         {
-            this.client = client;
+            client = App.SupabaseService.Client;
         }
         public async Task<bool> AddDocumentAsync(string title, int category, int status, string localFilePath)
         {
@@ -94,6 +93,8 @@ namespace DocumentManagementService
                 var update = await client.From<Document>()
                     .Where(x => x.Id == document.Id)
                     .Set(x => x.Status, 2)
+                    .Set(x => x.RouteId, route.Id)
+                    .Set(x => x.CurrentStepIndex, 0)
                     .Update();
 
             }
@@ -123,7 +124,7 @@ namespace DocumentManagementService
             var route = await client.From<ApprovalRoute>().Where(x => x.Id == routeId).Get();
             return route.Model;
         }
-        public async Task<bool> ApproveCurrentStepAsync(Document doc, bool approved)
+        public async Task<bool> ApproveCurrentStepAsync(ViewDocument doc, bool approved, string? comment)
         {
             var route = await GetApprovalRouteById(doc.RouteId);
             if (route == null)
@@ -150,7 +151,8 @@ namespace DocumentManagementService
                 DocumentId = doc.Id,
                 UserId = currentUserId,
                 StepIndex = currentIndex,
-                IsApproved = true
+                IsApproved = true,
+                Comment = comment
             };
             await client.From<DocumentApprovals>().Insert(approval);
 

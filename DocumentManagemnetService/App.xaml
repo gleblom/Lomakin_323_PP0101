@@ -5,7 +5,7 @@
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:graph="clr-namespace:GraphSharp.Controls;assembly=GraphSharp.Controls" 
              xmlns:local1="clr-namespace:DocumentManagementService.Models" 
-             ShutdownMode="OnMainWindowClose"
+             ShutdownMode="OnLastWindowClose"
              >
     <Application.Resources>
         <ResourceDictionary>
@@ -41,6 +41,14 @@
                 </StackPanel>
             </DataTemplate>
 
+            <DataTemplate x:Key="AuthorComboboxItemTemplate">
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay}" 
+                              Background="{DynamicResource PrimaryHueDarkBrush}"/>
+                    <TextBlock Text="{Binding Display}"/>
+                </StackPanel>
+            </DataTemplate>
+
             <DataTemplate x:Key="SelectionBoxTemplate">
                 <TextBlock Text="Тип документа" Foreground="Gray" />
             </DataTemplate>
@@ -55,6 +63,24 @@
 
             <DataTemplate x:Key="SelectionCategoryBoxTemplate">
                 <TextBlock Text="Категории" Foreground="Gray" />
+            </DataTemplate>
+            
+            <DataTemplate x:Key="SelectionAuthorBoxTemplate">
+                <TextBlock Text="Категории" Foreground="Gray" />
+            </DataTemplate>
+
+            <DataTemplate x:Key="AuthorComboBoxTemplate">
+                <ContentPresenter x:Name="Presenter"
+               Content="{Binding}"
+               ContentTemplate="{StaticResource AuthorComboboxItemTemplate}" />
+
+                <DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ComboBoxItem}}" 
+                             Value="{x:Null}">
+                        <Setter TargetName="Presenter" Property="ContentTemplate" 
+                            Value="{StaticResource SelectionAuthorBoxTemplate}" />
+                    </DataTrigger>
+                </DataTemplate.Triggers>
             </DataTemplate>
 
             <DataTemplate x:Key="CategoryComboBoxTemplate">
@@ -117,7 +143,8 @@
 
 
             <DataTemplate DataType="{x:Type local1:RouteNode}" x:Key="RouteNodeTemplate">
-                <Border Background="{Binding NodeColour}" CornerRadius="8" Padding="8">
+                <Border Background="{Binding NodeColour}" CornerRadius="8" Padding="8"
+                        Tag="{Binding StepNumber}" PreviewMouseDown="Border_PreviewMouseDown">
                     <StackPanel>
                         <TextBlock Text="{Binding StepNumber, StringFormat='Этап {0}'}"  FontWeight="Bold" />
                         <TextBlock Text="{Binding Name}" FontStyle="Italic" />

@@ -3,13 +3,11 @@ using Supabase.Postgrest.Models;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
-using ColumnAttribute = Supabase.Postgrest.Attributes.ColumnAttribute;
-using TableAttribute = Supabase.Postgrest.Attributes.TableAttribute;
 
 namespace DocumentManagementService.Models
 {
-    [Table("roles")]
-    public class Role : BaseModel, INotifyPropertyChanged
+    [Table("role_view")]
+    public class ViewRole : BaseModel, INotifyPropertyChanged
     {
         [Column("role_id")]
         public int Id { get; set; }
@@ -29,16 +27,8 @@ namespace DocumentManagementService.Models
             }
         }
 
-        [Reference(typeof(RoleCategory))]
-        public List<RoleCategory> RoleCategories { get; set; }
-
-        [IgnoreDataMember]
-        public List<Category> Categories =>
-            RoleCategories?.Select(rc => rc.Category).ToList() ?? [];
-
         public event PropertyChangedEventHandler? PropertyChanged;
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
     }
 }

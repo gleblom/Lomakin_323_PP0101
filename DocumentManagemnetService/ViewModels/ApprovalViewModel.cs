@@ -1,10 +1,12 @@
 ﻿using DocumentManagementService.Models;
 using DocumentManagemnetService;
 using Microsoft.Win32;
+using QuickGraph;
 using Supabase;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Document = DocumentManagementService.Models.Document;
@@ -16,71 +18,118 @@ namespace DocumentManagementService.ViewModels
     {
         private readonly Client client;
         private readonly DocumentService documentService;
-
-        public ObservableCollection<Document> Documents { get; } = []; //Наблюдаемая коллекция для привязки данных
-        public Document SelectedDocument { get; set; }
+        private readonly GraphService graphService;
+        public ViewDocument SelectedDocument { get; set; }
         public ICommand ApproveCommand { get; }
         public ICommand RejectCommand { get; }
-        public ICommand DownloadCommand {  get; }
+        public ICommand CancelCommand { get; }
+        public ICommand AddCommentCommand { get; }
+        public ObservableCollection<RouteStep> Steps { get; } = [];
+
+        private Visibility visibility;
+        public Visibility Visibility
+        {
+            get { return visibility; }
+            set
+            {
+                if(SelectedDocument.Status == "Опубликован")
+                {
+                    visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    visibility = Visibility.Visible;
+                }
+                OnPropertyChanged();
+            }
+        }
+        private bool isOpen = false;
+        public bool IsOpen
+        {
+            get { return isOpen; }
+            set
+            {
+                isOpen = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string comment;
+        public string Comment
+        {
+            get { return comment; }
+            set
+            {
+                comment = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private IBidirectionalGraph<RouteNode, RouteEdge> graph;
+        public IBidirectionalGraph<RouteNode, RouteEdge> Graph
+        {
+            get { return graph; }
+            set
+            {
+                graph = value;
+                OnPropertyChanged();
+            }
+        }
         public ApprovalViewModel()
         {
             client = App.SupabaseService.Client;
+            SelectedDocument = App.SelectedDocument;
+            documentService = new DocumentService();
+            graphService = new GraphService();
+
+   
             RejectCommand = new RelayCommand(RejectAsync, obj => SelectedDocument != null);
             ApproveCommand = new RelayCommand(ApproveAsync, obj => SelectedDocument != null);
-            DownloadCommand = new RelayCommand(Download, obj => SelectedDocument != null);
-            documentService = new DocumentService(client);
-            LoadDocuments();
-        }
-        private async void LoadDocuments() //Загрузка документов для согласования
-        {
-            List<Notification> notifications = await documentService.GetNotificationsAsync(); 
-            Documents.Clear();
-            foreach (var notification in notifications)
-            {
-                var document = await client.From<Document>().
-                    Where(x => x.Id == notification.DocumentId). 
-                    Get();
-                Documents.Add(document.Model);
-            }
-        }
-        private async void Download() //Скачивание документа
-        {
-            var url = await client.Storage.From("documents").CreateSignedUrl(SelectedDocument.Url, 60); //Получение специальной url для скачивания
+            CancelCommand = new RelayCommand(Cancel);
+            AddCommentCommand = new RelayCommand(AddComment);
 
-            var dialog = new SaveFileDialog
-            {
-                FileName = Path.GetFileName(SelectedDocument.Url), //Выбор места сохранения
-                Filter = "Все файлы|*.*" //Все файлы т.к документа может быть pdf, docx и т.д.
-            };
+            BuildGraph(SelectedDocument);
+        }
+        private async Task<ApprovalRoute?> LoadRoute()
+        {
+            var route = await client.From<ApprovalRoute>()
+                 .Where(x => x.Id == SelectedDocument.RouteId).Get();
 
-            if (dialog.ShowDialog() != true)
-            {
-                return;
-            }
-            using (HttpClient httpClient = new())
-            {
-                var response = await httpClient.GetStreamAsync(url);
 
-                using (var fileStream = File.Create(dialog.FileName))  
-                {
-                    await response.CopyToAsync(fileStream); //Сохранение файла
-                }
-            }
-            MessageBox.Show("Файл сохранен!", "", MessageBoxButton.OK, MessageBoxImage.Information);
+            return route.Model;
         }
-        private void DeleteRow()
+        private async void BuildGraph(ViewDocument document)
         {
-            Documents.Remove(SelectedDocument);
+            var route = await LoadRoute();
+            Graph = graphService.LoadRoute(route.GraphJson, Steps, document);
         }
-        private async void ApproveAsync()
+
+        private async void ApproveCurrentStep(bool isApprove, string? comment)
         {
-            await documentService.ApproveCurrentStepAsync(SelectedDocument, true);
-            DeleteRow();
+            await documentService.ApproveCurrentStepAsync(SelectedDocument, isApprove, comment);
+
+            var doc = await client.From<ViewDocument>()
+                 .Where(x => x.Id == SelectedDocument.Id).Get();
+
+            BuildGraph(doc.Model);
+
+            Visibility = Visibility.Collapsed;
         }
-        private async void RejectAsync()
+        private void ApproveAsync()
         {
-            await documentService.ApproveCurrentStepAsync(SelectedDocument, false);
-            DeleteRow();
+            ApproveCurrentStep(true, null);
+        }
+        private void RejectAsync()
+        {
+            IsOpen = true;
+        }
+        private void AddComment()
+        {
+            ApproveCurrentStep(false, comment);
+        }
+        private void Cancel()
+        {
+            IsOpen = false;
         }
     }
 }

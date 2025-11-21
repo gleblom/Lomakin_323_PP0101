@@ -4,6 +4,7 @@ using DocumentManagemnetService;
 using QuickGraph;
 using Supabase;
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Input;
 
 namespace DocumentManagementService.ViewModels
@@ -16,11 +17,27 @@ namespace DocumentManagementService.ViewModels
         private readonly ViewDocument document;
         private readonly GraphService graphService;
 
+        public Action UnsetAction { get; set; }
+
         public ICommand CreateRouteCommand { get; }
         public ICommand OnApproveCommand { get; }
         public ICommand CancelCommand { get; }
         public ICommand EditRouteCommand { get; }
+       
+        
 
+        private string searchQuery;
+        public string SearchQuery
+        {
+            get { return searchQuery; }
+            set 
+            { 
+                searchQuery = value; 
+                OnPropertyChanged(); 
+            }
+        }
+
+        public ObservableCollection<Category> Categories { get; } = [];
         public ObservableCollection<ApprovalRoute> Routes { get; } = [];
         public ObservableCollection<RouteStep> Steps { get; } = [];
 
@@ -61,17 +78,27 @@ namespace DocumentManagementService.ViewModels
             CancelCommand = new RelayCommand(Back);
 
             client = App.SupabaseService.Client;
-            documentService = new(client);
+            documentService = new();
             document = App.SelectedDocument;
             graphService = new();
             navigationService = App.NavigationService;
 
             LoadRoutes();
             LoadUserInfo();
+            LoadCategories();
 
  
         }
-
+        public async void LoadCategories()
+        {
+            Categories.Clear();
+            var categories = await client.From<Category>().Get();
+            foreach (var category in categories.Models)
+            {
+                category.IsChecked = true;
+                Categories.Add(category);
+            }
+        }
         public void BuildGraph()
         {
             Graph = graphService.BuildGraph(Steps);
@@ -98,7 +125,7 @@ namespace DocumentManagementService.ViewModels
             if (user.RoleId == 2)
             {
                 var window = new RouteEditorWindow();
-                RouteEditorViewModel vm = new(selectedRoute);
+                RouteEditorViewModel vm = new(graphService, selectedRoute);
                 window.DataContext = vm;
                 vm.UpdateAction ??= new Action(LoadRoutes);
                 vm.UnselectAction ??= new Action(Unselect);
@@ -124,7 +151,7 @@ namespace DocumentManagementService.ViewModels
         private void ConfirmSelection() 
         {
             var window = new RouteEditorWindow();
-            RouteEditorViewModel vm = new();    
+            RouteEditorViewModel vm = new(graphService);    
             window.DataContext = vm;
             vm.UpdateAction ??= new Action(LoadRoutes);
             vm.UnselectAction ??= new Action(Unselect);
@@ -136,7 +163,10 @@ namespace DocumentManagementService.ViewModels
         }
         private async void OnApprove()
         {
+           document.Status = "На согласовании";
            await documentService.OnApprove(document, SelectedRoute);
+           UnsetAction();
+            MessageBox.Show("Документ отправлен на согласование", "", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

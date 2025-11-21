@@ -1,5 +1,4 @@
-﻿using Supabase.Postgrest.Attributes;
-using Supabase.Postgrest.Models;
+﻿using Supabase.Postgrest.Models;
 using ColumnAttribute = Supabase.Postgrest.Attributes.ColumnAttribute;
 using TableAttribute = Supabase.Postgrest.Attributes.TableAttribute;
 
@@ -9,7 +8,7 @@ namespace DocumentManagementService.Models
     public class Company: BaseModel
     {
         [Column("company_id")]
-        public Guid CompanyId { get; set; }
+        public Guid? CompanyId { get; set; }
         [Column("company_name")]
         public string CompanyName { get; set; }
         [Column("director")]

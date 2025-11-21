@@ -4,12 +4,12 @@ using System.Windows.Controls;
 namespace DocumentManagementService.Views
 {
 
-    public partial class PublicDocumentsView : UserControl
+    public partial class RecoveryView : UserControl
     {
-        public PublicDocumentsView(string key)
+        public RecoveryView()
         {
             InitializeComponent();
-            DataContext = new PublicDocumentsViewModel(key);
+            DataContext = new RecoveryViewModel();
         }
     }
 }

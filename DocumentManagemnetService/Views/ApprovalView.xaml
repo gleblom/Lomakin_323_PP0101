@@ -3,31 +3,51 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:DocumentManagementService.ViewModels"
-      mc:Ignorable="d"
-      d:DesignHeight="420" d:DesignWidth="860">
+      xmlns:local="clr-namespace:DocumentManagementService.ViewModels" 
+            
+     xmlns:graph="clr-namespace:DocumentManagementService" 
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+    mc:Ignorable="d"
+      d:DesignHeight="450" d:DesignWidth="620">
+    <md:DialogHost IsOpen="{Binding IsOpen}" Name="CommentDialog">
+        <md:DialogHost.DialogContent>
+            <StackPanel>
+                <TextBlock Text="Причина отклонения"/>
+                <TextBox Text="{Binding Comment}"/>
+                <StackPanel Orientation="Horizontal">
+                    <Button x:Name="AddComment" Command="{Binding AddCommentCommand}" Content="Отправить" 
+                            Background="{x:Null}" 
+                            BorderBrush="{x:Null}"/>
+                    <Button x:Name="CancelCommand" Command="{Binding CancelCommand}" Content="Отмена" 
+                            Background="{x:Null}" 
+                            BorderBrush="{x:Null}"/>
+                </StackPanel>
+            </StackPanel>
+        </md:DialogHost.DialogContent>
+        <Grid Background="White">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="5*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <Border Margin="10,10,10,72"
+                     Grid.Row="0"
+             BorderThickness="1" Grid.RowSpan="2">
+                <graph:RouteGraphLayout x:Name="graphLayout" IsEnabled="False"
+                    Graph="{Binding Graph}" LayoutAlgorithmType="Tree" 
+                                    OverlapRemovalAlgorithmType="FSA" />
+            </Border>
+            <StackPanel Visibility="{Binding Visibility}"
+                    Grid.Row="1" Orientation="Horizontal" Margin="191,5,191,19" Cursor="Hand"  >
+                <Button 
+                    Content="Отклонить" 
+                    Command="{Binding RejectCommand}" Margin="0,0,8,0" Foreground="White" 
+                    Background="#FFF90000" BorderBrush="{x:Null}"/>
+                <Button Margin="15,0"
+                    Content="Согласовать"
+                    Command="{Binding ApproveCommand}" Cursor="Hand" Foreground="White" 
+                    Background="{DynamicResource PrimaryHueDarkBrush}" BorderBrush="{x:Null}" />
+            </StackPanel>
 
-    <Grid Background="White">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="1,0,1,383" Background="{DynamicResource PrimaryHueDarkBrush}"  >
-            <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Отклонить" Command="{Binding RejectCommand}" Margin="0,0,8,0" Foreground="White"/>
-            <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Согласовать" Command="{Binding ApproveCommand}" Cursor="Hand" Foreground="White" />
-            <Button Style="{StaticResource MaterialDesignFlatButton}" Content="Скачать документ" Command="{Binding DownloadCommand}" Cursor="Hand" Foreground="White" />
-        </StackPanel>
-        <DataGrid
-                AutoGenerateColumns="False"
-                ItemsSource="{Binding Documents}"
-                      SelectedItem="{Binding SelectedDocument}"
-                      SelectionMode="Single"
-                IsReadOnly="True" Margin="0,33,0,3" Grid.RowSpan="2" >
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Название"  Binding="{Binding Title}" Width="*"/>
-                <DataGridTextColumn Header="Категория" Binding="{Binding Category}" Width="*"/>
-            </DataGrid.Columns>
-        </DataGrid>
-    </Grid>
+        </Grid>
+    </md:DialogHost>
 </UserControl>

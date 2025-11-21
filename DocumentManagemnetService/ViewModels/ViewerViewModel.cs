@@ -1,4 +1,5 @@
 ﻿using DocumentManagementService.Models;
+using DocumentManagemnetService;
 using System.Collections.ObjectModel;
 
 
@@ -31,9 +32,11 @@ namespace DocumentManagementService.ViewModels
             DocumentItems =
                 [
                     new("Просмотр", "Image", "View"),
-                    new("Комментарии", "CommentOutline", "Comments"),
-                    new("Согласование", "Check", "Approvement")
                 ];
+            if(App.SelectedDocument.RouteId != null)
+            {
+                DocumentItems.Add(new("Согласование", "Check", "Approvement"));
+            }
             navigationService.Navigate("View");
         }
     }

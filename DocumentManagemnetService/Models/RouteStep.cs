@@ -6,7 +6,7 @@ namespace DocumentManagementService.Models
     public class RouteStep: BaseViewModel
     {
         public string Id { get; set; }
-        public User User { get; set; }
+        public UserView User { get; set; }
 
         private string role;
         public string Role

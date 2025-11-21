@@ -1,0 +1,116 @@
+﻿<UserControl x:Class="DocumentManagementService.Views.CompanyRegisterView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DocumentManagementService.Views"
+        xmlns:local1="clr-namespace:DocumentManagementService"
+        mc:Ignorable="d"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" 
+        Height="720" Width="960" Background="White" >
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25*" />
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel  Grid.Row="0">
+            <Label Content="   Система управления корпоративными  &#xA;&#x9;         документами"
+               Margin="10"
+               Background="#78B24B" Height="70" Foreground="#E5FFFFFF" FontSize="20" Width="384"/>
+            <TextBlock Margin="20" Text="Зарегистрироваться в системе"                     
+                   Width="275" TextAlignment="Center" FontSize="18" FontWeight="Bold"/>
+            <TextBox Style="{StaticResource MaterialDesignFilledTextBox}" 
+                     Text="{Binding User.SecondName, UpdateSourceTrigger=PropertyChanged}"
+                     Margin="10" Width="240" Height="45"                    
+                     local1:InputRestriction.AllowedPattern="^[a-zA-Zа-яА-Я]*$"
+                     materialDesign:HintAssist.Hint="Фамилия" PreviewKeyDown="TextBox_PreviewKeyDown"
+                     MaxLength="30"
+                     materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed"/>
+
+
+            <TextBox Style="{StaticResource MaterialDesignFilledTextBox}"   
+                     Text="{Binding User.FirstName, UpdateSourceTrigger=PropertyChanged}"
+                     Margin="10"  Width="240" Height="45" 
+                     local1:InputRestriction.AllowedPattern="^[a-zA-Zа-яА-Я]*$"
+                     materialDesign:HintAssist.Hint="Имя" PreviewKeyDown="TextBox_PreviewKeyDown"
+                     MaxLength="30"
+                    materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed"/>
+
+
+
+            <TextBox Style="{StaticResource MaterialDesignFilledTextBox}"           
+                      Text="{Binding User.ThirdName, UpdateSourceTrigger=PropertyChanged}"
+                     Margin="10"  Width="240" Height="45" 
+                     local1:InputRestriction.AllowedPattern="^[a-zA-Zа-яА-Я]*$"
+                     materialDesign:HintAssist.Hint="Отчество" PreviewKeyDown="TextBox_PreviewKeyDown"/>
+            <TextBox Style="{StaticResource MaterialDesignFilledTextBox}" 
+                     Text="{Binding User.Email, UpdateSourceTrigger=PropertyChanged}"
+                     Margin="10" Width="240" Height="45" 
+                     materialDesign:HintAssist.Hint="Email" PreviewKeyDown="TextBox_PreviewKeyDown"
+                                          MaxLength="30"
+                    materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed"/>
+
+
+
+            <TextBox Style="{StaticResource MaterialDesignFilledTextBox}" 
+                     Margin="10" Width="240" Height="45"
+                     materialDesign:HintAssist.Hint="Телефон"
+                     local1:InputRestriction.AllowedPattern="^[0-9]*$"
+                    PreviewKeyDown="TextBox_PreviewKeyDown"
+                     materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed"
+                     MaxLength="10">
+                <TextBox.Text>
+                    <Binding Path="User.Telephone"                          
+                         Mode="TwoWay" 
+                         UpdateSourceTrigger="PropertyChanged"
+                         ValidatesOnNotifyDataErrors="True"
+                         NotifyOnValidationError="True">
+                        <Binding.ValidationRules>
+                            <local1:MinLengthValidationRule MinLength="10"/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
+            <TextBox Style="{StaticResource MaterialDesignFilledTextBox}" 
+                     Text="{Binding Company.CompanyName, UpdateSourceTrigger=PropertyChanged}"
+                     Margin="10" Width="240" Height="45"
+                     materialDesign:HintAssist.Hint="Название организации"
+                     MaxLength="50"
+                    materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed"/>
+            <PasswordBox
+                materialDesign:HintAssist.Hint="Пароль"          
+                Style="{StaticResource MaterialDesignFilledRevealPasswordBox}"            
+                Width="240" KeyDown="TextBox_PreviewKeyDown"
+                MaxLength="30"
+                 materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed">
+                <materialDesign:PasswordBoxAssist.Password>
+                    <Binding Path="Password" 
+                         Mode="TwoWay" 
+                         UpdateSourceTrigger="PropertyChanged"
+                         ValidatesOnNotifyDataErrors="True"
+                         NotifyOnValidationError="True">
+                        <Binding.ValidationRules>
+                            <local1:MinLengthValidationRule MinLength="6"/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </materialDesign:PasswordBoxAssist.Password>
+            </PasswordBox>
+            <Button Command="{Binding SignUpCommand}"
+                    Margin="20" Content="Зарегистрироваться" Width="184"                   
+                    Background="{DynamicResource PrimaryHueLightBrush}" Foreground="White" 
+                    BorderBrush="{x:Null}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="325,665,315,1" Grid.RowSpan="2">
+            <TextBlock Text="Уже зарегистрированы в системе?" Height="19" FontWeight="Bold"
+                       FontSize="14"/>
+            <Button Command="{Binding SignInCommand}" Content="Войти" Width="90" FontWeight="Bold" 
+                    Height="26" 
+                    Background="{x:Null}" BorderBrush="{x:Null}"/>
+        </StackPanel>
+
+        <Button Grid.Row="1" Content="Восстановление доступа" 
+                Command="{Binding RecoveryCommand}" Margin="370,21,370,0" Background="{x:Null}" BorderBrush="{x:Null}" Grid.RowSpan="2"/>
+
+    </Grid>
+</UserControl>

@@ -7,32 +7,45 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="900">
-    <Grid Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}">
+    <Grid Margin="10" Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal">
+                <TextBox                     
+                    Width="200"
+                    materialDesign:HintAssist.Hint="Поиск"
+                    Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+                <materialDesign:PackIcon Kind="Magnify" Height="26" Width="25" />
+            </StackPanel>
 
-        <DataGrid Grid.Row="1"
-                  ItemsSource="{Binding Responsibles}"
+            <ComboBox ItemTemplate="{StaticResource RoleComboBoxTemplate}" 
+                      ItemsSource="{Binding Roles}" 
+                      Margin="20,0,0,0" 
+                      materialDesign:HintAssist.Hint="Должность" Height="33">
+            </ComboBox>
+
+        </StackPanel>
+        <Button Command="{Binding AddUserCommand}"  Background="{x:Null}" BorderBrush="{x:Null}" 
+                HorizontalAlignment="Right" VerticalAlignment="Top">
+            <StackPanel Orientation="Horizontal">
+                <materialDesign:PackIcon Kind="Add"/>
+                <TextBlock Text="Новый пользователь"/>
+            </StackPanel>
+        </Button>
+        <DataGrid x:Name="UserGrid" Grid.Row="1"
+                  ItemsSource="{Binding FilteredUsers}"
                   AutoGenerateColumns="False"
-                  CanUserAddRows="True"
+                  CanUserAddRows="False"
                   SelectionMode="Single"
+                  IsReadOnly="True"
                   SelectedItem="{Binding SelectedUser}">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Фамилия" Binding="{Binding SecondName}" Width="150"/>
-                <DataGridTextColumn Header="Имя" Binding="{Binding FirstName}" Width="100"/>
-                <DataGridTextColumn Header="Отчество" Binding="{Binding ThirdName}" Width="150"/>
-                <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="100"/>
-                <DataGridTextColumn Header="Телефон" Binding="{Binding Telephone}" Width="100"/>
-                <DataGridTextColumn Header="Пароль" Binding="{Binding Password}" Width="100"/>
-                <DataGridTextColumn Header="Отдел" Binding="{Binding Unit}" Width="100"/>
+                <DataGridTextColumn Header="ФИО" Binding="{Binding Display}" Width="*"/>
+                <DataGridTextColumn Header="Должность" Binding="{Binding Role.Name}" Width="300"/>
             </DataGrid.Columns>
         </DataGrid>
-        <StackPanel Orientation="Horizontal" Grid.Row="0">
-            <ComboBox 
-                Style="{StaticResource MaterialDesignDataGridComboBox}" Margin="10"/>
-            <Button Content="Сохранить" Background="{x:Null}" BorderBrush="{x:Null}"/>
-        </StackPanel>
     </Grid>
 </UserControl>

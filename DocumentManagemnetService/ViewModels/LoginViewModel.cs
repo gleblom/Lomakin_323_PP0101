@@ -8,7 +8,7 @@ namespace DocumentManagementService.ViewModels
     public class LoginViewModel: BaseViewModel
     {
         private readonly AuthService auth;
-        public Action CloseAction { get; set; } //Делегат для связи модели представления и code-behind. Закрывает LoginView при переходе в главное окно.
+        private readonly INavigationService navigationService;
 
         //Привязка текста для Textbox'ов
         public string SignInEmail { get; set; }
@@ -17,21 +17,30 @@ namespace DocumentManagementService.ViewModels
         public ICommand SignInCommand { get; }
         public LoginViewModel() 
         {
+            auth = new AuthService();
+            navigationService = App.NavigationService;
 
             SignInCommand = new RelayCommand(SignIn);
-
-            auth = new AuthService();
+            SignUpCommand = new RelayCommand(SignUp);
+        }
+        private void SignUp()
+        {
+            navigationService.Navigate("SignUp");
         }
         private async void SignIn()
         {
+            
             var session = await auth.SignInAsync(SignInEmail, SignInPassword);
+
 
             if (session)
             {
+                MenuWindow window = new();
+                Application.Current.MainWindow.Close();
+                App.Current.MainWindow = window;
+                App.Current.MainWindow.Show();
                 MessageBox.Show("Успешный вход!");
-                Application.Current.MainWindow = new MenuWindow();
-                Application.Current.MainWindow.Show();
-                CloseAction();
+
             }
         }
     }

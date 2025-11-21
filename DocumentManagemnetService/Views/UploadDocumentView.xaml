@@ -9,8 +9,8 @@
 
     <Grid Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}" >
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="260"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="3*"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
@@ -28,17 +28,6 @@
                       SelectedItem="{Binding SelectedFileCategory}" 
                       Width="310" Height="29" Background="#0C000000" >
             </ComboBox>
-            <DatePicker IsEnabled="{Binding IsEnabled}"
-                        Margin="10,0,0,0"
-                        Width="310"
-                        materialDesign:HintAssist.Hint="Действителен до"
-                        materialDesign:TextFieldAssist.HasClearButton="True"
-                        Style="{StaticResource MaterialDesignFloatingHintDatePicker}"/>
-            <TextBox Margin="20" materialDesign:HintAssist.Hint="Описание"
-                         MaxLength="200"
-    TextWrapping="Wrap"
-    VerticalScrollBarVisibility="Auto"
-                Style="{StaticResource MaterialDesignOutlinedTextBox}" Width="320" Height="106"/>
 
         </StackPanel>
 
@@ -48,11 +37,11 @@
                 CornerRadius="8"               
                 Padding="40"
                 VerticalAlignment="Top"
-                AllowDrop="True" Height="201" 
+                AllowDrop="True" Height="200" 
                 Drop="Border_Drop"
                 DragEnter="Border_DragEnter" 
                 DragLeave="Border_DragLeave" 
-                Margin="325,34,261,0">
+                Margin="293,41,293,0">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Height="113" Width="610">
                 <TextBlock Text="Перетащите сюда файл документа"
                            HorizontalAlignment="Center"

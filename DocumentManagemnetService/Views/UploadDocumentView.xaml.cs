@@ -12,7 +12,7 @@ namespace DocumentManagementService.Views
         {
             InitializeComponent();
             var client = App.SupabaseService.Client;
-            DocumentService service = new(client);
+            DocumentService service = new();
             DataContext = new UploadDocumentViewModel(service);
         }
 

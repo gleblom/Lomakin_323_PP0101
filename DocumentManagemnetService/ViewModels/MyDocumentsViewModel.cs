@@ -16,6 +16,9 @@ namespace DocumentManagementService.ViewModels
         private ObservableCollection<ViewDocument> Documents { get; } = [];
         public ObservableCollection<Category> Categories { get; } = [];
         public ICollectionView FilteredDocuments { get; }
+
+        public ICommand SelectionCommand { get; }
+
         private ViewDocument selectedDocument;
         public ViewDocument SelectedDocument
         {
@@ -29,7 +32,6 @@ namespace DocumentManagementService.ViewModels
                     OnPropertyChanged();
 
                     App.SelectedDocument = SelectedDocument;
-                    navigationService.Navigate("Viewer"); //Когда пользователь выбирает пункт меню, вызывается переход
                 }
             }
         }
@@ -72,6 +74,8 @@ namespace DocumentManagementService.ViewModels
             navigationService = App.NavigationService;
             client = App.SupabaseService.Client;
 
+            SelectionCommand = new RelayCommand(Selection, obj => SelectedDocument != null);
+
             LoadDocuments();
             LoadCategories();
 
@@ -85,6 +89,11 @@ namespace DocumentManagementService.ViewModels
 
         }
         private void ApplyFilters() => FilteredDocuments.Refresh();
+        
+        private void Selection()
+        {
+            navigationService.Navigate("Viewer");
+        }
         public async void LoadCategories()
         {
             Categories.Clear();
@@ -113,7 +122,7 @@ namespace DocumentManagementService.ViewModels
         }
         private bool FilterDocument(ViewDocument doc)
         {
-            if(Categories.All(c => c.IsChecked == false)) 
+            if (Categories.All(c => c.IsChecked == false))
                 return false;
 
 

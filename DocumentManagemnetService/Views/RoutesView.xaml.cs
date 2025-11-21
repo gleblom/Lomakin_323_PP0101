@@ -12,6 +12,7 @@ namespace DocumentManagementService.Views
         {
             InitializeComponent();
             RoutesViewModel vm = new();
+            vm.UnsetAction ??= new Action(Collapse);
             DataContext = vm;
 
 
@@ -22,6 +23,10 @@ namespace DocumentManagementService.Views
                 OnApprove.Visibility = Visibility.Collapsed;
             }
 
+        }
+        private void Collapse()
+        {
+            OnApprove.Visibility = Visibility.Collapsed;
         }
     }
 }

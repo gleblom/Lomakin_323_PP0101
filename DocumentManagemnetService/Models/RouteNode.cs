@@ -21,7 +21,11 @@ namespace DocumentManagementService.Models
         public SolidColorBrush NodeColour
         {
             get {  return brushes; }
-            set { brushes = value; }
+            set 
+            { 
+                brushes = value; 
+                OnPropertyChanged();
+            }
         }
         public string Display => $"{StepNumber}\n({Name})";
 
