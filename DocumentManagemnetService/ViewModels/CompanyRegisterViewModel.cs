@@ -55,8 +55,11 @@ namespace DocumentManagementService.ViewModels
 
             SignUpCommand = new RelayCommand(SignUp,
                 obj => User.FirstName != null && User.SecondName != null &&
-                User.ThirdName != User.Email && User.Telephone != null
-                && User.Telephone?.Length > 9 && Company.CompanyName != null
+                User.FirstName != string.Empty && User.SecondName != string.Empty &&
+                User.Email != string.Empty && User.ThirdName != string.Empty &&
+                Company.CompanyName != string.Empty &&
+                User.ThirdName != null && User.Email != null && User.Telephone != null
+                && User.Telephone?.Length == 10 && Company.CompanyName != null
                 && Password != string.Empty && Password?.Length > 5);
 
 
@@ -87,23 +90,22 @@ namespace DocumentManagementService.ViewModels
         }
         private async void SignUp()
         {
-
-            var comp = await client.From<Company>().Insert(Company);
-
-
-            if (comp.Models.Count == 1)
+            bool success = await authService.SignUpAsync(User.Email, Password,
+                 User.FirstName, User.SecondName, User.ThirdName,
+                 user.Telephone, 3, 0, null);
+            
+            if (success)
             {
-                bool success = await authService.SignUpAsync(User.Email, Password,
-                    User.FirstName, User.SecondName, User.ThirdName,
-                    user.Telephone, 3, 0, company.CompanyId);
-                    company.DirectorId = App.RegisteredUser.Id;
-                await client.From<Company>().Update(Company);
-                if (success)
-                {
-                    MessageBox.Show("Регистрация прошла успешно!", "Регистрация", MessageBoxButton.OK, MessageBoxImage.Information);
-                    User = new();
-                    Company = new();
-                }
+                company.DirectorId = App.RegisteredUser.Id;
+                await client.From<Company>().Insert(Company);
+
+                await client.From<User>().Set(x => x.CompanyId, Company.CompanyId).Update();
+                //await client.From<Company>().Update(Company);
+
+
+                MessageBox.Show("Регистрация прошла успешно!", "Регистрация", MessageBoxButton.OK, MessageBoxImage.Information);
+                User = new();
+                Company = new();
             }
         }
     }

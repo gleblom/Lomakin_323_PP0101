@@ -16,7 +16,7 @@ namespace DocumentManagementService.ViewModels
         private ObservableCollection<ViewDocument> Documents { get; } = [];
         public ObservableCollection<Category> Categories { get; } = [];
         public ICollectionView FilteredDocuments { get; }
-
+        public User CurrentUser;
         public ICommand SelectionCommand { get; }
 
         private ViewDocument selectedDocument;
@@ -112,9 +112,9 @@ namespace DocumentManagementService.ViewModels
         private async void LoadDocuments()
         {
             Documents.Clear();
-            var documents = await client.From<ViewDocument>().
-                Where(x => x.AuthorId == client.Auth.CurrentUser.Id).
-                Get();
+            var documents = await client.From<ViewDocument>()
+                .Where(x => x.AuthorId == App.CurrentUser.Id.ToString())
+                .Get();
             foreach (var document in documents.Models)
             {
                 Documents.Add(document);

@@ -1,17 +1,19 @@
 ﻿using DocumentManagemnetService;
+using NLog;
 using Supabase.Gotrue.Exceptions;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Windows;
-using User = DocumentManagementService.Models.User;
 using Client = Supabase.Client;
+using User = DocumentManagementService.Models.User;
 namespace DocumentManagementService
 {
     public class AuthService
     {
         private readonly Client client;
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public AuthService()
         {
@@ -139,8 +141,16 @@ namespace DocumentManagementService
 
         public async Task SignOutAsync()
         {
-            await client.Auth.SignOut();
-            App.SupabaseService.DestroySession();
+            try
+            {
+                await client.Auth.SignOut();
+                App.SupabaseService.DestroySession();
+            }
+            catch
+            {
+                Logger.Info("Something went wrong :(");
+            }
+
         }
         private static string MapError(string error)
         {

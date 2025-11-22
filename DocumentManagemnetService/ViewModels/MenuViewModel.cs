@@ -38,7 +38,7 @@ namespace DocumentManagementService.ViewModels
         public MenuViewModel(int? userRole)
         {
             authService = new AuthService();
-            LeaveCommand = new RelayCommand(Leave);
+            LeaveCommand = new RelayCommand(Leave, obj => !App.IsWindowOpen<StartupView>());
             AccountCommand = new RelayCommand(Account);
             navigationService = App.NavigationService;
             switch (userRole)
@@ -81,10 +81,14 @@ namespace DocumentManagementService.ViewModels
         }
         private async void Leave()
         {
-            await authService.SignOutAsync();
-            Application.Current.MainWindow = new StartupView();
-            Application.Current.MainWindow.Show();
-            CloseAction();
+            MenuItems.Clear();
+            if (!App.IsWindowOpen<StartupView>())
+            {
+                await authService.SignOutAsync();
+                Application.Current.MainWindow = new StartupView();
+                Application.Current.MainWindow.Show();
+                CloseAction();
+            }
         }
     }
 }

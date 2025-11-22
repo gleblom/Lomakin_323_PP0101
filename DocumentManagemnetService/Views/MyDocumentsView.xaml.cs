@@ -2,6 +2,8 @@
 using DocumentManagementService.ViewModels;
 using DocumentManagemnetService;
 using Microsoft.Win32;
+using Supabase;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -101,9 +103,9 @@ namespace DocumentManagementService.Views
             }
         }
 
-        private void Delete()
+        private async void Delete()
         {
- 
+           
         }
 
         private void OnApprove()

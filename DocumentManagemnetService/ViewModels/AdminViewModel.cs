@@ -81,6 +81,7 @@ namespace DocumentManagementService.ViewModels
         {
             var userEditWindow = new UserEditView();
             UserEditViewModel vm = new();
+            vm.UpdateAction ??= new Action(LoadUsers);
             userEditWindow.DataContext = vm;
             userEditWindow.ShowDialog();
 

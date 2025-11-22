@@ -12,6 +12,7 @@ namespace DocumentManagementService.ViewModels
     {
         private readonly Client client;
         private readonly AuthService authService;
+        public Action UpdateAction { get; set; }
         public ObservableCollection<Unit> Units { get; } = [];
         public ObservableCollection<Role> Roles { get; } = [];
         public ObservableCollection<Category> Categories { get; } = [];
@@ -250,6 +251,7 @@ namespace DocumentManagementService.ViewModels
                     SelectedUnit = null;
                     SelectedRole = null;
                 }
+                UpdateAction();
             }
         }
         private async void AddRoleCategory(List<RoleCategory> roleCategory, Role role)
