@@ -13,13 +13,14 @@ namespace DocumentManagementService.ViewModels
     {
         private readonly Client client;
         public ObservableCollection<ViewRole> Roles { get; } = [];
-        private ObservableCollection<UserView> Users { get; } = [];
+        private ObservableCollection<User> Users { get; } = [];
+        public ObservableCollection<Unit> Units { get; } = [];
         public ICollectionView FilteredUsers { get; }
         public ICommand AddUserCommand { get; }
         public ICommand EditUserCommand { get; }
         public User CurrentUser { get; }
-        private UserView selectedUser;
-        public UserView SelectedUser
+        private User selectedUser;
+        public User SelectedUser
         {
             get { return selectedUser; }
             set
@@ -30,7 +31,7 @@ namespace DocumentManagementService.ViewModels
                     OnPropertyChanged();
 
 
-                    App.SelectedUser = SelectedUser;
+                    App.SelectedExecutive = SelectedUser;
 
 
                 }
@@ -58,7 +59,6 @@ namespace DocumentManagementService.ViewModels
                 obj => !App.IsWindowOpen<ClerkEditView>());
 
             LoadUsers();
-            LoadRoles();
 
 
             FilteredUsers = new CollectionViewSource
@@ -67,7 +67,7 @@ namespace DocumentManagementService.ViewModels
             }.View;
 
 
-            FilteredUsers.Filter = obj => FilterUsers(obj as UserView);
+            FilteredUsers.Filter = obj => FilterUsers(obj as User);
         }
         private void ApplyFilters() => FilteredUsers.Refresh();
         private void AddUser()
@@ -79,11 +79,21 @@ namespace DocumentManagementService.ViewModels
         {
             var userEditWindow = new ClerkEditView();
             ClerkEditViewModel vm = new();
+            vm.UpdateAction ??= new Action(LoadUsers);
             userEditWindow.DataContext = vm;
             userEditWindow.ShowDialog();
 
         }
-        private async void LoadRoles()
+        private void SyncRoles()
+        {
+            foreach (var user  in Users)
+            {
+                var role = Roles.Where(x => x.Id == user.RoleId).Single();
+                user.Role = role;
+            }
+            ApplyFilters();
+        }
+        private async void LoadUsers()
         {
             Roles.Clear();
             var roles = await client.From<ViewRole>()
@@ -97,12 +107,8 @@ namespace DocumentManagementService.ViewModels
             {
                 item.PropertyChanged += (s, e) => ApplyFilters();
             }
-            ApplyFilters();
-        }
-        private async void LoadUsers()
-        {
-            var users = await client.From<UserView>()
-                .Where(x => x.CompanyId == App.CurrentUser.CompanyId)
+
+            var users = await client.From<User>()
                 .Where(x => x.RoleId == 2 || x.RoleId == 1)
                 .Get();
 
@@ -110,8 +116,12 @@ namespace DocumentManagementService.ViewModels
             {
                 Users.Add(user);
             }
+            SyncRoles();
+            ApplyFilters();
         }
-        private bool FilterUsers(UserView user)
+
+
+        private bool FilterUsers(User user)
         {
             if (user == null)
             {

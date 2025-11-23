@@ -17,7 +17,7 @@ namespace DocumentManagementService.ViewModels
         public ICommand SignInCommand { get; }
         public LoginViewModel() 
         {
-            auth = new AuthService();
+            auth = new AuthService(App.SupabaseService);
             navigationService = App.NavigationService;
 
             SignInCommand = new RelayCommand(SignIn);
@@ -35,7 +35,8 @@ namespace DocumentManagementService.ViewModels
 
             if (session)
             {
-                MenuWindow window = new();
+                App.CurrentUser = await App.LoadUserInfo();
+                MenuWindow window = new(App.CurrentUser);
                 Application.Current.MainWindow.Close();
                 App.Current.MainWindow = window;
                 App.Current.MainWindow.Show();

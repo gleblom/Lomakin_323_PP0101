@@ -1,6 +1,7 @@
 ﻿using DocumentManagementService.DTO;
 using DocumentManagementService.Models;
 using DocumentManagemnetService;
+using NLog;
 using QuickGraph;
 using Supabase;
 using System.Collections.ObjectModel;
@@ -65,10 +66,7 @@ namespace DocumentManagementService
                 currentStep--;
                 graph.AddVertex(nodes[i]);
             }
-            //foreach (var node in nodes)
-            //{
-            //    graph.AddVertex(node); //Вершины графа
-            //}
+
             for (int i = 0; i < nodes.Count - 1; i++)
             {
                 graph.AddEdge(new RouteEdge(nodes[i], nodes[i + 1])); //Рёбра графа
@@ -102,7 +100,6 @@ namespace DocumentManagementService
             }
             ReindexSteps(Steps);
             return graph;
-            //OnPropertyChanged(nameof(Graph));
         }
         public async void SaveRoute(ApprovalRoute editingRoute, string RouteName, ObservableCollection<RouteStep> Steps)
         {
@@ -157,8 +154,7 @@ namespace DocumentManagementService
             {
                 var response = await client.From<ApprovalRoute>().Insert(route); //Сохранение нового маршрута
             }
-            //UpdateAction();
-            //MessageBox.Show("Маршрутная карта успешно сохранена!", "Сохранение", MessageBoxButton.OK, MessageBoxImage.Information);
+
         }
         private void ReindexSteps(ObservableCollection<RouteStep> Steps) //Автоматическое изменение номера шага (этапа)
         {

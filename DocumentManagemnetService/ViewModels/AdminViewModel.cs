@@ -121,8 +121,9 @@ namespace DocumentManagementService.ViewModels
         private async void LoadUsers()
         {
             var users = await client.From<UserView>().
-                Where(x => x.CompanyId == App.CurrentUser.CompanyId).
-                Get();
+                Where(x => x.CompanyId == App.CurrentUser.CompanyId)
+                .Where(x => x.UnitId != 0)
+                .Get();
 
             foreach (var user in users.Models)
             {

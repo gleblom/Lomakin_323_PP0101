@@ -1,5 +1,7 @@
 ﻿using DocumentManagementService.Models;
 using DocumentManagemnetService;
+using Microsoft.Office.Interop.Word;
+using NLog;
 using Supabase;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -11,6 +13,7 @@ namespace DocumentManagementService.ViewModels
 {
     public class MyDocumentsViewModel : BaseViewModel
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly Client client;
         private readonly INavigationService navigationService;
         private ObservableCollection<ViewDocument> Documents { get; } = [];
@@ -108,17 +111,20 @@ namespace DocumentManagementService.ViewModels
                 item.PropertyChanged += (s, e) => ApplyFilters();
             }
             ApplyFilters();
+            Logger.Info($"{categories.Content}");
         }
         private async void LoadDocuments()
         {
+            string id = App.CurrentUser.Id.ToString();
             Documents.Clear();
             var documents = await client.From<ViewDocument>()
-                .Where(x => x.AuthorId == App.CurrentUser.Id.ToString())
+                .Where(x => x.AuthorId == id)
                 .Get();
             foreach (var document in documents.Models)
             {
                 Documents.Add(document);
             }
+            Logger.Info($"{documents.Content}");
         }
         private bool FilterDocument(ViewDocument doc)
         {

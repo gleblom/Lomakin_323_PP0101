@@ -37,7 +37,7 @@ namespace DocumentManagementService.ViewModels
         }
         public MenuViewModel(int? userRole)
         {
-            authService = new AuthService();
+            authService = new AuthService(App.SupabaseService);
             LeaveCommand = new RelayCommand(Leave, obj => !App.IsWindowOpen<StartupView>());
             AccountCommand = new RelayCommand(Account);
             navigationService = App.NavigationService;

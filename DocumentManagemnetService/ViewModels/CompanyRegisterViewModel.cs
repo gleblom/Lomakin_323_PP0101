@@ -1,5 +1,6 @@
 ﻿using DocumentManagementService.Models;
 using DocumentManagemnetService;
+using NLog;
 using Supabase;
 using System.Windows;
 using System.Windows.Input;
@@ -8,6 +9,7 @@ namespace DocumentManagementService.ViewModels
 {
     public class CompanyRegisterViewModel: BaseViewModel
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly AuthService authService;
         private readonly Client client;
         private readonly INavigationService navigationService;
@@ -49,9 +51,9 @@ namespace DocumentManagementService.ViewModels
 
         public CompanyRegisterViewModel()
         {
-            authService = new AuthService();
             client = App.SupabaseService.Client;
             navigationService = App.NavigationService;
+            authService = new AuthService(App.SupabaseService);
 
             SignUpCommand = new RelayCommand(SignUp,
                 obj => User.FirstName != null && User.SecondName != null &&
@@ -90,22 +92,29 @@ namespace DocumentManagementService.ViewModels
         }
         private async void SignUp()
         {
-            bool success = await authService.SignUpAsync(User.Email, Password,
-                 User.FirstName, User.SecondName, User.ThirdName,
-                 user.Telephone, 3, 0, null);
-            
-            if (success)
+            try
             {
-                company.DirectorId = App.RegisteredUser.Id;
-                await client.From<Company>().Insert(Company);
+                bool success = await authService.SignUpAsync(User.Email, Password,
+                    User.FirstName, User.SecondName, User.ThirdName,
+                     user.Telephone, 3, 0, null);
 
-                await client.From<User>().Set(x => x.CompanyId, Company.CompanyId).Update();
-                //await client.From<Company>().Update(Company);
+                if (success)
+                {
+                    Logger.Info("Регистрация пользователя прошла успешно");
+                    company.DirectorId = App.RegisteredUser.Id;
+                    await client.From<Company>().Insert(Company);
+
+                    await client.From<User>().Set(x => x.CompanyId, Company.CompanyId).Update();
 
 
-                MessageBox.Show("Регистрация прошла успешно!", "Регистрация", MessageBoxButton.OK, MessageBoxImage.Information);
-                User = new();
-                Company = new();
+                    MessageBox.Show("Регистрация прошла успешно!", "Регистрация", MessageBoxButton.OK, MessageBoxImage.Information);
+                    User = new();
+                    Company = new();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
             }
         }
     }

@@ -132,7 +132,7 @@ namespace DocumentManagementService.ViewModels
         public UserEditViewModel()
         {
             client = App.SupabaseService.Client;
-            authService = new AuthService();
+            authService = new AuthService(App.SupabaseService);
 
             if (App.SelectedUser != null)
             {

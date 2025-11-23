@@ -79,7 +79,7 @@ namespace DocumentManagementService.ViewModels
         {
             client = App.SupabaseService.Client;
             SelectedDocument = App.SelectedDocument;
-            documentService = new DocumentService();
+            documentService = new DocumentService(client);
             graphService = new GraphService();
 
    

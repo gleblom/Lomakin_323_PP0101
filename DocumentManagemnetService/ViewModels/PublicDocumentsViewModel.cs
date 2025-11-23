@@ -22,6 +22,7 @@ namespace DocumentManagementService.ViewModels
         public string SearchQuery { get; set; }
         private ObservableCollection<ViewDocument> Documents { get; } = [];
         public ObservableCollection<Category> Categories { get; } = [];
+
         public ObservableCollection<User> Users { get; } = [];
         public ICollectionView FilteredDocuments { get; }
         public ICommand SelectionCommand { get; }
@@ -84,7 +85,7 @@ namespace DocumentManagementService.ViewModels
         {
             navigationService = App.NavigationService;
             client = App.SupabaseService.Client;
-            documentService = new();
+            documentService = new(client);
 
             SelectionCommand = new RelayCommand(Selection, obj => SelectedDocument != null);
             DownloadCommand = new RelayCommand(Download, obj => SelectedDocument != null);

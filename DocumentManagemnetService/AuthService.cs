@@ -13,11 +13,13 @@ namespace DocumentManagementService
     public class AuthService
     {
         private readonly Client client;
+        private readonly SupabaseService supabase;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public AuthService()
-        {
-            client = App.SupabaseService.Client;
+        public AuthService(SupabaseService service)
+        { 
+            client = service.Client;
+            supabase = service;
         }
 
         public async Task<bool> SignUpAsync(
@@ -33,7 +35,6 @@ namespace DocumentManagementService
                     var model = await client.From<User>()
                         .Where(x => x.Email == email).Get();
 
-                    
 
                     if (model != null)
                     {
@@ -51,7 +52,7 @@ namespace DocumentManagementService
                             {"UnitId", unitId }
 
                         });
-
+                        Logger.Info("Профиль успешно обновлён");
                         return true;
                     }
                 }
@@ -60,11 +61,14 @@ namespace DocumentManagementService
             }
             catch (GotrueException ex) {
 
+
+                Logger.Error(ex);
                 MessageBox.Show(MapError(ex.Message), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
             catch (Exception ex)
             {
+                Logger.Error(ex);
                 MessageBox.Show("Ошибка сети или сервера.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 MessageBox.Show(ex.Message);
                 return false;
@@ -81,9 +85,10 @@ namespace DocumentManagementService
             var res = await http.SendAsync(req);
             var body = await res.Content.ReadAsStringAsync();
 
+            Logger.Info(res);
             return res.StatusCode;
         }
-        public static async Task SendEmail(string adminToken, string userId, string userPassword)
+        public static async Task<HttpStatusCode> SendEmail(string adminToken, string userId, string userPassword)
         {
             using var http = new HttpClient();
             var json = JsonSerializer.Serialize(new {id = userId, password = userPassword });
@@ -94,8 +99,12 @@ namespace DocumentManagementService
 
             var res = await http.SendAsync(req);
             var body = await res.Content.ReadAsStringAsync();
+
+            Logger.Info(res);
+
+            return res.StatusCode;
         }
-        public static async Task ChangeUserPassword(string userId, string newPassword)
+        public static async Task<HttpStatusCode> ChangeUserPassword(string userId, string newPassword)
         {
             using var http = new HttpClient();
             var json = JsonSerializer.Serialize(new { id = userId, new_password = newPassword });
@@ -106,10 +115,13 @@ namespace DocumentManagementService
 
             var res = await http.SendAsync(req);
             var body = await res.Content.ReadAsStringAsync();
+            Logger.Info(res);
             if (res.StatusCode == HttpStatusCode.OK)
             {
                 MessageBox.Show("Пароль успешно изменен!", "Изменение пароля", MessageBoxButton.OK, MessageBoxImage.Information);
             }
+            Logger.Info(res);
+            return res.StatusCode;
         }
         public async Task<bool> SignInAsync(string email, string password)
         {
@@ -118,7 +130,7 @@ namespace DocumentManagementService
                 var response = await client.Auth.SignIn(email, password);
                 if (response.User != null)
                 {
-                   await App.SupabaseService.SaveSessionAsync();
+                   await supabase.SaveSessionAsync();
                    await client.Auth.SetSession(response.AccessToken, response.RefreshToken);
                    
                    return true;
@@ -128,11 +140,13 @@ namespace DocumentManagementService
             }
             catch (GotrueException ex)
             {
+                Logger.Error(ex);
                 MessageBox.Show(MapError(ex.Message), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Logger.Error(ex);
                 MessageBox.Show("Ошибка сети или сервера.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
@@ -144,7 +158,7 @@ namespace DocumentManagementService
             try
             {
                 await client.Auth.SignOut();
-                App.SupabaseService.DestroySession();
+                supabase.DestroySession();
             }
             catch
             {

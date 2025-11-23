@@ -1,7 +1,6 @@
 ﻿using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using ColumnAttribute = Supabase.Postgrest.Attributes.ColumnAttribute;
@@ -34,6 +33,18 @@ namespace DocumentManagementService.Models
         public Guid? CompanyId { get; set; }
         [Column("unit_id")]
         public int? UnitId { get; set; }
+
+        private ViewRole role;
+        [IgnoreDataMember]
+        public ViewRole Role
+        {
+            get { return role; }
+            set 
+            {
+                role = value;
+                OnPropertyChanged();
+            }
+        }
 
         private bool isChecked = true;
 

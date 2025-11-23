@@ -1,6 +1,7 @@
 ﻿using DocumentManagementService.ViewModels;
 using DocumentManagementService.Views;
 using DocumentManagemnetService.Views;
+using NLog;
 using System.Windows.Controls;
 
 
@@ -10,6 +11,7 @@ namespace DocumentManagementService
     {
         private readonly Frame mainFraim;
         private readonly Dictionary<string, Func<UserControl>> routes = [];
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         public NavigationService(Frame frame) 
         {
             mainFraim = frame;
@@ -36,8 +38,17 @@ namespace DocumentManagementService
         public void Navigate(string pageKey)
         {
             //Переход на страницу происходит по ключу
-            if (routes.TryGetValue(pageKey, out var route)) {
-                mainFraim.Navigate(route());
+            try
+            {
+                if (routes.TryGetValue(pageKey, out var route))
+                {
+                    mainFraim.Navigate(route());
+                    Logger.Info($"Переход на страницу по ключу {pageKey}");
+                }
+            }
+            catch(Exception ex) 
+            {
+                Logger.Error(ex);
             }
         }
     }

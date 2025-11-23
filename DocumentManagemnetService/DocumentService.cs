@@ -1,6 +1,7 @@
 ﻿using DocumentManagementService.DTO;
 using DocumentManagementService.Models;
 using DocumentManagemnetService;
+using NLog;
 using Supabase;
 using System.IO;
 using System.Text.Json;
@@ -11,16 +12,18 @@ namespace DocumentManagementService
     public class DocumentService
     {
         private readonly Client client;
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public DocumentService()
+        public DocumentService(Client client)
         {
-            client = App.SupabaseService.Client;
+            this.client = client;
         }
         public async Task<bool> AddDocumentAsync(string title, int category, int status, string localFilePath)
         {
             var user = client.Auth.CurrentUser;
             if (user == null)
             {
+                Logger.Warn("Пользователь null");
                 return false;
             }
             var fileName = Path.GetFileName(localFilePath);
@@ -29,6 +32,7 @@ namespace DocumentManagementService
             var url = await UploadFileAsync(localFilePath, storagePath);
             if (url == null)
             {
+                Logger.Warn("Url не существует");
                 return false;
             }
 
@@ -43,19 +47,8 @@ namespace DocumentManagementService
 
             };
             var response = await client.From<Document>().Insert(document);
-            //if(status == 2)
-            //{
-            //    var dto = JsonSerializer.Deserialize<RouteGraph>(route.GraphJson); //Из маршрута получаем граф
 
-
-            //    await client.Rpc("InsertNotification", //После отправки на солгласованме уведомляем первого подписанта
-            //              new Dictionary<string, object> {
-            //            {"UserId",  dto.Nodes[document.CurrentStepIndex].UserId}, //Из десериализованного графа получаем id первого подписанта
-            //            {"DocumentId",   response.Model.Id}
-            //    });
-
-            //}
-
+            Logger.Info($"{response.Content}");
             return response.Models.Count == 1;
         }
         public async Task<bool> Update(string localFilePath, ViewDocument document)
@@ -76,6 +69,8 @@ namespace DocumentManagementService
                 .Where(x => x.Id == document.Id)
                 .Set(x => x.Url, url)
                 .Update();
+
+            Logger.Info($"{update.Content}");
             return update.Models.Count == 1;
         }
         public async Task OnApprove(ViewDocument document, ApprovalRoute route)
@@ -96,7 +91,7 @@ namespace DocumentManagementService
                     .Set(x => x.RouteId, route.Id)
                     .Set(x => x.CurrentStepIndex, 0)
                     .Update();
-
+                Logger.Info($"{update.Content}");
             }
         }
         public async Task<string?> UploadFileAsync(string localFilePath, string storageFilePath)
@@ -107,28 +102,48 @@ namespace DocumentManagementService
                 {
                     Upsert = true
                 });
+                Logger.Info($"Url файла {storageFilePath}");
                 return storageFilePath;
             }
-            catch
+            catch(Exception ex) 
             {
+                Logger.Error(ex);
                 return null;
             }
         }
         public async Task<List<Notification>> GetNotificationsAsync()
         {
-            var notification = await client.From<Notification>().Get();
-            return notification.Models;
+            try
+            {
+                var notification = await client.From<Notification>().Get();
+                return notification.Models;
+            }
+            catch(Exception ex)
+            {
+                Logger.Error(ex);
+                return null;
+            }
+
         }
         public async Task<ApprovalRoute> GetApprovalRouteById(Guid? routeId)
         {
-            var route = await client.From<ApprovalRoute>().Where(x => x.Id == routeId).Get();
-            return route.Model;
+            try
+            {
+                var route = await client.From<ApprovalRoute>().Where(x => x.Id == routeId).Get();
+                return route.Model;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+                return null;
+            }
         }
         public async Task<bool> ApproveCurrentStepAsync(ViewDocument doc, bool approved, string? comment)
         {
             var route = await GetApprovalRouteById(doc.RouteId);
             if (route == null)
             {
+                Logger.Warn("Маршрут не прикреплён");
                 return false;
             }
 
@@ -161,8 +176,10 @@ namespace DocumentManagementService
             if (!approved)
             {
                 model.Status = 1;
-
+                
                 await client.From<Document>().Update(model);
+
+                Logger.Info("Документ отклонен");
             }
             else if (currentIndex >= steps.Count - 1)
             {
@@ -172,6 +189,7 @@ namespace DocumentManagementService
 
                 await client.From<Document>().Update(model);
 
+                Logger.Info("Документ согласован");
             }
             else
             {
@@ -187,6 +205,7 @@ namespace DocumentManagementService
                         {"UserId", nextNode.UserId},
                         {"DocumentId",  doc.Id}
                     });
+                Logger.Info($"Этап согласован, текущий индекс: {model.CurrentStepIndex}");
             }
             await client.From<Notification>().
             Where(x => x.DocumentId == doc.Id).

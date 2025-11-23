@@ -1,4 +1,5 @@
-﻿using DocumentManagementService.ViewModels;
+﻿using DocumentManagementService.Models;
+using DocumentManagementService.ViewModels;
 using DocumentManagemnetService;
 using NLog;
 using System.Windows;
@@ -8,18 +9,12 @@ namespace DocumentManagementService.Views
 {
     public partial class MenuWindow : Window
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        public MenuWindow()
+        public MenuWindow(User currentUser)
           {
             InitializeComponent();
             var navigationService = new NavigationService(MainFrame);
             App.NavigationService = navigationService;
-
-            while(App.CurrentUser == null)
-            {
-                Logger.Info("Загрузка..");
-            }
-            int? role = App.CurrentUser.RoleId;
+            int? role = currentUser?.RoleId; 
             MenuViewModel vm = new(role);
             DataContext = vm;
             vm.CloseAction ??= new Action(Close);

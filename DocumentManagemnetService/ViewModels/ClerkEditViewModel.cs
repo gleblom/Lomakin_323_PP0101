@@ -1,5 +1,6 @@
 ﻿using DocumentManagementService.Models;
 using DocumentManagemnetService;
+using NLog;
 using Supabase;
 using System;
 using System.Collections.Generic;
@@ -12,13 +13,15 @@ namespace DocumentManagementService.ViewModels
     public class ClerkEditViewModel: BaseViewModel
     {
         private readonly Client client;
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly AuthService authService;
         private readonly bool isUserEditing;
         public ICommand SaveUserCommand { get; }
+        public Action UpdateAction { get; set; }
         public ObservableCollection<ViewRole> Roles { get; } = [];
         private bool isReadOnly;
-        private UserView currentUser;
-        public UserView CurrentUser
+        private User currentUser;
+        public User CurrentUser
         {
             get { return currentUser; }
             set
@@ -63,11 +66,11 @@ namespace DocumentManagementService.ViewModels
         public ClerkEditViewModel()
         {
             client = App.SupabaseService.Client;
-            authService = new AuthService();
+            authService = new AuthService(App.SupabaseService);
 
             if (App.SelectedUser != null)
             {
-                CurrentUser = App.SelectedUser;
+                CurrentUser = App.SelectedExecutive;
 
                 CurrentUser.Id = App.SelectedUser.Id;
                 CurrentUser.RoleId = App.SelectedUser.RoleId;
@@ -92,41 +95,51 @@ namespace DocumentManagementService.ViewModels
         }
         private async void SaveUser()
         {
-            if (isUserEditing)
+            try
             {
-
-                string id = CurrentUser.Id.ToString();
-                if (password != string.Empty)
+                if (isUserEditing)
                 {
-                    await AuthService.ChangeUserPassword(id, password);
-                }
 
-                await client.From<User>()
-                     .Where(x => x.Id == currentUser.Id)
-                     .Set(x => x.FirstName, CurrentUser.FirstName)
-                     .Set(x => x.SecondName, CurrentUser.SecondName)
-                     .Set(x => x.ThirdName, CurrentUser.ThirdName)
-                     .Set(x => x.RoleId, SelectedRole.Id)
-                     .Update();
+                    string id = CurrentUser.Id.ToString();
+                    if (password != string.Empty)
+                    {
+                        await AuthService.ChangeUserPassword(id, password);
+                    }
+
+                    await client.From<User>()
+                         .Where(x => x.Id == currentUser.Id)
+                         .Set(x => x.FirstName, CurrentUser.FirstName)
+                         .Set(x => x.SecondName, CurrentUser.SecondName)
+                         .Set(x => x.ThirdName, CurrentUser.ThirdName)
+                         .Set(x => x.RoleId, SelectedRole.Id)
+                         .Update();
+                }
+                else
+                {
+                    string token = client.Auth.CurrentSession.AccessToken;
+                    bool success = await authService.SignUpAsync(CurrentUser.Email, Password,
+                          CurrentUser.FirstName, CurrentUser.SecondName, CurrentUser.ThirdName,
+                             CurrentUser.Telephone, SelectedRole.Id, null, App.CurrentUser.CompanyId);
+                    if (success)
+                    {
+                        MessageBox.Show("Новый пользователь успешно создан!", "Регистрация", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                        string id = App.RegisteredUser.Id.ToString();
+
+                        await AuthService.SendEmail(token, id, password);
+                        CurrentUser = new();
+                        Password = string.Empty;
+                        SelectedRole = null;
+                    }
+                }
             }
-            else
+            catch (Exception ex)
             {
-                string token = client.Auth.CurrentSession.AccessToken;
-                bool success = await authService.SignUpAsync(CurrentUser.Email, Password,
-                      CurrentUser.FirstName, CurrentUser.SecondName, CurrentUser.ThirdName,
-                         CurrentUser.Telephone, SelectedRole.Id, null, App.CurrentUser.CompanyId);
-                if (success)
-                {
-                    MessageBox.Show("Новый пользователь успешно создан!", "Регистрация", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                    string id = App.RegisteredUser.Id.ToString();
-
-                    await AuthService.SendEmail(token, id, password);
-                    CurrentUser = new();
-                    Password = string.Empty;
-                    SelectedRole = null;
-                }
+                Logger.Error(ex);
             }
+
+            UpdateAction();
+            
         }
         private async void LoadAdminsClerks()
         {

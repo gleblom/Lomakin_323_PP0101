@@ -1,9 +1,11 @@
-﻿using Supabase;
+﻿using NLog;
+using Supabase;
 
 namespace DocumentManagementService
 {
     public class SupabaseService
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly string url = "https://kphkeykctqyqgfotrqoy.supabase.co";
         private readonly string key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtwaGtleWtjdHF5cWdmb3RycW95Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA0ODc4NTQsImV4cCI6MjA2NjA2Mzg1NH0.N9tcPHuG6VXdOBiiC8UWS7ISxTTZnNKoWIarWX9bOAw";
         private Client client;
@@ -28,8 +30,10 @@ namespace DocumentManagementService
                 {
                     await client.Auth.SetSession(session.AccessToken, session.RefreshToken);
                 }
-                catch
+                catch(Exception ex) 
                 {
+                    Logger.Warn("Не удалось загрузить сессию");
+                    Logger.Error(ex.Message);
                     DestroySession();
                 }
             }
@@ -60,8 +64,10 @@ namespace DocumentManagementService
                     await client.Auth.RefreshSession(); //обновляем её
                     await SaveSessionAsync();
                 }
-                catch
+                catch(Exception ex)
                 {
+                    Logger.Warn("Ошибка проверки валидности сессии");
+                    Logger.Error(ex.Message);
                     DestroySession(); //Если что-то пошло не так, то удаляем
                 }
             }

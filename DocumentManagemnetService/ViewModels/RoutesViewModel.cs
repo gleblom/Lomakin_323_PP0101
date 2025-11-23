@@ -78,7 +78,7 @@ namespace DocumentManagementService.ViewModels
             CancelCommand = new RelayCommand(Back);
 
             client = App.SupabaseService.Client;
-            documentService = new();
+            documentService = new(client);
             document = App.SelectedDocument;
             graphService = new();
             navigationService = App.NavigationService;

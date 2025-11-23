@@ -18,21 +18,36 @@ namespace DocumentManagemnetService
         public static SupabaseService SupabaseService { get; private set; }
         public static User CurrentUser { get; set; }
         public static User RegisteredUser { get; set; }
+        public static User SelectedExecutive {  get; set; }
         public static UserView SelectedUser { get; set; }
         public static INavigationService NavigationService { get; set; }
         public static async Task<User?> LoadUserInfo()
         {
-            var model = await SupabaseService.Client.From<User>().
-                 Where(x => x.Email == SupabaseService.Client.Auth.CurrentUser.Email).
-                 Single();
-            return model;
+            try
+            {
+                var model = await SupabaseService.Client.From<User>().
+                     Where(x => x.Email == SupabaseService.Client.Auth.CurrentUser.Email).
+                    Single();
+                return model;
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn("Не удалось загрузить данные пользователя!");
+                Logger.Error(ex.Message);
+
+                return null;
+            }
 
         }
 
         protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+            var config = new NLog.Config.XmlLoggingConfiguration("NLog.config");
+            LogManager.Configuration = config;
+            Logger.Info("Приложение запущено.");
             SupabaseService = new SupabaseService();
+
 
             await SupabaseService.InitializeAsync();
 
@@ -42,14 +57,10 @@ namespace DocumentManagemnetService
 
             if (SupabaseService.IsAuthenticated)
             {
-                Logger.Info("Запуск приложения");
+         
                 CurrentUser = await LoadUserInfo();
-                while(CurrentUser == null)
-                {
-                    Logger.Info("Ожидание информации о пользователе...");
-                }
 
-                new MenuWindow().Show(); //Если пользователь залогинен открывается главное окно
+                new MenuWindow(CurrentUser).Show(); //Если пользователь залогинен открывается главное окно
             }
             else
             {
@@ -83,6 +94,12 @@ namespace DocumentManagemnetService
             {
                 e.Handled = true;
             }
+        }
+        protected override void OnExit(ExitEventArgs e)
+        {
+            Logger.Info("Приложение завершает работу.");
+            LogManager.Shutdown();
+            base.OnExit(e);
         }
     }
 
