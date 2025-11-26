@@ -44,12 +44,6 @@ namespace DocumentManagementService.Views
                             Command = new RelayCommand(OnApprove)
                         });
                         menu.Items.Add(
-                            new MenuItem 
-                        { 
-                            Header = "Удалить", 
-                            Command = new RelayCommand(Delete)
-                        });
-                        menu.Items.Add(
                             new MenuItem
                             {
                                 Header = "Загрузить новую версию",
@@ -103,10 +97,6 @@ namespace DocumentManagementService.Views
             }
         }
 
-        private async void Delete()
-        {
-           
-        }
 
         private void OnApprove()
         {

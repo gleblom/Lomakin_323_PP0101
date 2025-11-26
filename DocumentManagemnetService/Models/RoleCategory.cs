@@ -17,8 +17,8 @@ namespace DocumentManagementService.Models
         public int RoleId { get; set; }
         [Column("category_id")]
         public int CategoryId { get; set; }
-        [Column("company_id")]
-        public Guid? CompanyId  { get; set; }
+        //[Column("company_id")]
+        //public Guid? CompanyId  { get; set; }
 
         [Reference(typeof(Role))]
         public Role Role { get; set; }

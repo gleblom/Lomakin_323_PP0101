@@ -98,18 +98,20 @@ namespace DocumentManagementService.ViewModels
                     User.FirstName, User.SecondName, User.ThirdName,
                      user.Telephone, 3, 0, null);
 
+
                 if (success)
                 {
                     Logger.Info("Регистрация пользователя прошла успешно");
                     company.DirectorId = App.RegisteredUser.Id;
                     await client.From<Company>().Insert(Company);
 
-                    await client.From<User>().Set(x => x.CompanyId, Company.CompanyId).Update();
+                    var update = await client.From<User>().Where(x => x.Email == User.Email).Set(x => x.CompanyId, Company.CompanyId).Update();
 
 
                     MessageBox.Show("Регистрация прошла успешно!", "Регистрация", MessageBoxButton.OK, MessageBoxImage.Information);
                     User = new();
                     Company = new();
+                    Password = string.Empty;
                 }
             }
             catch (Exception ex)

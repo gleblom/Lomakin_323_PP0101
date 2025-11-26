@@ -284,7 +284,6 @@ namespace DocumentManagementService.ViewModels
                                 Id = roleCategories[roleCategories.Count - 1].Id + i,
                                 CategoryId = category.Id,
                                 Category = category,
-                                CompanyId = App.CurrentUser.CompanyId,
                                 Role = role,
                                 RoleId = role.Id
                             }
@@ -326,8 +325,7 @@ namespace DocumentManagementService.ViewModels
                 var newRoleCategories = categoriesToAdd.Select(categoryId => new RoleCategory
                 {
                     RoleId = SelectedRole.Id,
-                    CategoryId = categoryId,
-                    CompanyId = CurrentUser.CompanyId
+                    CategoryId = categoryId
                 }).ToList();
 
                 if (newRoleCategories.Any())

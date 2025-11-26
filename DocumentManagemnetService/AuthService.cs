@@ -40,7 +40,7 @@ namespace DocumentManagementService
                     {
                         App.RegisteredUser = model.Model;
 
-                        await client.Rpc("UpdateProfile", new Dictionary<string, object>
+                        var resp = await client.Rpc("UpdateProfile", new Dictionary<string, object>
                         {
                             {"FirstName", firstName},
                             {"SecondName", secondName},
@@ -52,6 +52,7 @@ namespace DocumentManagementService
                             {"UnitId", unitId }
 
                         });
+                        Logger.Info(resp);
                         Logger.Info("Профиль успешно обновлён");
                         return true;
                     }

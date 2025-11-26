@@ -116,7 +116,7 @@ namespace DocumentManagementService.ViewModels
         private async void LoadUnits()
         {
             Units.Clear();
-            var units = await client.From<Unit>().Where(x => x.CompanyId == CurrentUser.CompanyId).Get();
+            var units = await client.From<Unit>().Get();
             foreach(var unit in units.Models)
             {
                 Units.Add(unit);
