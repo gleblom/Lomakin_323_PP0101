@@ -1,0 +1,16 @@
+﻿<Window x:Class="DocumentManagementService.Views.CommentWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DocumentManagementService.Views"
+        mc:Ignorable="d" Height="213" Width="356" ResizeMode="NoResize" Title="" WindowStartupLocation="CenterScreen">
+    <Grid Margin="0,0,0,3">
+        <TextBlock Text="Введите причину отклонения" Margin="0,0,0,115" FontSize="16" FontWeight="Bold"/>
+        <TextBox Text="{Binding Comment}"
+                 MaxLength="50"
+                 Margin="25,49,20,94"/>
+        <Button Command="{Binding AddCommentCommand}" Content="Отклонить" Margin="48,110,179,0" Cursor="Hand" BorderBrush="{x:Null}" Background="{x:Null}" Height="42" VerticalAlignment="Top"/>
+        <Button Command="{Binding CancelCommand}" Content="Отмена" Margin="202,112,41,0" Background="{x:Null}" Cursor="Hand" BorderBrush="{x:Null}" Height="41" VerticalAlignment="Top"/>
+    </Grid>
+</Window>

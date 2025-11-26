@@ -2,12 +2,16 @@
 using DocumentManagementService.Models;
 using DocumentManagementService.Views;
 using NLog;
+using NLog.Filters;
+using Supabase.Gotrue;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using static Supabase.Postgrest.Constants;
+using User = DocumentManagementService.Models.User;
 
 namespace DocumentManagemnetService
 {
@@ -20,7 +24,21 @@ namespace DocumentManagemnetService
         public static User RegisteredUser { get; set; }
         public static User SelectedExecutive {  get; set; }
         public static UserView SelectedUser { get; set; }
+        public static ObservableCollection<UserView> Users { get; } = [];
         public static INavigationService NavigationService { get; set; }
+        private async void LoadUsers()
+        {
+            Users.Clear();
+            var response = await SupabaseService.Client.From<UserView>()
+                .Where(x => x.RoleId != 2)
+                .Where(x => x.RoleId != 1)
+                .Get();
+            foreach (var user in response.Models)
+            {
+                Users.Add(user);
+            }
+
+        }
         public static async Task<User?> LoadUserInfo()
         {
             try
@@ -44,6 +62,7 @@ namespace DocumentManagemnetService
         {
             base.OnStartup(e);
             var config = new NLog.Config.XmlLoggingConfiguration("NLog.config");
+
             LogManager.Configuration = config;
             Logger.Info("Приложение запущено.");
             SupabaseService = new SupabaseService();
@@ -53,12 +72,13 @@ namespace DocumentManagemnetService
 
             await SupabaseService.EnsureSessionIsValidAsync();
 
-
+            LoadUsers();
 
             if (SupabaseService.IsAuthenticated)
             {
          
                 CurrentUser = await LoadUserInfo();
+
 
                 new MenuWindow(CurrentUser).Show(); //Если пользователь залогинен открывается главное окно
             }
@@ -79,15 +99,16 @@ namespace DocumentManagemnetService
         {
             Border border = sender as Border;
             var step = Convert.ToInt32(border.Tag);
-            
+
             var docAproves = await SupabaseService.Client.From<DocumentApprovals>()
-                .Where(x => x.StepIndex == step)
                 .Where(x => x.DocumentId == SelectedDocument.Id)
-                .Order("id", Ordering.Descending)
+                .Where(x => x.IsApproved == false)
                 .Get();
-            if (SelectedDocument.RouteId != null && SelectedDocument.CurrentStepIndex == step)
+
+            var approves = docAproves.Models.Where(x => x.ApprovedAt == docAproves.Models.Max(x => x.ApprovedAt)).Single();
+            if (SelectedDocument.RouteId != null && SelectedDocument.CurrentStepIndex + 1 == step)
             {
-                string comment = docAproves.Models[0].Comment;
+                string comment = approves.Comment;
                 MessageBox.Show($"Причина отклонения: {comment}");
             }
             else
@@ -100,6 +121,15 @@ namespace DocumentManagemnetService
             Logger.Info("Приложение завершает работу.");
             LogManager.Shutdown();
             base.OnExit(e);
+        }
+        private void DoNothing(object sender, MouseButtonEventArgs e)
+        {
+            e.Handled = false;
+        }
+
+        private void DoNothing(object sender, MouseEventArgs e)
+        {
+            e.Handled = false;
         }
     }
 

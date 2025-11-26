@@ -1,6 +1,7 @@
 ﻿using DocumentManagementService.Models;
 using DocumentManagemnetService;
 using Microsoft.Office.Interop.Word;
+using NLog;
 using PdfiumViewer;
 using Supabase;
 using System.IO;
@@ -17,6 +18,7 @@ namespace DocumentManagementService.Views
     public partial class PdfViewerView : UserControl
     {
         private readonly Client client;
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private PdfViewer pdfViewer;
 
@@ -109,6 +111,7 @@ namespace DocumentManagementService.Views
             catch (Exception ex)
             {
                 MessageBox.Show($"Error loading document: {ex.Message}");
+                Logger.Error(ex);
             }
         }
 

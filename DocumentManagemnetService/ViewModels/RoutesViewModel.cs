@@ -17,6 +17,8 @@ namespace DocumentManagementService.ViewModels
         private readonly ViewDocument document;
         private readonly GraphService graphService;
 
+
+
         public Action UnsetAction { get; set; }
 
         public ICommand CreateRouteCommand { get; }
@@ -80,7 +82,7 @@ namespace DocumentManagementService.ViewModels
             client = App.SupabaseService.Client;
             documentService = new(client);
             document = App.SelectedDocument;
-            graphService = new();
+            graphService = new(App.Users);
             navigationService = App.NavigationService;
 
             LoadRoutes();
@@ -99,6 +101,7 @@ namespace DocumentManagementService.ViewModels
                 Categories.Add(category);
             }
         }
+
         public void BuildGraph()
         {
             Graph = graphService.BuildGraph(Steps);

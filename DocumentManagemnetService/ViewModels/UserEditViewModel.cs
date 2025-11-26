@@ -1,5 +1,6 @@
 ﻿using DocumentManagementService.Models;
 using DocumentManagemnetService;
+using NLog;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
@@ -10,8 +11,10 @@ namespace DocumentManagementService.ViewModels
 {
     public class UserEditViewModel : BaseViewModel
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly Client client;
         private readonly AuthService authService;
+        private List<RoleCategory> roleCategories { get; } = [];
         public Action UpdateAction { get; set; }
         public ObservableCollection<Unit> Units { get; } = [];
         public ObservableCollection<Role> Roles { get; } = [];
@@ -156,6 +159,7 @@ namespace DocumentManagementService.ViewModels
             LoadUnits();
             LoadRoles();
             LoadCategories();
+            LoadRoleCategories();
 
 
 
@@ -197,8 +201,9 @@ namespace DocumentManagementService.ViewModels
             {
                 var unit = new Unit
                 {
+                    Id = Units[Units.Count - 1].Id + 1,
                     Name = CurrentUnit,
-                    CompanyId = CurrentUser.CompanyId
+                    CompanyId = App.CurrentUser.CompanyId
                 };
                 var respone = await client.From<Unit>().Insert(unit);
                 if (respone.Models.Count == 1)
@@ -212,6 +217,7 @@ namespace DocumentManagementService.ViewModels
                     MessageBox.Show("При сохранении отдела произошла ошибка", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+            LoadUnits();
         }
         private async void SaveUser()
         {
@@ -235,45 +241,67 @@ namespace DocumentManagementService.ViewModels
             }
             else
             {
-                string token = client.Auth.CurrentSession.AccessToken;
-                bool success = await authService.SignUpAsync(CurrentUser.Email, Password,
-                      CurrentUser.FirstName, CurrentUser.SecondName, CurrentUser.ThirdName,
-                         CurrentUser.Telephone, SelectedRole.Id, SelectedUnit.Id, App.CurrentUser.CompanyId);
-                if (success)
+                try
                 {
-                    MessageBox.Show("Новый пользователь успешно создан!", "Регистрация", MessageBoxButton.OK, MessageBoxImage.Information);
+                    await client.Auth.RefreshSession();
+                    string token = client.Auth.CurrentSession.AccessToken;
+                    bool success = await authService.SignUpAsync(CurrentUser.Email, Password,
+                          CurrentUser.FirstName, CurrentUser.SecondName, CurrentUser.ThirdName,
+                             CurrentUser.Telephone, SelectedRole.Id, SelectedUnit.Id, App.CurrentUser.CompanyId);
+                    if (success)
+                    {
+                        MessageBox.Show("Новый пользователь успешно создан!", "Регистрация", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                    string id = App.RegisteredUser.Id.ToString();
+                        string id = App.RegisteredUser.Id.ToString();
 
-                    await AuthService.SendEmail(token, id, password);
-                    CurrentUser = new();
-                    Password = string.Empty;
-                    SelectedUnit = null;
-                    SelectedRole = null;
+                        await AuthService.SendEmail(token, id, password);
+                        CurrentUser = new();
+                        Password = string.Empty;
+                        SelectedUnit = null;
+                        SelectedRole = null;
+                    }
+                    UpdateAction();
                 }
-                UpdateAction();
+                catch(Exception ex) 
+                {
+                    Logger.Error(ex);
+                }
             }
         }
         private async void AddRoleCategory(List<RoleCategory> roleCategory, Role role)
         {
-            roleCategory.Clear();
-            foreach (var category in Categories)
+            try
             {
-                if (category.IsChecked)
+                int i = 1;
+                roleCategory.Clear();
+                foreach (var category in Categories)
                 {
-                    roleCategory.Add(
-                        new RoleCategory
-                        {
-                            CategoryId = category.Id,
-                            Category = category,
-                            CompanyId = CurrentUser.CompanyId,
-                            Role = role,
-                            RoleId = role.Id
-                        }
-                    );
+                    if (category.IsChecked)
+                    {
+                        roleCategory.Add(
+                            new RoleCategory
+                            {
+                                Id = roleCategories[roleCategories.Count - 1].Id + i,
+                                CategoryId = category.Id,
+                                Category = category,
+                                CompanyId = App.CurrentUser.CompanyId,
+                                Role = role,
+                                RoleId = role.Id
+                            }
+                        );
+                        i++;
+
+                    }
                 }
+                await client.From<RoleCategory>().Insert(roleCategory);
+                LoadRoleCategories();
+
             }
-            await client.From<RoleCategory>().Insert(roleCategory);
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                Logger.Error(ex);
+            }
         }
         private async void SaveRole()
         {
@@ -333,7 +361,7 @@ namespace DocumentManagementService.ViewModels
             }
             else
             {
-
+               
                 var role = new Role
                 {
                     Id = Roles.Count + 4,
@@ -346,11 +374,12 @@ namespace DocumentManagementService.ViewModels
                     var roleCategory = new List<RoleCategory>();
                     AddRoleCategory(roleCategory, response.Model);
                     CurrentRole = String.Empty;
-                    UnCheckCategories();
                     LoadRoles();
+                    UnCheckCategories();
                     MessageBox.Show("Должность успешно сохранена!", "Сохранение", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
+
         }
         private void UnCheckCategories()
         {
@@ -424,6 +453,15 @@ namespace DocumentManagementService.ViewModels
                 {
                     SelectedRole = role;
                 }
+            }
+        }
+        private async void LoadRoleCategories()
+        {
+           roleCategories.Clear();
+            var rctg = await client.From<RoleCategory>().Get();
+            foreach(var category in rctg.Models)
+            {
+                roleCategories.Add(category);
             }
         }
         private async void LoadCategories()

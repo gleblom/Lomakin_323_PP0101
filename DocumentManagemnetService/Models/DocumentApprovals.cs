@@ -21,6 +21,8 @@ namespace DocumentManagementService.Models
 
         [Column("approved")]
         public bool IsApproved { get; set; }
+        [Column("approved_at")]
+        public DateTime ApprovedAt {  get; set; }
         [Column("comment")]
         public string? Comment { get; set; }
     }

@@ -9,45 +9,29 @@
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
     mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="620">
-    <md:DialogHost IsOpen="{Binding IsOpen}" Name="CommentDialog">
-        <md:DialogHost.DialogContent>
-            <StackPanel>
-                <TextBlock Text="Причина отклонения"/>
-                <TextBox Text="{Binding Comment}"/>
-                <StackPanel Orientation="Horizontal">
-                    <Button x:Name="AddComment" Command="{Binding AddCommentCommand}" Content="Отправить" 
-                            Background="{x:Null}" 
-                            BorderBrush="{x:Null}"/>
-                    <Button x:Name="CancelCommand" Command="{Binding CancelCommand}" Content="Отмена" 
-                            Background="{x:Null}" 
-                            BorderBrush="{x:Null}"/>
-                </StackPanel>
-            </StackPanel>
-        </md:DialogHost.DialogContent>
-        <Grid Background="White">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="5*"/>
-                <RowDefinition Height="1*"/>
-            </Grid.RowDefinitions>
-            <Border Margin="10,10,10,72"
+    <Grid Background="White">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <Border Margin="10,10,10,72"
                      Grid.Row="0"
              BorderThickness="1" Grid.RowSpan="2">
-                <graph:RouteGraphLayout x:Name="graphLayout" IsEnabled="False"
+            <graph:RouteGraphLayout x:Name="graphLayout" IsEnabled="True"
                     Graph="{Binding Graph}" LayoutAlgorithmType="Tree" 
                                     OverlapRemovalAlgorithmType="FSA" />
-            </Border>
-            <StackPanel Visibility="{Binding Visibility}"
-                    Grid.Row="1" Orientation="Horizontal" Margin="191,5,191,19" Cursor="Hand"  >
-                <Button 
+        </Border>
+        <StackPanel Visibility="{Binding Visibility}"
+                    Grid.Row="1" Orientation="Horizontal" Margin="383,5,-1,19" Cursor="Hand"  >
+            <Button 
                     Content="Отклонить" 
                     Command="{Binding RejectCommand}" Margin="0,0,8,0" Foreground="White" 
                     Background="#FFF90000" BorderBrush="{x:Null}"/>
-                <Button Margin="15,0"
+            <Button Margin="15,0"
                     Content="Согласовать"
                     Command="{Binding ApproveCommand}" Cursor="Hand" Foreground="White" 
                     Background="{DynamicResource PrimaryHueDarkBrush}" BorderBrush="{x:Null}" />
-            </StackPanel>
+        </StackPanel>
 
-        </Grid>
-    </md:DialogHost>
+    </Grid>
 </UserControl>

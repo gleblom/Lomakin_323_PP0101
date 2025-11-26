@@ -198,7 +198,7 @@ namespace DocumentManagementService.ViewModels
             }
         }
 
-        private async void SaveRoute()
+        private void SaveRoute()
         {
             graphService.SaveRoute(editingRoute, RouteName, Steps);
             UpdateAction();

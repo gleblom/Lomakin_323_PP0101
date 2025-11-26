@@ -144,7 +144,10 @@
 
             <DataTemplate DataType="{x:Type local1:RouteNode}" x:Key="RouteNodeTemplate">
                 <Border Background="{Binding NodeColour}" CornerRadius="8" Padding="8"
-                        Tag="{Binding StepNumber}" PreviewMouseDown="Border_PreviewMouseDown">
+                        
+                        Tag="{Binding StepNumber}" MouseDown="Border_PreviewMouseDown"
+                        MouseLeftButtonDown="DoNothing" 
+                        MouseLeftButtonUp="DoNothing" MouseMove="DoNothing" >
                     <StackPanel>
                         <TextBlock Text="{Binding StepNumber, StringFormat='Этап {0}'}"  FontWeight="Bold" />
                         <TextBlock Text="{Binding Name}" FontStyle="Italic" />

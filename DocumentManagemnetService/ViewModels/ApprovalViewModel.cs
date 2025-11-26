@@ -1,8 +1,10 @@
 ﻿using DocumentManagementService.Models;
+using DocumentManagementService.Views;
 using DocumentManagemnetService;
 using Microsoft.Win32;
 using QuickGraph;
 using Supabase;
+using Supabase.Gotrue;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Net.Http;
@@ -16,15 +18,17 @@ namespace DocumentManagementService.ViewModels
 {
     public class ApprovalViewModel: BaseViewModel
     {
-        private readonly Client client;
+
+        private readonly Supabase.Client client;
         private readonly DocumentService documentService;
         private readonly GraphService graphService;
         public ViewDocument SelectedDocument { get; set; }
+        
         public ICommand ApproveCommand { get; }
         public ICommand RejectCommand { get; }
-        public ICommand CancelCommand { get; }
-        public ICommand AddCommentCommand { get; }
+
         public ObservableCollection<RouteStep> Steps { get; } = [];
+
 
         private Visibility visibility;
         public Visibility Visibility
@@ -32,35 +36,8 @@ namespace DocumentManagementService.ViewModels
             get { return visibility; }
             set
             {
-                if(SelectedDocument.Status == "Опубликован")
-                {
-                    visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    visibility = Visibility.Visible;
-                }
-                OnPropertyChanged();
-            }
-        }
-        private bool isOpen = false;
-        public bool IsOpen
-        {
-            get { return isOpen; }
-            set
-            {
-                isOpen = value;
-                OnPropertyChanged();
-            }
-        }
 
-        private string comment;
-        public string Comment
-        {
-            get { return comment; }
-            set
-            {
-                comment = value;
+                visibility = value;
                 OnPropertyChanged();
             }
         }
@@ -77,16 +54,26 @@ namespace DocumentManagementService.ViewModels
         }
         public ApprovalViewModel()
         {
+
             client = App.SupabaseService.Client;
             SelectedDocument = App.SelectedDocument;
             documentService = new DocumentService(client);
-            graphService = new GraphService();
+            graphService = new GraphService(App.Users);
 
    
-            RejectCommand = new RelayCommand(RejectAsync, obj => SelectedDocument != null);
-            ApproveCommand = new RelayCommand(ApproveAsync, obj => SelectedDocument != null);
-            CancelCommand = new RelayCommand(Cancel);
-            AddCommentCommand = new RelayCommand(AddComment);
+            if(SelectedDocument.Status == "Опубликован" || SelectedDocument.Status == "Не согласован")
+            {
+                Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                Visibility = Visibility.Visible;
+            }
+            RejectCommand = new RelayCommand(RejectAsync, 
+                obj => SelectedDocument != null && !App.IsWindowOpen<CommentWindow>());
+            ApproveCommand = new RelayCommand(ApproveAsync, 
+                obj => SelectedDocument != null && !App.IsWindowOpen<CommentWindow>());
+
 
             BuildGraph(SelectedDocument);
         }
@@ -111,9 +98,12 @@ namespace DocumentManagementService.ViewModels
             var doc = await client.From<ViewDocument>()
                  .Where(x => x.Id == SelectedDocument.Id).Get();
 
+            MessageBox.Show($"{doc.Model.Status}");
+            MessageBox.Show($"{doc.Model.CurrentStepIndex}");
+
             BuildGraph(doc.Model);
 
-            Visibility = Visibility.Collapsed;
+            visibility = Visibility.Collapsed;
         }
         private void ApproveAsync()
         {
@@ -121,15 +111,14 @@ namespace DocumentManagementService.ViewModels
         }
         private void RejectAsync()
         {
-            IsOpen = true;
+            CommentWindow commentWindow = new();
+            CommentViewModel vm = new();
+            vm.AddCommentAction ??= AddComment;
+            vm.CancelAction ??= new Action(commentWindow.Close);
+            commentWindow.DataContext = vm;
+            commentWindow.Show();
         }
-        private void AddComment()
-        {
-            ApproveCurrentStep(false, comment);
-        }
-        private void Cancel()
-        {
-            IsOpen = false;
-        }
+        public void AddComment(string comment) => ApproveCurrentStep(false, comment);
+
     }
 }

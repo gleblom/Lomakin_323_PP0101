@@ -1,6 +1,7 @@
 ﻿using DocumentManagementService.Models;
 using DocumentManagementService.Views;
 using DocumentManagemnetService;
+using NLog;
 using Supabase;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -12,6 +13,7 @@ namespace DocumentManagementService.ViewModels
     public class AdminViewModel : BaseViewModel
     {
         private readonly Client client;
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private ObservableCollection<UserView> Users { get; } = [];
         public ObservableCollection<Unit> Units { get; } = [];
         public ObservableCollection<Role> Roles { get; } = [];
@@ -79,11 +81,18 @@ namespace DocumentManagementService.ViewModels
         }
         private void OpenUserEditor()
         {
-            var userEditWindow = new UserEditView();
-            UserEditViewModel vm = new();
-            vm.UpdateAction ??= new Action(LoadUsers);
-            userEditWindow.DataContext = vm;
-            userEditWindow.ShowDialog();
+            try
+            {
+                var userEditWindow = new UserEditView();
+                UserEditViewModel vm = new();
+                vm.UpdateAction ??= new Action(LoadUsers);
+                userEditWindow.DataContext = vm;
+                userEditWindow.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
 
         }
         private async void LoadRoles()
@@ -120,6 +129,7 @@ namespace DocumentManagementService.ViewModels
         }
         private async void LoadUsers()
         {
+            Users.Clear();
             var users = await client.From<UserView>().
                 Where(x => x.CompanyId == App.CurrentUser.CompanyId)
                 .Where(x => x.UnitId != 0)

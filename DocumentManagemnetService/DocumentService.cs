@@ -166,7 +166,8 @@ namespace DocumentManagementService
                 DocumentId = doc.Id,
                 UserId = currentUserId,
                 StepIndex = currentIndex,
-                IsApproved = true,
+                IsApproved = approved,
+                ApprovedAt = DateTime.UtcNow,
                 Comment = comment
             };
             await client.From<DocumentApprovals>().Insert(approval);

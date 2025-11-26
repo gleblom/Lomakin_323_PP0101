@@ -5,7 +5,9 @@ using NLog;
 using QuickGraph;
 using Supabase;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Text.Json;
+using System.Windows;
 using System.Windows.Media;
 
 namespace DocumentManagementService
@@ -16,23 +18,10 @@ namespace DocumentManagementService
         private readonly Client client;
         public ObservableCollection<ApprovalRoute> Routes { get; } = [];
         public ObservableCollection<UserView> Users { get; } = [];
-        public GraphService()
+        public GraphService(ObservableCollection<UserView> Users)
         {
             client = App.SupabaseService.Client;
-            LoadUsers();
-        }
-        private async void LoadUsers()
-        {
-            Users.Clear();
-            var response = await client.From<UserView>()
-                .Where(x => x.RoleId != 2)
-                .Where(x => x.RoleId != 1)
-                .Get();
-            foreach (var user in response.Models)
-            {
-                Users.Add(user);
-            }
-
+            this.Users = Users;
         }
         public BidirectionalGraph<RouteNode, RouteEdge> BuildGraph(ObservableCollection<RouteStep> Steps, ViewDocument document)
         {
@@ -55,13 +44,13 @@ namespace DocumentManagementService
 
             for (int i = 0; i < nodes.Count; i++)
             {
-                if (currentStep > 0 && document.Status != "Отклонён")
+                if (currentStep > 0 && document.Status != "Не согласован")
                 {
                     nodes[i].NodeColour = Brushes.LightGreen;
                 }
-                if (currentStep > 0 && document.Status == "Отклонён")
+                if (currentStep + 1 > 0 && document.Status == "Не согласован")
                 {
-                    nodes[i].NodeColour = Brushes.Red;
+                    nodes[i].NodeColour = Brushes.OrangeRed;
                 }
                 currentStep--;
                 graph.AddVertex(nodes[i]);
@@ -189,6 +178,7 @@ namespace DocumentManagementService
             Steps.Clear();
             var idToStep = new Dictionary<string, RouteStep>();
 
+
             foreach (var node in dto.Nodes)
             {
                 var user = Users.Where(x => x.Id.ToString() == node.UserId).First();
@@ -218,20 +208,30 @@ namespace DocumentManagementService
             Steps.Clear();
             var idToStep = new Dictionary<string, RouteStep>();
 
-            foreach (var node in dto.Nodes)
-            {
-                var user = Users.Where(x => x.Id.ToString() == node.UserId).First();
-                var step = new RouteStep
-                {
-                    Name = node.Name,
-                    StepNumber = node.StepNumber,
-                    Role = node.Role,
-                    User = user,
+           
 
-                };
-                Steps.Add(step);
-                idToStep[node.Id] = step;
+            try
+            {
+                foreach (var node in dto.Nodes)
+                {
+                    var user = Users.Where(x => x.Id.ToString() == node.UserId).First();
+                    var step = new RouteStep
+                    {
+                        Name = node.Name,
+                        StepNumber = node.StepNumber,
+                        Role = node.Role,
+                        User = user,
+
+                    };
+                    Steps.Add(step);
+                    idToStep[node.Id] = step;
+                }
             }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+  
 
             return BuildGraph(Steps, document);
         }

@@ -2,7 +2,9 @@
 using DocumentManagementService.Views;
 using DocumentManagemnetService;
 using DocumentManagemnetService.Views;
+using NLog;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 
@@ -81,7 +83,14 @@ namespace DocumentManagementService.ViewModels
         }
         private async void Leave()
         {
-            MenuItems.Clear();
+            try
+            {
+                MenuItems?.Clear();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
             if (!App.IsWindowOpen<StartupView>())
             {
                 await authService.SignOutAsync();

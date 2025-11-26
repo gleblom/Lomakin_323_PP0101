@@ -5,18 +5,24 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DocumentManagemnetService.Views"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+                     xmlns:local1="clr-namespace:DocumentManagementService"
         mc:Ignorable="d"
         Height="645" Width="960">
     <Grid Background="White">
         <TextBox Text="{Binding SignInEmail}" 
             x:Name="EmailBox"
             materialDesign:HintAssist.Hint="Email" Margin="321,217,323,0" Height="50" 
+           local1:InputRestriction.AllowedPattern="^[a-zA-Zа-яА-Я0-9@.]*$"
+                                      MaxLength="30"
+                     materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed"
             VerticalAlignment="Top" BorderBrush="#B2000000"/>
         <PasswordBox materialDesign:PasswordBoxAssist.Password="{Binding SignInPassword}"
             Style="{StaticResource MaterialDesignFloatingHintRevealPasswordBox}"
             materialDesign:TextFieldAssist.HasClearButton="True"
             x:Name="PasswordBox"
             materialDesign:HintAssist.Hint="Пароль"
+                                          MaxLength="30"
+                     materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed"
             Margin="321,310,323,0" Height="49" VerticalAlignment="Top" />
         <Button Command="{Binding SignInCommand}" 
                 x:Name="SignIn" 
