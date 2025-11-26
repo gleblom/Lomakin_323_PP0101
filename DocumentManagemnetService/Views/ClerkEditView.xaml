@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:DocumentManagementService.Views"
+
              mc:Ignorable="d" 
             xmlns:local11="clr-namespace:DocumentManagementService"
               xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" Width="510" Height="450" ResizeMode="NoResize">
@@ -16,16 +17,19 @@
 
             <TextBlock  Text="Фамилия" FontSize="20"/>
             <TextBox Margin="10"  MaxLength="30"
+                     local11:InputRestriction.AllowedPattern="^[a-zA-Zа-яА-Я]*$"
                      materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed"
                      Text="{Binding SecondName, UpdateSourceTrigger=PropertyChanged}" Height="32" PreviewKeyDown="TextBox_PreviewKeyDown"/>
 
             <TextBlock Text="Имя" FontSize="20"/>
             <TextBox Margin="10" MaxLength="30"
+                     local11:InputRestriction.AllowedPattern="^[a-zA-Zа-яА-Я]*$"
                      materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed"           
                      Text="{Binding FirstName, UpdateSourceTrigger=PropertyChanged}" Height="32" PreviewKeyDown="TextBox_PreviewKeyDown"/>
 
             <TextBlock Text="Отчество" FontSize="20"/>
             <TextBox Margin="10" MaxLength="30"
+                     local11:InputRestriction.AllowedPattern="^[a-zA-Zа-яА-Я]*$"
                      materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed"
                     Text="{Binding ThirdName, UpdateSourceTrigger=PropertyChanged}"                    
                      Height="32" PreviewKeyDown="TextBox_PreviewKeyDown"/>
@@ -40,6 +44,7 @@
             <TextBlock Text="Телефон" FontSize="20"/>
 
             <TextBox Margin="10" MaxLength="30"
+                          local11:InputRestriction.AllowedPattern="^[0-9]*$"
                      materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed" 
                      PreviewKeyDown="TextBox_PreviewKeyDown">
                 <TextBox.Text>

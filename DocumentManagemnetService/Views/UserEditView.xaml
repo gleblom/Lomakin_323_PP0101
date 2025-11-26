@@ -21,16 +21,19 @@
 
             <TextBlock  Text="Фамилия" FontSize="20"/>
             <TextBox Margin="10"  MaxLength="30"
+                     local11:InputRestriction.AllowedPattern="^[a-zA-Zа-яА-Я]*$"
                      materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed"
                      Text="{Binding SecondName, UpdateSourceTrigger=PropertyChanged}" Height="32" PreviewKeyDown="TextBox_PreviewKeyDown"/>
 
             <TextBlock Text="Имя" FontSize="20"/>
             <TextBox Margin="10" MaxLength="30"
+                                          local11:InputRestriction.AllowedPattern="^[a-zA-Zа-яА-Я]*$"
                      materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed"           
                      Text="{Binding FirstName, UpdateSourceTrigger=PropertyChanged}" Height="32" PreviewKeyDown="TextBox_PreviewKeyDown"/>
 
             <TextBlock Text="Отчество" FontSize="20"/>
             <TextBox Margin="10" MaxLength="30"
+                                          local11:InputRestriction.AllowedPattern="^[a-zA-Zа-яА-Я]*$"
                      materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed"
                     Text="{Binding ThirdName, UpdateSourceTrigger=PropertyChanged}"                    
                      Height="32" PreviewKeyDown="TextBox_PreviewKeyDown"/>
@@ -39,12 +42,13 @@
             <TextBox x:Name="EmailBox"
                      IsReadOnly="{Binding IsReadOnly}"
                     Margin="10" MaxLength="30"
+                      local11:InputRestriction.AllowedPattern="^[a-zA-Z0-9@.]*$"
                      materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed"
                     Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"             
                     Height="32" PreviewKeyDown="TextBox_PreviewKeyDown"/>
 
             <TextBlock Text="Телефон" FontSize="20"/>
-            <TextBox Margin="10" MaxLength="30"
+            <TextBox Margin="10" MaxLength="10"
                      materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed" Height="32" PreviewKeyDown="TextBox_PreviewKeyDown">
                 <TextBox.Text>
                     <Binding Path="Telephone" 

@@ -78,7 +78,6 @@
                      Margin="10" Width="240" Height="45"
                      materialDesign:HintAssist.Hint="Название организации"
                      MaxLength="50"
-                     local1:InputRestriction.AllowedPattern="^[a-zA-Zа-яА-Я]*$"
                     materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed"/>
             <PasswordBox
                 materialDesign:HintAssist.Hint="Пароль"          

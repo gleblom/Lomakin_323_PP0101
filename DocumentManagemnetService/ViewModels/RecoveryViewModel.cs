@@ -117,7 +117,7 @@ namespace DocumentManagementService.ViewModels
 
             GetCodeCommand = new RelayCommand(GetCode, obj => email != null);
             ChangePasswordCommand = new RelayCommand(ChangePassword);
-            SaveCommand = new RelayCommand(Save );
+            SaveCommand = new RelayCommand(Save);
         }
         private async void GetCode()
         {

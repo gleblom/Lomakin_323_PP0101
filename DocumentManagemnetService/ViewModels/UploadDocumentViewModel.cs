@@ -118,6 +118,9 @@ namespace DocumentManagementService.ViewModels
             if (success)
             {
                 MessageBox.Show("Документ сохранен", "Сохранение", MessageBoxButton.OK, MessageBoxImage.Information);
+                DocumentTitle = string.Empty;
+                SelectedFileCategory = null;
+                selectedFilePath = string.Empty;
             }
             else
             {

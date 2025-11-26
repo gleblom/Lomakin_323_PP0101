@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentManagementService",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xUnitTests", "xUnitTests\xUnitTests.csproj", "{438EA294-04CE-48AC-BA62-C923271E8797}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "DMS", "DMS\DMS.vdproj", "{A3C7D1B1-7F1C-4D91-C755-5EC277256645}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,8 +21,6 @@ Global
 		{438EA294-04CE-48AC-BA62-C923271E8797}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{438EA294-04CE-48AC-BA62-C923271E8797}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{438EA294-04CE-48AC-BA62-C923271E8797}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A3C7D1B1-7F1C-4D91-C755-5EC277256645}.Debug|Any CPU.ActiveCfg = Debug
-		{A3C7D1B1-7F1C-4D91-C755-5EC277256645}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
