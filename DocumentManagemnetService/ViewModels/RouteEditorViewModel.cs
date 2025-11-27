@@ -30,6 +30,16 @@ namespace DocumentManagementService.ViewModels
         public ICommand MoveDownCommand { get; }
         public ICommand SaveCommand { get; }
         public ICommand DeleteCommand { get; }
+        private bool isEnabled = true;
+        public bool IsEnabled
+        {
+            get { return isEnabled; }
+            set
+            {
+                isEnabled = value;
+                OnPropertyChanged();
+            }
+        }
 
         private UserView selectedUser;
         public UserView SelectedUser
@@ -200,9 +210,11 @@ namespace DocumentManagementService.ViewModels
 
         private void SaveRoute()
         {
+            IsEnabled = false;
             graphService.SaveRoute(editingRoute, RouteName, Steps);
             UpdateAction();
             MessageBox.Show("Маршрутная карта успешно сохранена!", "Сохранение", MessageBoxButton.OK, MessageBoxImage.Information);
+            IsEnabled = true;
         }
 
         private async void DeleteRoute()

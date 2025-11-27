@@ -25,16 +25,10 @@ namespace DocumentManagementService.ViewModels
             get { return selectedUser; }
             set
             {
-                if (selectedUser != value)
-                {
-                    selectedUser = value;
-                    OnPropertyChanged();
+               selectedUser = value;
+               OnPropertyChanged();
 
-
-                    App.SelectedExecutive = SelectedUser;
-
-
-                }
+               App.SelectedExecutive = SelectedUser;
             }
         }
         private string name;
@@ -54,7 +48,8 @@ namespace DocumentManagementService.ViewModels
             CurrentUser = App.CurrentUser;
 
             EditUserCommand = new RelayCommand(OpenUserEditor,
-    obj => !App.IsWindowOpen<ClerkEditView>() && SelectedUser != null);
+                obj => !App.IsWindowOpen<ClerkEditView>() && SelectedUser != null);
+
             AddUserCommand = new RelayCommand(AddUser,
                 obj => !App.IsWindowOpen<ClerkEditView>());
 
@@ -81,7 +76,7 @@ namespace DocumentManagementService.ViewModels
             ClerkEditViewModel vm = new();
             vm.UpdateAction ??= new Action(LoadUsers);
             userEditWindow.DataContext = vm;
-            userEditWindow.ShowDialog();
+            userEditWindow.Show();
 
         }
         private void SyncRoles()
@@ -96,6 +91,7 @@ namespace DocumentManagementService.ViewModels
         private async void LoadUsers()
         {
             Roles.Clear();
+            Users.Clear();
             var roles = await client.From<ViewRole>()
                 .Where(x => x.Id == 1 || x.Id == 2)
                 .Get();

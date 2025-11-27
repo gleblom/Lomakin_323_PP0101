@@ -39,6 +39,7 @@ namespace DocumentManagementService.ViewModels
                 }
             }
         }
+
         private string name;
         public string Name
         {

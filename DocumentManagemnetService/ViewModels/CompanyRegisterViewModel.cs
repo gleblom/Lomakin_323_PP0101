@@ -2,6 +2,7 @@
 using DocumentManagemnetService;
 using NLog;
 using Supabase;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 
@@ -27,7 +28,16 @@ namespace DocumentManagementService.ViewModels
                 OnPropertyChanged();
             }
         }
-
+        private bool isEnabled = true;
+        public bool IsEnabled
+        {
+            get { return isEnabled; }
+            set
+            {
+                isEnabled = value;
+                OnPropertyChanged();
+            }
+        }
         private UserView user;
         public UserView User
         {
@@ -48,6 +58,7 @@ namespace DocumentManagementService.ViewModels
                 OnPropertyChanged();
             }
         }
+        public const string BasicTextPattern = @"^[a-zA-Zа-яА-Я0-9\s\.,!?;:""'\(\)\-]*$";
 
         public CompanyRegisterViewModel()
         {
@@ -55,11 +66,15 @@ namespace DocumentManagementService.ViewModels
             navigationService = App.NavigationService;
             authService = new AuthService(App.SupabaseService);
 
+           
+            var regex = new Regex(BasicTextPattern, RegexOptions.Compiled);
+
             SignUpCommand = new RelayCommand(SignUp,
                 obj => User.FirstName != null && User.SecondName != null &&
                 User.FirstName != string.Empty && User.SecondName != string.Empty &&
                 User.Email != string.Empty && User.ThirdName != string.Empty &&
-                Company.CompanyName != string.Empty &&
+                Company.CompanyName != string.Empty && regex.IsMatch(Company.CompanyName) &&
+                regex.IsMatch(password) && IsEnabled &&
                 User.ThirdName != null && User.Email != null && User.Telephone != null
                 && User.Telephone?.Length == 10 && Company.CompanyName != null
                 && Password != string.Empty && Password?.Length > 5);
@@ -92,6 +107,7 @@ namespace DocumentManagementService.ViewModels
         }
         private async void SignUp()
         {
+            IsEnabled = false;
             try
             {
                 bool success = await authService.SignUpAsync(User.Email, Password,
@@ -118,6 +134,7 @@ namespace DocumentManagementService.ViewModels
             {
                 Logger.Error(ex);
             }
+            IsEnabled = true;
         }
     }
 }

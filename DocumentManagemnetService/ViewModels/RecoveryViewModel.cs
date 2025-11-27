@@ -1,5 +1,6 @@
 ﻿using DocumentManagementService.Models;
 using DocumentManagemnetService;
+using NLog;
 using Supabase;
 using System.Net;
 using System.Windows;
@@ -110,18 +111,28 @@ namespace DocumentManagementService.ViewModels
                 OnPropertyChanged();
             }
         }
+        private bool isEnabled = true;
+        public bool IsEnabled
+        {
+            get { return isEnabled; }
+            set
+            {
+                isEnabled = value;
+                OnPropertyChanged();
+            }
+        }
         public RecoveryViewModel()
         {
             navigationService = App.NavigationService;
             client = App.SupabaseService.Client;
 
-            GetCodeCommand = new RelayCommand(GetCode, obj => email != null);
+            GetCodeCommand = new RelayCommand(GetCode, obj => email != null && IsEnabled);
             ChangePasswordCommand = new RelayCommand(ChangePassword);
-            SaveCommand = new RelayCommand(Save );
+            SaveCommand = new RelayCommand(Save);
         }
         private async void GetCode()
         {
-
+            IsEnabled = false;
             HttpStatusCode status = await AuthService.SendRecoveryCode(email);
             if (status == HttpStatusCode.OK)
             {
@@ -132,30 +143,43 @@ namespace DocumentManagementService.ViewModels
             {
                 MessageBox.Show("Произошла непредвиденная ошибка!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+            IsEnabled = true;
 
 
         }
         private async void ChangePassword()
         {
-            var user = await client.From<User>()
-                .Where(x => x.Email == email).Get();
-            int? code = user.Model.Code;
+            IsEnabled = false;
+            try
+            {
+                var user = await client.From<User>()
+                     .Where(x => x.Email == email).Get();
+                int? code = user.Model.Code;
 
-            if (code == int.Parse(recoveryCode))
-            {
-                PasswordVisibility = Visibility.Visible;
-                IsEnabledRecovery = false;
-                IsEnabledChanger = false;
+                if (code == int.Parse(recoveryCode))
+                {
+                    PasswordVisibility = Visibility.Visible;
+                    IsEnabledRecovery = false;
+                    IsEnabledChanger = false;
+                }
+                else
+                {
+                    MessageBox.Show("Неверный код восстановления", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
-            else
+            catch(Exception ex) 
             {
-                MessageBox.Show("Неверный код восстановления", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Введите код восстановленя!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+
+
+            IsEnabled = true;
 
 
         }
         private async void Save()
         {
+            IsEnabled = false;
             if (password == recoveryPassword)
             {
                 var user = await client.From<User>()
@@ -171,6 +195,7 @@ namespace DocumentManagementService.ViewModels
             {
                 MessageBox.Show("Пароли должны совпадать!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+            IsEnabled = true;
         }
     }
 }

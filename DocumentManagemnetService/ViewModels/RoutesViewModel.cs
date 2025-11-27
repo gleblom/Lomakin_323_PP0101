@@ -25,8 +25,8 @@ namespace DocumentManagementService.ViewModels
         public ICommand OnApproveCommand { get; }
         public ICommand CancelCommand { get; }
         public ICommand EditRouteCommand { get; }
-       
-        
+
+
 
         private string searchQuery;
         public string SearchQuery

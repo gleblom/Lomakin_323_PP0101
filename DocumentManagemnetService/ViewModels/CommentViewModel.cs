@@ -12,6 +12,19 @@ namespace DocumentManagementService.ViewModels
         public ICommand CancelCommand { get; }
         public ICommand AddCommentCommand { get; }
         public Action CancelAction { get; set; }
+        private bool isEnabled;
+        public bool IsEnabled
+        {
+            get { return isEnabled; }
+            set
+            {
+                if (isEnabled != value)
+                {
+                    isEnabled = value;
+                    OnPropertyChanged(nameof(isEnabled));
+                }
+            }
+        }
         public Action<string> AddCommentAction { get; set; }
         private string comment;
         public string Comment
@@ -25,8 +38,10 @@ namespace DocumentManagementService.ViewModels
         }
         public void ExecuteComment()
         {
+            IsEnabled = false;
             AddCommentAction?.Invoke(comment);
             CancelAction();
+            IsEnabled = true;
         }
         public CommentViewModel()
         {

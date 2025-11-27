@@ -78,7 +78,6 @@
                      Margin="10" Width="240" Height="45"
                      materialDesign:HintAssist.Hint="Название организации"
                      MaxLength="50"
-                     local1:InputRestriction.AllowedPattern="^[a-zA-Zа-яА-Я]*$"
                     materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed"/>
             <PasswordBox
                 materialDesign:HintAssist.Hint="Пароль"          
@@ -86,18 +85,13 @@
                 Width="240" KeyDown="TextBox_PreviewKeyDown"
                 MaxLength="30"
                  materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed">
-                <materialDesign:PasswordBoxAssist.Password                 
-                   >
-                    
-                    <Binding Path="Password" 
-                         Mode="TwoWay" 
-                             
+                <materialDesign:PasswordBoxAssist.Password>
+                    <Binding Path="Password"                      
                          UpdateSourceTrigger="PropertyChanged"
                          ValidatesOnNotifyDataErrors="True"
                          NotifyOnValidationError="True">
                         <Binding.ValidationRules>
                             <local1:MinLengthValidationRule MinLength="6"/>
-                           
                         </Binding.ValidationRules>
                     </Binding>
                 </materialDesign:PasswordBoxAssist.Password>

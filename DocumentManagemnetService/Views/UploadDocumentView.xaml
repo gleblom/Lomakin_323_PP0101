@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:DocumentManagementService.Views"
+                          xmlns:local1="clr-namespace:DocumentManagementService"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" Height="634" Width="1200">
 
@@ -18,6 +19,9 @@
             <TextBox 
                     Style="{StaticResource MaterialDesignFilledTextBox}"                 
                     Margin="5"
+
+                 materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed"
+                MaxLength="20"
                      materialDesign:HintAssist.Hint="Название документа"
                      Text="{Binding DocumentTitle, UpdateSourceTrigger=PropertyChanged}" Width="313" Height="47" />
 

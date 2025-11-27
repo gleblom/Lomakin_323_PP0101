@@ -5,6 +5,7 @@ using Supabase;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 
@@ -27,6 +28,16 @@ namespace DocumentManagementService.ViewModels
             set
             {
                 currentUser = value;
+                OnPropertyChanged();
+            }
+        }
+        private bool isEnabled = true;
+        public bool IsEnabled
+        {
+            get { return isEnabled; }
+            set
+            {
+                isEnabled = value;
                 OnPropertyChanged();
             }
         }
@@ -63,19 +74,21 @@ namespace DocumentManagementService.ViewModels
                 OnPropertyChanged();
             }
         }
+        public const string BasicTextPattern = @"^[a-zA-Zа-яА-Я0-9\s\.,!?;:""'\(\)\-]*$";
         public ClerkEditViewModel()
         {
             client = App.SupabaseService.Client;
             authService = new AuthService(App.SupabaseService);
+            var regex = new Regex(BasicTextPattern, RegexOptions.Compiled);
 
-            if (App.SelectedUser != null)
+            if (App.SelectedExecutive != null)
             {
                 CurrentUser = App.SelectedExecutive;
 
-                CurrentUser.Id = App.SelectedUser.Id;
-                CurrentUser.RoleId = App.SelectedUser.RoleId;
-                CurrentUser.UnitId = App.SelectedUser.UnitId;
-                CurrentUser.CompanyId = App.SelectedUser.CompanyId;
+                CurrentUser.Id = App.SelectedExecutive.Id;
+                CurrentUser.RoleId = App.SelectedExecutive.RoleId;
+                CurrentUser.UnitId = App.SelectedExecutive.UnitId;
+                CurrentUser.CompanyId = App.SelectedExecutive.CompanyId;
 
                 isUserEditing = true;
                 isReadOnly = true;
@@ -87,9 +100,10 @@ namespace DocumentManagementService.ViewModels
                 CurrentUser = new();
             }
             SaveUserCommand = new RelayCommand(SaveUser, obj =>
-            CurrentUser.FirstName != null && CurrentUser.SecondName != null &&
-            CurrentUser.Email != null && SelectedRole != null && Password != null &&
-            CurrentUser.Telephone != null && CurrentUser.Telephone?.Length > 9 && Password?.Length > 5);
+                CurrentUser.FirstName != null && CurrentUser.SecondName != null &&
+                CurrentUser.Email != null && SelectedRole != null && Password != null &&
+            regex.IsMatch(Password) &&
+            CurrentUser.Telephone != null && CurrentUser.Telephone?.Length > 9 && Password?.Length > 5 && IsEnabled);
 
             LoadAdminsClerks();
         }

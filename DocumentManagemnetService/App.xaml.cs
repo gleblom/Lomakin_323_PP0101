@@ -18,6 +18,7 @@ namespace DocumentManagemnetService
     public partial class App : Application
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private DocumentService documentService;
         public static ViewDocument SelectedDocument { get; set; }
         public static SupabaseService SupabaseService { get; private set; }
         public static User CurrentUser { get; set; }
@@ -25,7 +26,10 @@ namespace DocumentManagemnetService
         public static User SelectedExecutive {  get; set; }
         public static UserView SelectedUser { get; set; }
         public static ObservableCollection<UserView> Users { get; } = [];
+        public static List<Notification> notifications = [];
         public static INavigationService NavigationService { get; set; }
+        public static string token {  get; set; }
+
         private async void LoadUsers()
         {
             Users.Clear();
@@ -67,18 +71,22 @@ namespace DocumentManagemnetService
             Logger.Info("Приложение запущено.");
             SupabaseService = new SupabaseService();
 
+            
+
 
             await SupabaseService.InitializeAsync();
 
             await SupabaseService.EnsureSessionIsValidAsync();
 
             LoadUsers();
+            documentService = new DocumentService(SupabaseService.Client);
 
             if (SupabaseService.IsAuthenticated)
             {
          
                 CurrentUser = await LoadUserInfo();
-
+                LoadNotify();
+                token = SupabaseService.Client.Auth.CurrentSession.AccessToken;
 
                 new MenuWindow(CurrentUser).Show(); //Если пользователь залогинен открывается главное окно
             }
@@ -87,6 +95,15 @@ namespace DocumentManagemnetService
                 new StartupView().Show(); //если нет - окно входа
             }
 
+        }
+        private async void LoadNotify()
+        {
+            notifications.Clear();
+            var notifs = await documentService.GetNotificationsAsync();
+            foreach (var notif in notifs)
+            {
+                notifications.Add(notif);
+            }
         }
         public static bool IsWindowOpen<T>(string name = "") where T : Window //Проверка, открыто ли окно
         {
@@ -97,6 +114,7 @@ namespace DocumentManagemnetService
 
         private async void Border_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
+            e.Handled = true;
             Border border = sender as Border;
             var step = Convert.ToInt32(border.Tag);
 
@@ -115,6 +133,7 @@ namespace DocumentManagemnetService
             {
                 e.Handled = true;
             }
+            e.Handled = false;
         }
         protected override void OnExit(ExitEventArgs e)
         {

@@ -37,7 +37,7 @@ namespace DocumentManagementService.ViewModels
             {
                 DocumentItems.Add(new("Согласование", "Check", "Approvement"));
             }
-            navigationService.Navigate("View");
+
         }
     }
 }

@@ -16,6 +16,8 @@
             <StackPanel Orientation="Horizontal">
                 <TextBox                     
                     Width="200"
+                                        materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed"
+                    MaxLength="15"
                     materialDesign:HintAssist.Hint="Поиск"
                     Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
                 <materialDesign:PackIcon Kind="Magnify" Height="26" Width="25" />

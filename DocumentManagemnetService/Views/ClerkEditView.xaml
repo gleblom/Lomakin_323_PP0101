@@ -16,16 +16,21 @@
 
             <TextBlock  Text="Фамилия" FontSize="20"/>
             <TextBox Margin="10"  MaxLength="30"
+                     local11:InputRestriction.AllowedPattern="^[a-zA-Zа-яА-Я]*$"
                      materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed"
-                     Text="{Binding SecondName, UpdateSourceTrigger=PropertyChanged}" Height="32" PreviewKeyDown="TextBox_PreviewKeyDown"/>
+                     Text="{Binding SecondName, UpdateSourceTrigger=PropertyChanged}" Height="32" 
+                     PreviewKeyDown="TextBox_PreviewKeyDown"/>
 
             <TextBlock Text="Имя" FontSize="20"/>
             <TextBox Margin="10" MaxLength="30"
+                        local11:InputRestriction.AllowedPattern="^[a-zA-Zа-яА-Я]*$"
                      materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed"           
-                     Text="{Binding FirstName, UpdateSourceTrigger=PropertyChanged}" Height="32" PreviewKeyDown="TextBox_PreviewKeyDown"/>
+                     Text="{Binding FirstName, UpdateSourceTrigger=PropertyChanged}" Height="32"
+                     PreviewKeyDown="TextBox_PreviewKeyDown"/>
 
             <TextBlock Text="Отчество" FontSize="20"/>
             <TextBox Margin="10" MaxLength="30"
+                        local11:InputRestriction.AllowedPattern="^[a-zA-Zа-яА-Я]*$"
                      materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed"
                     Text="{Binding ThirdName, UpdateSourceTrigger=PropertyChanged}"                    
                      Height="32" PreviewKeyDown="TextBox_PreviewKeyDown"/>
@@ -33,13 +38,15 @@
             <TextBlock Text="Email" FontSize="20"/>
             <TextBox x:Name="EmailBox"
                     Margin="10" MaxLength="30"
+                                          local11:InputRestriction.AllowedPattern="^[a-zA-Z0-9@.]*$"
                      materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed"
                     Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"             
                     Height="32" PreviewKeyDown="TextBox_PreviewKeyDown"/>
 
             <TextBlock Text="Телефон" FontSize="20"/>
 
-            <TextBox Margin="10" MaxLength="30"
+            <TextBox Margin="10" MaxLength="10"
+                     local11:InputRestriction.AllowedPattern="^[0-9]*$"
                      materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed" 
                      PreviewKeyDown="TextBox_PreviewKeyDown">
                 <TextBox.Text>
@@ -70,13 +77,23 @@
 
             </StackPanel>
 
-            <PasswordBox materialDesign:HintAssist.HelperText="Пароль доступен только для записи. "
-                         materialDesign:HintAssist.Hint="Пароль"
-                         materialDesign:PasswordBoxAssist.Password="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                         materialDesign:TextFieldAssist.HasClearButton="True"
-                         MaxLength="30"
-                            materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed"
-                         Style="{StaticResource MaterialDesignRevealPasswordBox}" Margin="10" Width="278" Height="32" />
+            <PasswordBox
+                materialDesign:HintAssist.Hint="Пароль"          
+            Style="{StaticResource MaterialDesignRevealPasswordBox}"         
+                Width="280" KeyDown="TextBox_PreviewKeyDown"
+                MaxLength="30"
+                 materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed" Height="46">
+                <materialDesign:PasswordBoxAssist.Password>
+                    <Binding Path="Password"                      
+                         UpdateSourceTrigger="PropertyChanged"
+                         ValidatesOnNotifyDataErrors="True"
+                         NotifyOnValidationError="True">
+                        <Binding.ValidationRules>
+                            <local11:MinLengthValidationRule MinLength="6"/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </materialDesign:PasswordBoxAssist.Password>
+            </PasswordBox>
 
 
             <Button Grid.Column="1" Command="{Binding SaveUserCommand}" Content="Сохранить" 

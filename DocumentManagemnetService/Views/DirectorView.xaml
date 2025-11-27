@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:DocumentManagementService.Views"
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="900">
     <Grid Margin="10" Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}">
@@ -15,6 +15,8 @@
         <StackPanel Orientation="Horizontal">
             <StackPanel Orientation="Horizontal">
                 <TextBox                     
+                                                            materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed"
+                    MaxLength="15"
                     Width="200"
                     materialDesign:HintAssist.Hint="Поиск"
                     Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
@@ -46,6 +48,13 @@
                 <DataGridTextColumn Header="ФИО" Binding="{Binding Display}" Width="*"/>
                 <DataGridTextColumn Header="Должность" Binding="{Binding Role.Name}" Width="300"/>
             </DataGrid.Columns>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDoubleClick">
+                    <i:InvokeCommandAction 
+                                Command="{Binding EditUserCommand}"
+                                CommandParameter="{Binding ElementName=UserGrid}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
         </DataGrid>
     </Grid>
 </UserControl>

@@ -168,33 +168,42 @@ namespace DocumentManagementService
         }
         public BidirectionalGraph<RouteNode, RouteEdge> LoadRoute(string json, ObservableCollection<RouteStep> Steps)
         {
-
-            var dto = JsonSerializer.Deserialize<RouteGraph>(json); //Десериализация графа
-            if (dto is null)
+            try
             {
-                return null;
+                var dto = JsonSerializer.Deserialize<RouteGraph>(json); //Десериализация графа
+                if (dto is null)
+                {
+                    return null;
+                }
+
+                Steps.Clear();
+                var idToStep = new Dictionary<string, RouteStep>();
+
+
+                foreach (var node in dto.Nodes)
+                {
+                    var user = Users.Where(x => x.Id.ToString() == node.UserId).First();
+                    var step = new RouteStep
+                    {
+                        Name = node.Name,
+                        StepNumber = node.StepNumber,
+                        Role = node.Role,
+                        User = user,
+
+                    };
+                    Steps.Add(step);
+                    idToStep[node.Id] = step;
+                }
+
+                return BuildGraph(Steps);
             }
-
-            Steps.Clear();
-            var idToStep = new Dictionary<string, RouteStep>();
-
-
-            foreach (var node in dto.Nodes)
+            catch (Exception ex)
             {
-                var user = Users.Where(x => x.Id.ToString() == node.UserId).First();
-                var step = new RouteStep 
-                { 
-                    Name = node.Name,
-                    StepNumber = node.StepNumber, 
-                    Role = node.Role,
-                    User = user,
-                    
-                };
-                Steps.Add(step);
-                idToStep[node.Id] = step;
-            }
+                {
+                    return null;
+                }
 
-            return BuildGraph(Steps);
+            }
         }
         public BidirectionalGraph<RouteNode, RouteEdge> LoadRoute(string json, ObservableCollection<RouteStep> Steps, ViewDocument document)
         {

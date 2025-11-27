@@ -34,7 +34,10 @@
                Margin="279,86,281,0" VerticalAlignment="Top"
                Background="#78B24B" Height="70" Foreground="#E5FFFFFF" FontSize="20"/>
         <TextBlock Text="Ещё не в системе?" Margin="350,586,459,41" FontWeight="Bold" FontSize="16"/>
-        <Button Content="Зарегистрироваться" Command="{Binding SignUpCommand}" Margin="492,581,298,32" 
+        
+        <Button 
+           Content="Зарегистрироваться" Command="{Binding SignUpCommand}" 
+            Margin="492,581,298,32" 
                 FontWeight="Bold" Background="{x:Null}" BorderBrush="{x:Null}"/>
     </Grid>
 </UserControl>

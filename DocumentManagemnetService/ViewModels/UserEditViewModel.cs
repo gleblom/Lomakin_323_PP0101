@@ -2,6 +2,7 @@
 using DocumentManagemnetService;
 using NLog;
 using System.Collections.ObjectModel;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using Client = Supabase.Client;
@@ -26,6 +27,16 @@ namespace DocumentManagementService.ViewModels
         public ICommand SaveUserCommand { get; }
         public ICommand SaveRoleCommand { get; }
         public ICommand SaveUnitCommand { get; }
+        private bool isEnabled = true;
+        public bool IsEnabled
+        {
+            get { return isEnabled; }
+            set
+            {
+                isEnabled = value;
+                OnPropertyChanged();
+            }
+        }
 
         private string password;
         public string Password
@@ -132,10 +143,12 @@ namespace DocumentManagementService.ViewModels
 
             }
         }
+        public const string BasicTextPattern = @"^[a-zA-Zа-яА-Я0-9\s\.,!?;:""'\(\)\-]*$";
         public UserEditViewModel()
         {
             client = App.SupabaseService.Client;
             authService = new AuthService(App.SupabaseService);
+            var regex = new Regex(BasicTextPattern, RegexOptions.Compiled);
 
             if (App.SelectedUser != null)
             {
@@ -167,19 +180,21 @@ namespace DocumentManagementService.ViewModels
             AddRoleCommand = new RelayCommand(AddRole);
             EditRoleCommand = new RelayCommand(EditRole, obj => SelectedRole != null);
             EditUnitCommand = new RelayCommand(EditUnit, obj => SelectedUnit != null);
-            SaveRoleCommand = new RelayCommand(SaveRole, obj => CurrentRole != string.Empty && Categories.Any(x => x.IsChecked));
-            SaveUnitCommand = new RelayCommand(SaveUnit, obj => CurrentUnit != string.Empty);
+            SaveRoleCommand = new RelayCommand(SaveRole, obj => 
+            CurrentRole != string.Empty && Categories.Any(x => x.IsChecked) && IsEnabled);
+            SaveUnitCommand = new RelayCommand(SaveUnit, obj => CurrentUnit != string.Empty && IsEnabled);
 
             SaveUserCommand = new RelayCommand(SaveUser, obj =>
 
-                CurrentUser.FirstName != null && CurrentUser.SecondName != null && 
-                CurrentUser.Email != null && SelectedRole != null && SelectedUnit != null && Password != null && 
-                CurrentUser.Telephone != null && CurrentUser.Telephone?.Length > 9 && Password?.Length > 5);
+                CurrentUser.FirstName != null && CurrentUser.SecondName != null &&
+                regex.IsMatch(Password) &&
+                CurrentUser.Email != null && SelectedRole != null && SelectedUnit != null && Password != null &&
+                CurrentUser.Telephone != null && CurrentUser.Telephone?.Length > 9 && Password?.Length > 5 && IsEnabled);
         }
 
         private async void SaveUnit()
         {
-
+            IsEnabled = false;
             if (isUnitEditing)
             {
                 var update = await client.From<Unit>()
@@ -199,18 +214,30 @@ namespace DocumentManagementService.ViewModels
             }
             else
             {
-                var unit = new Unit
+                Unit unit = new();
+                if(Units.Count == 0)
                 {
-                    Id = Units[Units.Count - 1].Id + 1,
-                    Name = CurrentUnit,
-                    CompanyId = App.CurrentUser.CompanyId
-                };
+                    unit = new Unit
+                    {
+                        Id = 1,
+                        Name = CurrentUnit,
+                        CompanyId = App.CurrentUser.CompanyId
+                    };
+                }
+                else
+                {
+                    unit = new Unit
+                    {
+                        Id = Units[Units.Count - 1].Id + Units.Count,
+                        Name = CurrentUnit,
+                        CompanyId = App.CurrentUser.CompanyId
+                    };
+                }
                 var respone = await client.From<Unit>().Insert(unit);
                 if (respone.Models.Count == 1)
                 {
                     MessageBox.Show("Новый отдел успешно добавлен", "Сохранение", MessageBoxButton.OK, MessageBoxImage.Information);
-                    CurrentRole = string.Empty;
-                    LoadUnits();
+                    CurrentUnit = string.Empty;
                 }
                 else
                 {
@@ -218,9 +245,11 @@ namespace DocumentManagementService.ViewModels
                 }
             }
             LoadUnits();
+            IsEnabled = true;
         }
         private async void SaveUser()
         {
+            IsEnabled = false;
             if (isUserEditing)
             {
 
@@ -243,8 +272,7 @@ namespace DocumentManagementService.ViewModels
             {
                 try
                 {
-                    await client.Auth.RefreshSession();
-                    string token = client.Auth.CurrentSession.AccessToken;
+                    string token = App.token;
                     bool success = await authService.SignUpAsync(CurrentUser.Email, Password,
                           CurrentUser.FirstName, CurrentUser.SecondName, CurrentUser.ThirdName,
                              CurrentUser.Telephone, SelectedRole.Id, SelectedUnit.Id, App.CurrentUser.CompanyId);
@@ -260,13 +288,15 @@ namespace DocumentManagementService.ViewModels
                         SelectedUnit = null;
                         SelectedRole = null;
                     }
-                    UpdateAction();
+
                 }
                 catch(Exception ex) 
                 {
                     Logger.Error(ex);
                 }
             }
+            UpdateAction();
+            IsEnabled = true;
         }
         private async void AddRoleCategory(List<RoleCategory> roleCategory, Role role)
         {
@@ -304,7 +334,7 @@ namespace DocumentManagementService.ViewModels
         }
         private async void SaveRole()
         {
-
+            IsEnabled = false;
             if (isRoleEditing)
             {
                 var currentRoleCategories = await client
@@ -356,13 +386,14 @@ namespace DocumentManagementService.ViewModels
                 UnCheckCategories();
 
                 MessageBox.Show("Изменения успешно сохранены!", "Сохранение", MessageBoxButton.OK, MessageBoxImage.Information);
+
             }
             else
             {
                
                 var role = new Role
                 {
-                    Id = Roles.Count + 4,
+                    Id = Roles[Roles.Count -1].Id + Roles.Count,
                     Name = CurrentRole
                 };
                 var response = await client.From<Role>().Insert(role);
@@ -372,11 +403,11 @@ namespace DocumentManagementService.ViewModels
                     var roleCategory = new List<RoleCategory>();
                     AddRoleCategory(roleCategory, response.Model);
                     CurrentRole = String.Empty;
-                    LoadRoles();
                     UnCheckCategories();
                     MessageBox.Show("Должность успешно сохранена!", "Сохранение", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
+            IsEnabled = true;
 
         }
         private void UnCheckCategories()

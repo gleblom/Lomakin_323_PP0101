@@ -10,8 +10,11 @@ namespace DocumentManagementService
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
             string str = value as string;
-            if (str?.Length < MinLength)
-                return new ValidationResult(false, $"Минимальная длина: {MinLength}");
+            if(str != string.Empty)
+            {
+                if (str?.Length < MinLength)
+                    return new ValidationResult(false, $"Минимальная длина: {MinLength}");
+            }
             return ValidationResult.ValidResult;
         }
     }

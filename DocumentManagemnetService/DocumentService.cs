@@ -53,25 +53,32 @@ namespace DocumentManagementService
         }
         public async Task<bool> Update(string localFilePath, ViewDocument document)
         {
-            var user = client.Auth.CurrentUser;
+            try
+            {
+                var user = client.Auth.CurrentUser;
 
-            var fileName = Path.GetFileName(localFilePath);
+                var fileName = Path.GetFileName(localFilePath);
 
-            var storagePath = $"{user.Id}/{fileName}/{Guid.NewGuid()}_{fileName}";
+                var storagePath = $"{user.Id}/{fileName}/{Guid.NewGuid()}_{fileName}";
 
-            var url = UploadFileAsync(localFilePath, storagePath);
+                var url = UploadFileAsync(localFilePath, storagePath);
 
-            if (url == null)
+                if (url == null)
+                {
+                    return false;
+                }
+                var update = await client.From<Document>()
+                    .Where(x => x.Id == document.Id)
+                    .Set(x => x.Url, url)
+                    .Update();
+
+                Logger.Info($"{update.Content}");
+                return update.Models.Count == 1;
+            }
+            catch (Exception ex)
             {
                 return false;
             }
-            var update = await client.From<Document>()
-                .Where(x => x.Id == document.Id)
-                .Set(x => x.Url, url)
-                .Update();
-
-            Logger.Info($"{update.Content}");
-            return update.Models.Count == 1;
         }
         public async Task OnApprove(ViewDocument document, ApprovalRoute route)
         {

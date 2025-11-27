@@ -5,6 +5,7 @@ using Microsoft.Win32;
 using Supabase;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 
@@ -21,7 +22,7 @@ namespace DocumentManagementService.ViewModels
         public ICommand SelectFileCommand { get; }
         public ICommand SubmitCommand { get; }
         private string selectedFilePath;
-
+        public const string BasicTextPattern = @"^[a-zA-Zа-яА-Я0-9\s\.,!?;:""'\(\)\-]*$";
 
         private string documentTitle;
         public string DocumentTitle
@@ -47,14 +48,6 @@ namespace DocumentManagementService.ViewModels
                 {
                     category = value;
                     OnPropertyChanged(nameof(category));
-                    if (category.Name != "Инструкция")
-                    {
-                        IsEnabled = true;
-                    }
-                    else
-                    {
-                       IsEnabled = false;
-                    }
                 }
             }
         }
@@ -77,9 +70,11 @@ namespace DocumentManagementService.ViewModels
             SelectFileCommand = new RelayCommand(OpenFileDialog);
             currentUser = App.CurrentUser;
 
+            var regex = new Regex(BasicTextPattern, RegexOptions.Compiled);
+
             SubmitCommand = new RelayCommand(SubmitDocument, obj => 
-            (SelectedFileCategory != null 
-            && DocumentTitle != null 
+            (SelectedFileCategory != null && IsEnabled
+            && DocumentTitle != null && regex.IsMatch(DocumentTitle)
             && SelectedFileName != null 
             && !App.IsWindowOpen<SelectRouteView>()));
 
@@ -114,6 +109,7 @@ namespace DocumentManagementService.ViewModels
         }
         private async void SubmitDocument()
         {
+            IsEnabled = false;
             bool success = await documentService.AddDocumentAsync(DocumentTitle, SelectedFileCategory.Id, 1, selectedFilePath);
             if (success)
             {
@@ -123,6 +119,7 @@ namespace DocumentManagementService.ViewModels
             {
                 MessageBox.Show("Ошибка при сохранении документа", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
+            IsEnabled = true;
         }
         public void HandleDropFile(string filePath)
         {

@@ -1,4 +1,5 @@
 ﻿using DocumentManagementService.ViewModels;
+using DocumentManagemnetService;
 using MaterialDesignThemes.Wpf;
 using System.Windows.Controls;
 
@@ -10,8 +11,9 @@ namespace DocumentManagementService.Views
         public ApprovalView()
         {
             InitializeComponent();
-            ApprovalViewModel vm = new();
+            ApprovalViewModel vm = new(App.notifications);
             DataContext = vm;
         }
+
     }
 }

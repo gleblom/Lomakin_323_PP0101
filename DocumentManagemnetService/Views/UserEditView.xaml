@@ -22,15 +22,20 @@
             <TextBlock  Text="Фамилия" FontSize="20"/>
             <TextBox Margin="10"  MaxLength="30"
                      materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed"
-                     Text="{Binding SecondName, UpdateSourceTrigger=PropertyChanged}" Height="32" PreviewKeyDown="TextBox_PreviewKeyDown"/>
+                                          local11:InputRestriction.AllowedPattern="^[a-zA-Zа-яА-Я]*$"
+                     Text="{Binding SecondName, UpdateSourceTrigger=PropertyChanged}" Height="32" 
+                     PreviewKeyDown="TextBox_PreviewKeyDown"/>
 
             <TextBlock Text="Имя" FontSize="20"/>
             <TextBox Margin="10" MaxLength="30"
-                     materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed"           
-                     Text="{Binding FirstName, UpdateSourceTrigger=PropertyChanged}" Height="32" PreviewKeyDown="TextBox_PreviewKeyDown"/>
+                     materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed"      
+                                          local11:InputRestriction.AllowedPattern="^[a-zA-Zа-яА-Я]*$"
+                     Text="{Binding FirstName, UpdateSourceTrigger=PropertyChanged}" Height="32"
+                     PreviewKeyDown="TextBox_PreviewKeyDown"/>
 
             <TextBlock Text="Отчество" FontSize="20"/>
             <TextBox Margin="10" MaxLength="30"
+                                          local11:InputRestriction.AllowedPattern="^[a-zA-Zа-яА-Я]*$"
                      materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed"
                     Text="{Binding ThirdName, UpdateSourceTrigger=PropertyChanged}"                    
                      Height="32" PreviewKeyDown="TextBox_PreviewKeyDown"/>
@@ -39,13 +44,16 @@
             <TextBox x:Name="EmailBox"
                      IsReadOnly="{Binding IsReadOnly}"
                     Margin="10" MaxLength="30"
+                   local11:InputRestriction.AllowedPattern="^[a-zA-Z0-9@.]*$"
                      materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed"
                     Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"             
                     Height="32" PreviewKeyDown="TextBox_PreviewKeyDown"/>
 
             <TextBlock Text="Телефон" FontSize="20"/>
-            <TextBox Margin="10" MaxLength="30"
-                     materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed" Height="32" PreviewKeyDown="TextBox_PreviewKeyDown">
+            <TextBox Margin="10" MaxLength="10"
+                     local11:InputRestriction.AllowedPattern="^[0-9]*$"
+                     materialDesign:TextFieldAssist.CharacterCounterVisibility="Collapsed" 
+                     PreviewKeyDown="TextBox_PreviewKeyDown">
                 <TextBox.Text>
                     <Binding Path="Telephone" 
                          Mode="TwoWay" 
@@ -131,7 +139,7 @@
                       materialDesign:HintAssist.Hint="Категории"
                       materialDesign:HintAssist.HelperText="Укажите типы документов, с которыми может работать должность"/>
 
-            <StackPanel Orientation="Horizontal" Margin="10 "  Width="105">
+            <StackPanel Orientation="Horizontal" Margin="10 "  Width="106" Height="49">
                 <Button Command="{Binding SaveRoleCommand}" Content="Сохранить" Margin="5" Width="110" 
                     Height="30" Background="{x:Null}" BorderBrush="{x:Null}"/>
 

@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:DocumentManagementService.Views"
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:local1="clr-namespace:DocumentManagementService"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              d:DesignHeight="645" d:DesignWidth="960" Background="White" Cursor="Hand">
     <Grid>
@@ -16,7 +17,12 @@
                Style="{StaticResource MaterialDesignFilledTextBox}" Width="380" Height="45"/>
             <Button IsEnabled="{Binding IsEnabledRecovery}"
                     Margin="20" Command="{Binding GetCodeCommand}"  
-                    Content="Получить код восстановления" Width="250" Background="{x:Null}" BorderBrush="{x:Null}" Cursor="Hand"/>
+                    Content="Получить код восстановления" Width="250" Background="{x:Null}"
+                    BorderBrush="{x:Null}" Cursor="Hand">
+                <i:Interaction.Behaviors>
+                    <local1:DebounceBehavior/>
+                </i:Interaction.Behaviors>
+            </Button>
         </StackPanel>
         <Label Content="   Система управления корпоративными  &#xA;&#x9;         документами"
             Background="#78B24B" Foreground="#E5FFFFFF" FontSize="20" Margin="288,10,288,0" Height="70" VerticalAlignment="Top"/>

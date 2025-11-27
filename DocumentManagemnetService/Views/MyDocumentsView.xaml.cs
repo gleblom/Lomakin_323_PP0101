@@ -21,6 +21,7 @@ namespace DocumentManagementService.Views
         public MyDocumentsView()
         {
             InitializeComponent();
+            documentService = new DocumentService(App.SupabaseService.Client);
             navigationService = App.NavigationService;
             MyDocumentsViewModel vm = new();
             DataContext = vm;
@@ -93,7 +94,7 @@ namespace DocumentManagementService.Views
             }
             else
             {
-                MessageBox.Show("Ошибка при сохранении документа", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Документ не обновлен!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
