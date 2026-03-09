@@ -66,7 +66,6 @@ namespace DocumentManagementService.UpdateChecker
             catch (Exception ex)
             {
                 Debug.WriteLine("Update check failed: " + ex);
-                // не мешаем пользователю при ошибке апдейта — логируем и продолжаем
             }
         }
 
