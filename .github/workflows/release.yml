@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - 'v*'
+permissions:
+  contents: write
 
 jobs:
   build-and-release:
@@ -63,6 +65,7 @@ jobs:
         with:
           tag: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           files: |
             artifacts/DocumentManagemnetService-${{ github.ref_name }}.zip
             artifacts/manifest.json
