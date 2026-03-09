@@ -16,12 +16,15 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.x'
+
+      - name: Restore
+        run: dotnet restore
 	
       - name: Build Updater
         run: dotnet publish Updater/Updater.csproj -c Release -r win-x64 --self-contained false -o ./artifacts/updater
 
       - name: Build DocumentManagemnetService
-        run: dotnet publish DocumentManagemnetService/DocumentManagementService.csproj -c Release -r win-x64 --self-contained false -o ./artifacts/DocumentManagemnetService
+        run: dotnet publish DocumentManagemnetService/DocumentManagementService.csproj -c Release -r win-x64 --self-contained false -p:EnableWindowsTargeting=true -o ./artifacts/DocumentManagemnetService
 
       - name: Copy Updater into DocumentManagemnetService publish folder
         run: |
