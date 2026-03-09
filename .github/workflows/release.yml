@@ -81,7 +81,7 @@ jobs:
           $version = $env:RELEASE_VERSION
           $repo = "${{ github.repository }}"
           $zipName = "DocumentManagementService-$tag.zip"
-          $url = "https://github.com/$repo/releases/download/$tag/$zipName"
+          $url = "https://github.com/$repo/releases/download/tag/$tag/$zipName"
           $manifest = @{
             version = $version
             url = $url
@@ -111,5 +111,5 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fail_on_unmatched_files: true
           files: |
-            artifacts/DocumentManagementService-${{ github.ref_name }}.zip
-            artifacts/manifest.json
+           artifacts/DocumentManagementService-${{ github.ref_name }}.zip
+           artifacts/manifest.json
