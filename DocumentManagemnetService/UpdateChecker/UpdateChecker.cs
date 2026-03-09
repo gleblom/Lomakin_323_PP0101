@@ -17,10 +17,6 @@ namespace DocumentManagementService.UpdateChecker
         private readonly string manifestUrl; // e.g. "https://github.com/gleblom/Lomakin_323_PP0101/releases/latest/download/manifest.json"
         private readonly string updaterExeName = "Updater.exe"; // убедитесь, что updater рядом с app.exe
 
-        public UpdateChecker()
-        {
-        }
-
         public async Task CheckAndUpdateAsync()
         {
             try
