@@ -34,31 +34,68 @@ jobs:
           Copy-Item $updater -Destination $dms -Force
         shell: pwsh
 
-      - name: Zip DocumentManagemnetService
+      - name: Set variables
+        shell: pwsh
         run: |
-          powershell -Command "Compress-Archive -Path artifacts/DocumentManagemnetService/* -DestinationPath artifacts/DocumentManagemnetService-$GITHUB_REF_NAME.zip"
+          $tag = $env:GITHUB_REF_NAME
+          if (-not $tag) {
+            Write-Error "GITHUB_REF_NAME is empty. This workflow must run on a tag (v*)."
+            exit 1
+          }
+
+          $version = $tag.TrimStart('v')
+          Write-Host "Tag: $tag  Version: $version"
+
+          echo "RELEASE_TAG=$tag" >> $env:GITHUB_ENV
+          echo "RELEASE_VERSION=$version" >> $env:GITHUB_ENV
+        env:
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+
+      - name: Zip DocumentManagementService
+        shell: pwsh
+        run: |
+          $tag = $env:RELEASE_TAG
+          $zipName = "DocumentManagementService-$tag.zip"
+          Compress-Archive -Path artifacts/DocumentManagemnetService/* -DestinationPath "artifacts/$zipName" -Force
+          Write-Host "Created zip: artifacts/$zipName"
+
+      - name: List artifacts (debug)
+        run: dir artifacts
         shell: pwsh
 
       - name: Compute SHA256
         id: sha
+        shell: pwsh
         run: |
-          $zip = "artifacts/DocumentManagemnetService-$GITHUB_REF_NAME.zip"
+          $tag = $env:RELEASE_TAG
+          $zip = "artifacts/DocumentManagementService-$tag.zip"
+          if (-not (Test-Path $zip)) { Write-Error "ZIP not found: $zip"; exit 1 }
           $sha = Get-FileHash $zip -Algorithm SHA256 | Select -ExpandProperty Hash
           echo "sha=$sha" >> $env:GITHUB_OUTPUT
-        shell: pwsh
+          Write-Host "SHA256: $sha"
 
-      
       - name: Create manifest.json
+        shell: pwsh
         run: |
-          $version = $env:GITHUB_REF_NAME.TrimStart('v')
-          $url = "https://github.com/${{ github.repository }}/releases/download/$env:GITHUB_REF_NAME/DocumentManagemnetService-$env:GITHUB_REF_NAME.zip"
+          $tag = $env:RELEASE_TAG
+          $version = $env:RELEASE_VERSION
+          $repo = "${{ github.repository }}"
+          $zipName = "DocumentManagementService-$tag.zip"
+          $url = "https://github.com/$repo/releases/download/$tag/$zipName"
           $manifest = @{
             version = $version
             url = $url
             sha256 = "${{ steps.sha.outputs.sha }}".ToLower()
-            notes = "Auto-release $GITHUB_REF_NAME"
+            notes = "Auto-release $tag"
           } | ConvertTo-Json
+          New-Item -ItemType Directory -Force -Path artifacts | Out-Null
           $manifest | Out-File -FilePath artifacts/manifest.json -Encoding utf8
+          Write-Host "manifest.json created at artifacts/manifest.json"
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+
+      - name: List artifacts (final check)
+        run: dir artifacts
         shell: pwsh
 
       - name: Create Release
@@ -67,6 +104,7 @@ jobs:
           tag: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
           token: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_unmatched_files: true
           files: |
-            artifacts/DocumentManagemnetService-${{ github.ref_name }}.zip
+            artifacts/DocumentManagementService-${{ github.ref_name }}.zip
             artifacts/manifest.json
