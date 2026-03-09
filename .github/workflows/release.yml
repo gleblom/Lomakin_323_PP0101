@@ -22,7 +22,7 @@ jobs:
       - name: Build Updater
         run: dotnet publish src/Updater/Updater.csproj -c Release -r win-x64 --self-contained false -o ./artifacts/updater
 
-	- name: Copy Updater into DocumentManagemnetService publish folder
+     - name: Copy Updater into DocumentManagemnetService publish folder
   	run: |
 	  $updater = "artifacts/updater/Updater.exe"
     	  $dms = "artifacts/DocumentManagemnetService/"
