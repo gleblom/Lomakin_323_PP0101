@@ -6,11 +6,8 @@ using PdfiumViewer;
 using Supabase;
 using System.IO;
 using System.Net.Http;
-using System.Windows.Forms;
-using MessageBox = System.Windows.MessageBox;
 using Path = System.IO.Path;
 using PdfDocument = PdfiumViewer.PdfDocument;
-using UserControl = System.Windows.Controls.UserControl;
 using Word = Microsoft.Office.Interop.Word;
 
 namespace DocumentManagementService.Views

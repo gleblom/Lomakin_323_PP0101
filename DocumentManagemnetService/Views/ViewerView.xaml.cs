@@ -1,6 +1,5 @@
 ﻿
 using DocumentManagementService.ViewModels;
-using UserControl = System.Windows.Controls.UserControl;
 
 
 namespace DocumentManagementService.Views
