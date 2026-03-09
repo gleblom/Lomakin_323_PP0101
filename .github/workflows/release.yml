@@ -111,5 +111,14 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fail_on_unmatched_files: true
           files: |
-           ./artifacts/DocumentManagementService-${{ github.ref_name }}.zip
-           ./artifacts/manifest.json
+            artifacts/DocumentManagementService-${{ github.ref_name }}.zip
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: artifacts/manifest.json
+          asset_name: manifest.json
+          asset_content_type: application/json
