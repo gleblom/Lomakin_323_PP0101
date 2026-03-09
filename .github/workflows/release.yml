@@ -47,10 +47,11 @@ jobs:
           echo "sha=$sha" >> $env:GITHUB_OUTPUT
         shell: pwsh
 
+      
       - name: Create manifest.json
         run: |
           $version = $env:GITHUB_REF_NAME.TrimStart('v')
-          $url = "https://github.com/${{ github.repository }}/releases/download/${GITHUB_REF_NAME}/DocumentManagemnetService-$GITHUB_REF_NAME.zip"
+          $url = "https://github.com/${{ github.repository }}/releases/download/$env:GITHUB_REF_NAME/DocumentManagemnetService-$env:GITHUB_REF_NAME.zip"
           $manifest = @{
             version = $version
             url = $url
