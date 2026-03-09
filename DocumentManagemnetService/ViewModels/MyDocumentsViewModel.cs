@@ -5,6 +5,7 @@ using NLog;
 using Supabase;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using Category = DocumentManagementService.Models.Category;
@@ -99,32 +100,47 @@ namespace DocumentManagementService.ViewModels
         }
         public async void LoadCategories()
         {
-            Categories.Clear();
-            var categories = await client.From<Category>().Get();
-            foreach (var category in categories.Models)
+            try
             {
-                category.IsChecked = true;
-                Categories.Add(category);
+                Categories.Clear();
+                var categories = await client.From<Category>().Get();
+                foreach (var category in categories.Models)
+                {
+                    category.IsChecked = true;
+                    Categories.Add(category);
+                }
+                foreach (var item in Categories)
+                {
+                    item.PropertyChanged += (s, e) => ApplyFilters();
+                }
+                ApplyFilters();
+                Logger.Info($"{categories.Content}");
             }
-            foreach (var item in Categories)
+            catch (Exception ex)
             {
-                item.PropertyChanged += (s, e) => ApplyFilters();
+                Logger.Error(ex);
             }
-            ApplyFilters();
-            Logger.Info($"{categories.Content}");
+      
         }
         private async void LoadDocuments()
         {
-            string id = App.CurrentUser.Id.ToString();
-            Documents.Clear();
-            var documents = await client.From<ViewDocument>()
-                .Where(x => x.AuthorId == id)
-                .Get();
-            foreach (var document in documents.Models)
+            try
             {
-                Documents.Add(document);
+                string id = App.CurrentUser.Id.ToString();
+                Documents.Clear();
+                var documents = await client.From<ViewDocument>()
+                    .Where(x => x.AuthorId == id)
+                    .Get();
+                foreach (var document in documents.Models)
+                {
+                    Documents.Add(document);
+                }
+                Logger.Info($"{documents.Content}");
             }
-            Logger.Info($"{documents.Content}");
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
         private bool FilterDocument(ViewDocument doc)
         {

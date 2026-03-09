@@ -3,6 +3,7 @@ using DocumentManagementService.Models;
 using DocumentManagemnetService;
 using NLog;
 using Supabase;
+using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 
@@ -29,7 +30,21 @@ namespace DocumentManagementService
             var fileName = Path.GetFileName(localFilePath);
             var storagePath = $"{user.Id}/{fileName}/{Guid.NewGuid()}_{fileName}";
 
+            FileInfo fileInfo = new FileInfo(localFilePath);
+
+            int fileSize = (int)fileInfo.Length;
+            int size = (int)(fileSize / 1024.0);
+            Logger.Info($"Начало загрузки файла. Размер файла: {size / 1024} мб");
+            Stopwatch stopwatch = Stopwatch.StartNew();
             var url = await UploadFileAsync(localFilePath, storagePath);
+
+            await Task.WhenAll(UploadFileAsync(localFilePath, storagePath));
+
+            stopwatch.Stop();
+            int time = (int)(stopwatch.ElapsedMilliseconds / 1000.0);
+            Logger.Info($"Время загрузки: {time} с");
+            Logger.Info($"Скорость загрузки: {size / time} кб/c");
+
             if (url == null)
             {
                 Logger.Warn("Url не существует");

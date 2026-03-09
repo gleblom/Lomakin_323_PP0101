@@ -10,6 +10,7 @@ namespace DocumentManagementService.ViewModels
 {
     public class RecoveryViewModel : BaseViewModel
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly INavigationService navigationService;
         private readonly Client client;
         public ICommand GetCodeCommand { get; }
@@ -136,7 +137,10 @@ namespace DocumentManagementService.ViewModels
             HttpStatusCode status = await AuthService.SendRecoveryCode(email);
             if (status == HttpStatusCode.OK)
             {
+
                 MessageBox.Show("На указанный Email был отправлен код для восстановления", "Восстановление", MessageBoxButton.OK, MessageBoxImage.Information);
+                Logger.Info($"Код подтверждения был успешно отправлен на {email}");
+                Logger.Info($"Время действия кода 2 минуты");
                 RecoveryVisibility = Visibility.Visible;
             }
             else
@@ -165,6 +169,7 @@ namespace DocumentManagementService.ViewModels
                 else
                 {
                     MessageBox.Show("Неверный код восстановления", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Logger.Warn($"Ошибка! Пользователь {email} ввел неверный код восстановления");
                 }
             }
             catch(Exception ex) 
@@ -186,7 +191,10 @@ namespace DocumentManagementService.ViewModels
                     .Where(x => x.Email == email)
                     .Single();
                 await AuthService.ChangeUserPassword(user.Id.ToString(), Password);
+
                 MessageBox.Show("Ваш пароль успешно изменен!", "Изменение пароля", MessageBoxButton.OK, MessageBoxImage.Information);
+                Logger.Info($"Пользователь {email} успешно изменил пароль");
+
                 navigationService.Navigate("Login");
                 user.Code = null;
                 await user.Update<User>();

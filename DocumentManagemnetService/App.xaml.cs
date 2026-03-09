@@ -1,11 +1,15 @@
 ﻿using DocumentManagementService;
 using DocumentManagementService.Models;
 using DocumentManagementService.Views;
+using Microsoft.Extensions.Configuration;
 using NLog;
 using NLog.Filters;
 using Supabase.Gotrue;
 using System.Collections.ObjectModel;
+using System.Configuration;
+using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -29,17 +33,26 @@ namespace DocumentManagemnetService
         public static List<Notification> notifications = [];
         public static INavigationService NavigationService { get; set; }
         public static string token {  get; set; }
+        public IConfiguration Configuration { get; private set; }
+
 
         private async void LoadUsers()
         {
-            Users.Clear();
-            var response = await SupabaseService.Client.From<UserView>()
-                .Where(x => x.RoleId != 2)
-                .Where(x => x.RoleId != 1)
-                .Get();
-            foreach (var user in response.Models)
+            try
             {
-                Users.Add(user);
+                Users.Clear();
+                var response = await SupabaseService.Client.From<UserView>()
+                    .Where(x => x.RoleId != 2)
+                    .Where(x => x.RoleId != 1)
+                    .Get();
+                foreach (var user in response.Models)
+                {
+                    Users.Add(user);
+                }
+            }
+            catch(Exception ex)
+            {
+                Logger.Error(ex);
             }
 
         }
@@ -47,9 +60,10 @@ namespace DocumentManagemnetService
         {
             try
             {
-                var model = await SupabaseService.Client.From<User>().
-                     Where(x => x.Email == SupabaseService.Client.Auth.CurrentUser.Email).
-                    Single();
+                var model = await SupabaseService.Client.From<User>()
+                    .Select("*, role:roles(*)")
+                    .Where(x => x.Email == SupabaseService.Client.Auth.CurrentUser.Email)
+                    .Single();
                 return model;
             }
             catch (Exception ex)
@@ -64,35 +78,56 @@ namespace DocumentManagemnetService
 
         protected override async void OnStartup(StartupEventArgs e)
         {
-            base.OnStartup(e);
-            var config = new NLog.Config.XmlLoggingConfiguration("NLog.config");
-
-            LogManager.Configuration = config;
-            Logger.Info("Приложение запущено.");
-            SupabaseService = new SupabaseService();
-
-            
-
-
-            await SupabaseService.InitializeAsync();
-
-            await SupabaseService.EnsureSessionIsValidAsync();
-
-            LoadUsers();
-            documentService = new DocumentService(SupabaseService.Client);
-
-            if (SupabaseService.IsAuthenticated)
+            try
             {
-         
-                CurrentUser = await LoadUserInfo();
-                LoadNotify();
-                token = SupabaseService.Client.Auth.CurrentSession.AccessToken;
+                var builder = new ConfigurationBuilder()
+                    .AddEnvironmentVariables()
+                    .AddUserSecrets<App>()
+                    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
 
-                new MenuWindow(CurrentUser).Show(); //Если пользователь залогинен открывается главное окно
+                Configuration = builder.Build();
+
+                base.OnStartup(e);
+                var config = new NLog.Config.XmlLoggingConfiguration("NLog.config");
+
+                Stopwatch stopwatch = Stopwatch.StartNew();
+                LogManager.Configuration = config;
+
+                Logger.Info("Приложение запущено.");
+
+                stopwatch.Stop();
+
+                Logger.Info($"Время выполнения: {stopwatch.ElapsedMilliseconds} мс");
+
+                SupabaseService = new SupabaseService();
+
+
+
+
+                await SupabaseService.InitializeAsync();
+
+                await SupabaseService.EnsureSessionIsValidAsync();
+
+                LoadUsers();
+                documentService = new DocumentService(SupabaseService.Client);
+
+                if (SupabaseService.IsAuthenticated)
+                {
+
+                    CurrentUser = await LoadUserInfo();
+                    LoadNotify();
+                    token = SupabaseService.Client.Auth.CurrentSession.AccessToken;
+
+                    new MenuWindow(CurrentUser).Show(); //Если пользователь залогинен открывается главное окно
+                }
+                else
+                {
+                    new StartupView().Show(); //если нет - окно входа
+                }
             }
-            else
+            catch(Exception ex)
             {
-                new StartupView().Show(); //если нет - окно входа
+                Logger.Error(ex.Message);
             }
 
         }

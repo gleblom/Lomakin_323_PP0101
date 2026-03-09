@@ -34,6 +34,10 @@ namespace DocumentManagementService.Models
         [Column("unit_id")]
         public int? UnitId { get; set; }
 
+
+        [Reference(typeof(Role))]
+        public Role UserRole { get; set; }
+
         private ViewRole role;
         [IgnoreDataMember]
         public ViewRole Role

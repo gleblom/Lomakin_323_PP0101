@@ -3,6 +3,7 @@ using NLog;
 using Supabase.Gotrue.Exceptions;
 using System.Net;
 using System.Net.Http;
+using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
 using System.Windows;
@@ -83,7 +84,25 @@ namespace DocumentManagementService
             var req = new HttpRequestMessage(HttpMethod.Post, "https://kphkeykctqyqgfotrqoy.supabase.co/functions/v1/code-send");
             req.Content = new StringContent(json, Encoding.UTF8, "application/json");
 
+            var ipAddress = Dns.GetHostAddresses(Dns.GetHostName());
+
+            var userIp = "";
+
+            var hostname = "";
+
+            foreach (var ip in ipAddress)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    hostname = Dns.GetHostEntry(ip).HostName;
+                    userIp = ip.ToString();
+                    break;
+                }
+            }
+
             var res = await http.SendAsync(req);
+            Logger.Info($"Пользователь {userEmail} (IP: {userIp}, Hostname: {hostname}) пытается сменить пароль");
+            Logger.Info($"Отправка кода подтверждения на {userEmail}");
             var body = await res.Content.ReadAsStringAsync();
 
             Logger.Info(res);
@@ -128,6 +147,25 @@ namespace DocumentManagementService
         {
             try
             {
+
+                var ipAddress = Dns.GetHostAddresses(Dns.GetHostName());
+
+                var userIp = "";
+
+                var hostname = "";
+
+                foreach(var ip in ipAddress)
+                {
+                    if(ip.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        hostname = Dns.GetHostEntry(ip).HostName; 
+                        userIp = ip.ToString();
+                        break;
+                    }
+                }
+
+
+                Logger.Info($"Вход пользователя {email} \n IP: {userIp} \n Имя хоста: {hostname}");
                 var response = await client.Auth.SignIn(email, password);
                 if (response.User != null)
                 {
@@ -136,12 +174,16 @@ namespace DocumentManagementService
                    
                    return true;
                 }
+
+
                 MessageBox.Show("Неверный логин или пароль.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
             catch (GotrueException ex)
             {
-                Logger.Error(ex);
+                Logger.Warn($"Провальная попытка пользователя {email} войти в систему");
+                Logger.Warn($"Причина: Неверный логин или пароль");
+                Logger.Error(ex.Message);
                 MessageBox.Show(MapError(ex.Message), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }

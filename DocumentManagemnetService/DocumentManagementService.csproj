@@ -9,6 +9,7 @@
     <ApplicationIcon>png-transparent-computer-icons-contract-transport-in-bangkok-text-logo-sign.ico</ApplicationIcon>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <UserSecretsId>2bf7bfba-c71f-4566-ae50-405ce6f55372</UserSecretsId>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -30,11 +31,17 @@
     <PackageReference Include="MaterialDesignExtensions" Version="3.3.0" />
     <PackageReference Include="MaterialDesignInXamlToolkitAddOns" Version="0.0.63" />
     <PackageReference Include="MaterialDesignThemes" Version="5.2.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="8.0.0" />
     <PackageReference Include="Microsoft.Office.Interop.Word" Version="15.0.4797.1004" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
     <PackageReference Include="MvvmLightLibs" Version="5.4.1.1" />
     <PackageReference Include="NLog" Version="6.0.6" />
-    <PackageReference Include="PdfiumViewer" Version="2.13.0" />
+	<PackageReference Include="System.Net.NameResolution" Version="4.3.0" />
+	<PackageReference Include="System.Buffers" Version="4.3.0" />
+	<PackageReference Include="PdfiumViewer" Version="2.13.0" />
     <PackageReference Include="PdfiumViewer.Native.x86_64.v8-xfa" Version="2018.4.8.256" />
     <PackageReference Include="Supabase" Version="1.1.1" />
     <PackageReference Include="Syroot.Windows.IO.KnownFolders" Version="1.3.0" />
@@ -48,10 +55,10 @@
       <HintPath>..\..\..\..\..\..\Windows\assembly\GAC_MSIL\office\15.0.0.0__71e9bce111e9429c\OFFICE.DLL</HintPath>
     </Reference>
     <Reference Include="System.Windows.Forms">
-      <HintPath>..\..\..\..\..\..\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\8.0.20\System.Windows.Forms.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\dotnet\shared\Microsoft.WindowsDesktop.App\8.0.23\System.Windows.Forms.dll</HintPath>
     </Reference>
     <Reference Include="WindowsFormsIntegration">
-      <HintPath>..\..\..\..\..\..\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\8.0.20\WindowsFormsIntegration.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\dotnet\shared\Microsoft.WindowsDesktop.App\8.0.23\WindowsFormsIntegration.dll</HintPath>
     </Reference>
   </ItemGroup>
 
@@ -70,6 +77,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -22,7 +22,7 @@ namespace DocumentManagementService.ViewModels
         public ICommand SelectFileCommand { get; }
         public ICommand SubmitCommand { get; }
         private string selectedFilePath;
-        public const string BasicTextPattern = @"^[a-zA-Zа-яА-Я0-9\s\.,!?;:""'\(\)\-]*$";
+/*        public const string BasicTextPattern = @"^[a-zA-Zа-яА-Я0-9\s\.,!?;:""'\(\)\-]*$";*/
 
         private string documentTitle;
         public string DocumentTitle
@@ -70,11 +70,11 @@ namespace DocumentManagementService.ViewModels
             SelectFileCommand = new RelayCommand(OpenFileDialog);
             currentUser = App.CurrentUser;
 
-            var regex = new Regex(BasicTextPattern, RegexOptions.Compiled);
+/*            var regex = new Regex(BasicTextPattern, RegexOptions.Compiled);*/
 
             SubmitCommand = new RelayCommand(SubmitDocument, obj => 
-            (SelectedFileCategory != null && IsEnabled
-            && DocumentTitle != null && regex.IsMatch(DocumentTitle)
+            (SelectedFileCategory != null
+            && DocumentTitle != null
             && SelectedFileName != null 
             && !App.IsWindowOpen<SelectRouteView>()));
 

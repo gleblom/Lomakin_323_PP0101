@@ -1,26 +1,50 @@
-﻿using NLog;
+﻿using DocumentManagemnetService;
+using NLog;
 using Supabase;
+using System.Windows;
 
 namespace DocumentManagementService
 {
     public class SupabaseService
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private readonly string url = "https://kphkeykctqyqgfotrqoy.supabase.co";
-        private readonly string key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtwaGtleWtjdHF5cWdmb3RycW95Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA0ODc4NTQsImV4cCI6MjA2NjA2Mzg1NH0.N9tcPHuG6VXdOBiiC8UWS7ISxTTZnNKoWIarWX9bOAw";
+        private readonly string url;
+        private readonly string key;
         private Client client;
         private readonly SessionManager sessionManager = new();
 
+        public SupabaseService()
+        {
+            var configuration = ((App)Application.Current).Configuration;
+            key = configuration["API_KEY"];
+
+            Logger.Info("Supabase API-ключ успешно загружен из хранилища");
+
+            url = configuration["Supabase:Url"];
+
+            Logger.Info("Supabase Url успешно загружен из файла конфигурации");
+
+        }
+
         public async Task InitializeAsync()
         {
-
-            var options = new SupabaseOptions //Настройки подключения
+            try
             {
-                AutoConnectRealtime = true,
-                AutoRefreshToken = true,            
-            };
-            client = new Client(url, key, options);
-            await client.InitializeAsync();
+                var options = new SupabaseOptions //Настройки подключения
+                {
+                    AutoConnectRealtime = true,
+                    AutoRefreshToken = true,
+                };
+                client = new Client(url, key, options);
+
+                await client.InitializeAsync();
+
+                Logger.Info($"Клиент Supabase успешно инициализирован");
+            }
+            catch(Exception ex)
+            {
+                Logger.Error(ex);
+            }
 
            
             var session = await sessionManager.LoadSessionAsync();
