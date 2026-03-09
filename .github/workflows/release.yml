@@ -98,6 +98,11 @@ jobs:
         run: dir artifacts
         shell: pwsh
 
+      - name: Verify manifest.json
+        run: |
+         Get-Content artifacts/manifest.json
+         Test-Path artifacts/manifest.json
+        shell: pwsh
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
