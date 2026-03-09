@@ -1,5 +1,6 @@
 ﻿using DocumentManagementService;
 using DocumentManagementService.Models;
+using DocumentManagementService.UpdateChecker;
 using DocumentManagementService.Views;
 using Microsoft.Extensions.Configuration;
 using NLog;
@@ -80,6 +81,8 @@ namespace DocumentManagemnetService
         {
             try
             {
+                await new UpdateChecker().CheckAndUpdateAsync();
+
                 var builder = new ConfigurationBuilder()
                     .AddEnvironmentVariables()
                     .AddUserSecrets<App>()
