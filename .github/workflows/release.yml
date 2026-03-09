@@ -4,62 +4,63 @@ on:
   push:
     tags:
       - 'v*'
+
 jobs:
   build-and-release:
     runs-on: windows-latest
     steps:
-     - name: Checkout
-       uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-     - name: Setup .NET
-       uses: actions/setup-dotnet@v3
-       with:
-         dotnet-version: '8.0.x'
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
 
-     - name: Build DocumentManagemnetService
+      - name: Build DocumentManagemnetService
         run: dotnet publish src/DocumentManagemnetService/DocumentManagemnetService.csproj -c Release -r win-x64 --self-contained false -o ./artifacts/DocumentManagemnetService
 
-     - name: Build Updater
-       run: dotnet publish src/Updater/Updater.csproj -c Release -r win-x64 --self-contained false -o ./artifacts/updater
+      - name: Build Updater
+        run: dotnet publish src/Updater/Updater.csproj -c Release -r win-x64 --self-contained false -o ./artifacts/updater
 
-     - name: Copy Updater into DocumentManagemnetService publish folder
-  	run: |
-	  $updater = "artifacts/updater/Updater.exe"
-    	  $dms = "artifacts/DocumentManagemnetService/"
-    	  Copy-Item $updater -Destination $dms -Force
-  	shell: pwsh
+      - name: Copy Updater into DocumentManagemnetService publish folder
+        run: |
+          $updater = "artifacts/updater/Updater.exe"
+          $dms = "artifacts/DocumentManagemnetService/"
+          Copy-Item $updater -Destination $dms -Force
+        shell: pwsh
 
-     - name: Zip DocumentManagemnetService
-       run: |
-         powershell -Command "Compress-Archive -Path artifacts/DocumentManagemnetService/* -DestinationPath artifacts/DocumentManagemnetService-$GITHUB_REF_NAME.zip"
-       shell: pwsh
+      - name: Zip DocumentManagemnetService
+        run: |
+          powershell -Command "Compress-Archive -Path artifacts/DocumentManagemnetService/* -DestinationPath artifacts/DocumentManagemnetService-$GITHUB_REF_NAME.zip"
+        shell: pwsh
 
-     - name: Compute SHA256
-       id: sha
-       run: |
-         $zip = "artifacts/DocumentManagemnetService-$GITHUB_REF_NAME.zip"
-         $sha = Get-FileHash $zip -Algorithm SHA256 | Select -ExpandProperty Hash
-         echo "sha=$sha" >> $env:GITHUB_OUTPUT
-       shell: pwsh
+      - name: Compute SHA256
+        id: sha
+        run: |
+          $zip = "artifacts/DocumentManagemnetService-$GITHUB_REF_NAME.zip"
+          $sha = Get-FileHash $zip -Algorithm SHA256 | Select -ExpandProperty Hash
+          echo "sha=$sha" >> $env:GITHUB_OUTPUT
+        shell: pwsh
 
-     - name: Create manifest.json
-       run: |
-         $version = $GITHUB_REF_NAME.TrimStart('v')
-         $url = "https://github.com/${{ github.repository }}/releases/download/${GITHUB_REF_NAME}/DocumentManagemnetService-$GITHUB_REF_NAME.zip"
-         $manifest = @{
-           version = $version
-           url = $url
-           sha256 = "${{ steps.sha.outputs.sha }}".ToLower()
-           notes = "Auto-release $GITHUB_REF_NAME"
-         } | ConvertTo-Json
-         $manifest | Out-File -FilePath artifacts/manifest.json -Encoding utf8
-       shell: pwsh
+      - name: Create manifest.json
+        run: |
+          $version = $GITHUB_REF_NAME.TrimStart('v')
+          $url = "https://github.com/${{ github.repository }}/releases/download/${GITHUB_REF_NAME}/DocumentManagemnetService-$GITHUB_REF_NAME.zip"
+          $manifest = @{
+            version = $version
+            url = $url
+            sha256 = "${{ steps.sha.outputs.sha }}".ToLower()
+            notes = "Auto-release $GITHUB_REF_NAME"
+          } | ConvertTo-Json
+          $manifest | Out-File -FilePath artifacts/manifest.json -Encoding utf8
+        shell: pwsh
 
-     - name: Create Release
-       uses: ncipollo/release-action@v1
-       with:
-         tag: ${{ github.ref_name }}
-         name: Release ${{ github.ref_name }}
-         files: |
-           artifacts/DocumentManagemnetService-${{ github.ref_name }}.zip
-           artifacts/manifest.json
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          files: |
+            artifacts/DocumentManagemnetService-${{ github.ref_name }}.zip
+            artifacts/manifest.json
