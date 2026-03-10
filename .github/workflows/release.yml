@@ -55,8 +55,8 @@ jobs:
         shell: pwsh
         run: |
           $tag = $env:RELEASE_TAG
-          $zipName = "DocumentManagementService-$tag.zip"
-          Compress-Archive -Path artifacts/DocumentManagemnetService/* -DestinationPath "artifacts/$zipName" -Force
+          $zipName = "Lomakin_323_PP0101-$tag.zip"
+          Compress-Archive -Path artifacts/Lomakin_323_PP0101/* -DestinationPath "artifacts/$zipName" -Force
           Write-Host "Created zip: artifacts/$zipName"
 
       - name: List artifacts (debug)
@@ -68,7 +68,7 @@ jobs:
         shell: pwsh
         run: |
           $tag = $env:RELEASE_TAG
-          $zip = "artifacts/DocumentManagementService-$tag.zip"
+          $zip = "artifacts/Lomakin_323_PP0101-$tag.zip"
           if (-not (Test-Path $zip)) { Write-Error "ZIP not found: $zip"; exit 1 }
           $sha = Get-FileHash $zip -Algorithm SHA256 | Select -ExpandProperty Hash
           echo "sha=$sha" >> $env:GITHUB_OUTPUT
@@ -80,7 +80,7 @@ jobs:
           $tag = $env:RELEASE_TAG
           $version = $env:RELEASE_VERSION
           $repo = "${{ github.repository }}"
-          $zipName = "DocumentManagementService-$tag.zip"
+          $zipName = "Lomakin_323_PP0101-$tag.zip"
           $url = "https://github.com/$repo/releases/download/$tag/$zipName"
           $manifest = @{
             version = $version
