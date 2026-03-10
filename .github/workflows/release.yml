@@ -56,7 +56,7 @@ jobs:
         run: |
           $tag = $env:RELEASE_TAG
           $zipName = "Lomakin_323_PP0101-$tag.zip"
-          Compress-Archive -Path artifacts/Lomakin_323_PP0101/* -DestinationPath "artifacts/$zipName" -Force
+          Compress-Archive -Path artifacts/DocumentManagementService/* -DestinationPath "artifacts/$zipName" -Force
           Write-Host "Created zip: artifacts/$zipName"
 
       - name: List artifacts (debug)
