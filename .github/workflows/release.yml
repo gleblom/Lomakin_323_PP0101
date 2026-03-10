@@ -81,7 +81,7 @@ jobs:
           $version = $env:RELEASE_VERSION
           $repo = "${{ github.repository }}"
           $zipName = "DocumentManagementService-$tag.zip"
-          $url = "https://github.com/$repo/releases/download/tag/$tag/$zipName"
+          $url = "https://github.com/$repo/releases/download/$tag/$zipName"
           $manifest = @{
             version = $version
             url = $url
