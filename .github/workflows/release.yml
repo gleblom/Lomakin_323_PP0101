@@ -111,8 +111,9 @@ jobs:
           name: Release ${{ github.ref_name }}
           token: ${{ secrets.GITHUB_TOKEN }}
           fail_on_unmatched_files: true
-          files: |
-            artifacts/Lomakin_323_PP0101-$tag.zip-${{ github.ref_name }}.zip
+        files: |
+          artifacts/Lomakin_323_PP0101-${{ github.ref_name }}.zip
+          artifacts/manifest.json
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
