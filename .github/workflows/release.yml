@@ -111,26 +111,4 @@ jobs:
           name: Release ${{ github.ref_name }}
           token: ${{ secrets.GITHUB_TOKEN }}
           fail_on_unmatched_files: true
-          files: |
-            artifacts/Lomakin_323_PP0101-${{ github.ref_name }}.zip
-            artifacts/manifest.json
-
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: artifacts/manifest.json
-          asset_name: manifest.json
-          asset_content_type: application/json
-
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: artifacts/Lomakin_323_PP0101-${{ github.ref_name }}.zip
-          asset_name: Lomakin_323_PP0101-${{ github.ref_name }}.zip
-          asset_content_type: application/zip
+          artifacts: "artifacts/Lomakin_323_PP0101-${{ github.ref_name }}.zip, artifacts/manifest.json"
