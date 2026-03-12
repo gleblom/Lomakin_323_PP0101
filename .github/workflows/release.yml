@@ -21,18 +21,9 @@ jobs:
 
       - name: Restore
         run: dotnet restore
-      - name: Build Updater
-        run: dotnet publish Updater/Updater.csproj -c Release -r win-x64 --self-contained false -o ./artifacts/updater 
 
       - name: Build DocumentManagemnetService
         run: dotnet publish DocumentManagemnetService/DocumentManagementService.csproj -c Release -r win-x64 --self-contained false -p:EnableWindowsTargeting=true -o ./artifacts/DocumentManagementService
-
-      - name: Copy Updater into DocumentManagemnetService publish folder
-        run: |
-          $updater = "artifacts/updater/Updater.exe"
-          $dms = "artifacts/DocumentManagementService/"
-          Copy-Item $updater -Destination $dms -Force
-        shell: pwsh
 
       - name: Set variables
         shell: pwsh
@@ -93,6 +84,44 @@ jobs:
           Write-Host "manifest.json created at artifacts/manifest.json"
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
+
+      - name: Create manifest.xml
+        shell: pwsh
+        run: |
+          $tag = $env:RELEASE_TAG
+          $version = $env:RELEASE_VERSION
+          $repo = "${{ github.repository }}"
+          $zipName = "Lomakin_323_PP0101-$tag.zip"
+          $url = "https://github.com/$repo/releases/download/$tag/$zipName"
+          $sha = "${{ steps.sha.outputs.sha }}".ToLower()
+          $notes = "Auto-release $tag"
+
+          $xml = New-Object System.Xml.XmlDocument
+          $decl = $xml.CreateXmlDeclaration("1.0", "utf-8", $null)
+          $xml.AppendChild($decl) | Out-Null
+
+          $root = $xml.CreateElement("manifest")
+          $xml.AppendChild($root) | Out-Null
+
+          $el = $xml.CreateElement("version")
+          $el.InnerText = $version
+          $root.AppendChild($el) | Out-Null
+
+          $el = $xml.CreateElement("url")
+          $el.InnerText = $url
+          $root.AppendChild($el) | Out-Null
+
+          $el = $xml.CreateElement("sha256")
+           $el.InnerText = $sha
+          $root.AppendChild($el) | Out-Null
+
+          $el = $xml.CreateElement("notes")
+          $el.InnerText = $notes
+          $root.AppendChild($el) | Out-Null
+
+          New-Item -ItemType Directory -Force -Path artifacts | Out-Null
+          $xml.Save("artifacts/manifest.xml")
+          Write-Host "manifest.xml created at artifacts/manifest.xml"
 
       - name: List artifacts (final check)
         run: dir artifacts
