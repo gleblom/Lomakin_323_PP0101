@@ -23,7 +23,7 @@ jobs:
         run: dotnet restore
 
       - name: Build DocumentManagemnetService
-        run: dotnet publish DocumentManagemnetService/DocumentManagementService.csproj -c Release -r win-x64 --self-contained false -p:EnableWindowsTargeting=true -o ./artifacts/DocumentManagementService
+        run: dotnet publish DocumentManagemnetService/DocumentManagementService.csproj -c Release -r win-x86 --self-contained false -p:EnableWindowsTargeting=true -o ./artifacts/DocumentManagementService
 
       - name: Set variables
         shell: pwsh

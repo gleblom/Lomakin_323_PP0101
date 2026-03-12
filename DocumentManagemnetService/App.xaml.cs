@@ -84,7 +84,7 @@ namespace DocumentManagemnetService
             }
             else if (args.IsUpdateAvailable)
             {
-                MessageBox.Show($"Ошибка при проверке обновлений: {args.CurrentVersion}");
+                MessageBox.Show($"Ошибка при проверке обновлений: {args.InstalledVersion}");
                 MessageBox.Show($"Ошибка при проверке обновлений: {args.DownloadURL}");
             }
         }
@@ -101,14 +101,13 @@ namespace DocumentManagemnetService
                 Configuration = builder.Build();
 
 
-                AutoUpdater.CheckForUpdateEvent += AutoUpdaterOnCheckForUpdateEvent;
                 AutoUpdater
                     .Start(Configuration["Updater:Url"]);
 
 
                 base.OnStartup(e);
 
-                MessageBox.Show($"Текущая версия: {Assembly.GetExecutingAssembly().GetName().Version}");
+                MessageBox.Show($"Текущая версия: {FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion}");
 
 
                 var config = new NLog.Config.XmlLoggingConfiguration("NLog.config");

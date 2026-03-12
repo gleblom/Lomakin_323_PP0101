@@ -12,6 +12,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
     <UserSecretsId>2bf7bfba-c71f-4566-ae50-405ce6f55372</UserSecretsId>
+    <AssemblyVersion>1.0.1.2</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
