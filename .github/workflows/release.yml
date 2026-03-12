@@ -65,26 +65,6 @@ jobs:
           echo "sha=$sha" >> $env:GITHUB_OUTPUT
           Write-Host "SHA256: $sha"
 
-      - name: Create manifest.json
-        shell: pwsh
-        run: |
-          $tag = $env:RELEASE_TAG
-          $version = $env:RELEASE_VERSION
-          $repo = "${{ github.repository }}"
-          $zipName = "Lomakin_323_PP0101-$tag.zip"
-          $url = "https://github.com/$repo/releases/download/$tag/$zipName"
-          $manifest = @{
-            version = $version
-            url = $url
-            sha256 = "${{ steps.sha.outputs.sha }}".ToLower()
-            notes = "Auto-release $tag"
-          } | ConvertTo-Json
-          New-Item -ItemType Directory -Force -Path artifacts | Out-Null
-          $manifest | Out-File -FilePath artifacts/manifest.json -Encoding utf8
-          Write-Host "manifest.json created at artifacts/manifest.json"
-        env:
-          GITHUB_REPOSITORY: ${{ github.repository }}
-
       - name: Create manifest.xml
         shell: pwsh
         run: |
@@ -127,10 +107,10 @@ jobs:
         run: dir artifacts
         shell: pwsh
 
-      - name: Verify manifest.json
+      - name: Verify manifest.xml
         run: |
-         Get-Content artifacts/manifest.json
-         Test-Path artifacts/manifest.json
+         Get-Content artifacts/manifest.xml
+         Test-Path artifacts/manifest.xml
         shell: pwsh
       - name: Create Release
         id: create_release
@@ -140,4 +120,4 @@ jobs:
           name: Release ${{ github.ref_name }}
           token: ${{ secrets.GITHUB_TOKEN }}
           fail_on_unmatched_files: true
-          artifacts: "artifacts/Lomakin_323_PP0101-${{ github.ref_name }}.zip, artifacts/manifest.json"
+          artifacts: "artifacts/Lomakin_323_PP0101-${{ github.ref_name }}.zip, artifacts/manifest.xml"
