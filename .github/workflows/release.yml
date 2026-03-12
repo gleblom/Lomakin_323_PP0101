@@ -80,7 +80,7 @@ jobs:
           $decl = $xml.CreateXmlDeclaration("1.0", "utf-8", $null)
           $xml.AppendChild($decl) | Out-Null
 
-          $root = $xml.CreateElement("manifest")
+          $root = $xml.CreateElement("item")
           $xml.AppendChild($root) | Out-Null
 
           $el = $xml.CreateElement("version")
