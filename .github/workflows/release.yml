@@ -91,14 +91,6 @@ jobs:
           $el.InnerText = $url
           $root.AppendChild($el) | Out-Null
 
-          $el = $xml.CreateElement("sha256")
-           $el.InnerText = $sha
-          $root.AppendChild($el) | Out-Null
-
-          $el = $xml.CreateElement("notes")
-          $el.InnerText = $notes
-          $root.AppendChild($el) | Out-Null
-
           New-Item -ItemType Directory -Force -Path artifacts | Out-Null
           $xml.Save("artifacts/manifest.xml")
           Write-Host "manifest.xml created at artifacts/manifest.xml"

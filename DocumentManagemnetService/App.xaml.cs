@@ -9,6 +9,7 @@ using Supabase.Gotrue;
 using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Diagnostics;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
@@ -74,7 +75,13 @@ namespace DocumentManagemnetService
             }
 
         }
-
+        private void AutoUpdaterOnCheckForUpdateEvent(UpdateInfoEventArgs args)
+        {
+            MessageBox.Show($"Ошибка при проверке обновлений: {args.DownloadURL}");
+            MessageBox.Show($"Ошибка при проверке обновлений: {args.Error.Message}");
+            MessageBox.Show($"Ошибка при проверке обновлений: {args.CurrentVersion}");
+            MessageBox.Show($"Ошибка при проверке обновлений: {args.ChangelogURL}");
+        }
         protected override async void OnStartup(StartupEventArgs e)
         {
             try
@@ -87,11 +94,20 @@ namespace DocumentManagemnetService
 
                 Configuration = builder.Build();
 
+                MessageBox.Show($"Текущая версия: {Assembly.GetExecutingAssembly().GetName().Version}");
+
+
+
+
+                AutoUpdater.CheckForUpdateEvent += AutoUpdaterOnCheckForUpdateEvent;
+                AutoUpdater
+                    .Start("https://github.com/gleblom/Lomakin_323_PP0101/releases/latest/download/manifest.xml", Assembly.GetExecutingAssembly());
+                
                 base.OnStartup(e);
 
                 var url = Configuration["Updater:Url"];
 
-                AutoUpdater.Start(Configuration["Updater:Url"]);
+ 
 
 
                 var config = new NLog.Config.XmlLoggingConfiguration("NLog.config");
