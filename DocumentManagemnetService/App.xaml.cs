@@ -1,4 +1,5 @@
-﻿using DocumentManagementService;
+﻿using AutoUpdaterDotNET;
+using DocumentManagementService;
 using DocumentManagementService.Models;
 using DocumentManagementService.Views;
 using Microsoft.Extensions.Configuration;
@@ -13,8 +14,6 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
-using static Supabase.Postgrest.Constants;
 using User = DocumentManagementService.Models.User;
 
 namespace DocumentManagemnetService
@@ -89,6 +88,12 @@ namespace DocumentManagemnetService
                 Configuration = builder.Build();
 
                 base.OnStartup(e);
+
+                var url = Configuration["Updater:Url"];
+
+                AutoUpdater.Start(Configuration["Updater:Url"]);
+
+
                 var config = new NLog.Config.XmlLoggingConfiguration("NLog.config");
 
                 Stopwatch stopwatch = Stopwatch.StartNew();
